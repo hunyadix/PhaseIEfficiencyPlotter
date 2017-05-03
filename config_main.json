@@ -1,0 +1,12 @@
+{
+	"input_files_list": "./input_lists/config_input_files_test.json",
+	"filter_for_runs": false,
+	"run_filter_lower_bound": -1,
+	"run_filter_upper_bound": -1,
+	"WBC_setting": "164++0ns",
+	"save_histograms_to_ntuple": true,
+	"ntuple_save_directory": ".",
+	"ntuple_name": "histograms.root",
+	"save_plots": true,
+	"plots_save_directory": "./results"
+}
