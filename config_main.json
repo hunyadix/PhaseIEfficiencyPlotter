@@ -1,12 +1,12 @@
 {
-	"input_files_list": "./input_lists/config_input_files_test.json",
+	"input_files_list": "./input_lists/config_input_files_MinBias_91X_mcRun2_eff_85_PU_40_evt50k_RECO.json",
 	"filter_for_runs": false,
 	"run_filter_lower_bound": -1,
 	"run_filter_upper_bound": -1,
 	"WBC_setting": "164++0ns",
 	"save_histograms_to_ntuple": true,
 	"ntuple_save_directory": ".",
-	"ntuple_name": "histograms.root",
+	"ntuple_name": "histograms_9_0_1_pre2.root",
 	"save_plots": true,
 	"plots_save_directory": "./results"
 }

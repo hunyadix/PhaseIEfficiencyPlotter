@@ -34,13 +34,9 @@ CANVASEXTRAS_S = ./src/CanvasExtras.$(SrcSuf)
 CANVASEXTRAS_O = ./obj/CanvasExtras.$(ObjSuf)
 OBJS     += $(CANVASEXTRAS_O)
 
-TRAJMEAS_EFFICIENCY_PLOTS_MODULE_S = ./src/TrajMeasEfficiencyPlotsModule.$(SrcSuf)
-TRAJMEAS_EFFICIENCY_PLOTS_MODULE_O = ./obj/TrajMeasEfficiencyPlotsModule.$(ObjSuf)
-OBJS     += $(TRAJMEAS_EFFICIENCY_PLOTS_MODULE_O)
-
-CLUSTEROCCUPANCY_MODULE_S = ./src/ClusterOccupancyModule.$(SrcSuf)
-CLUSTEROCCUPANCY_MODULE_O = ./obj/ClusterOccupancyModule.$(ObjSuf)
-OBJS     += $(CLUSTEROCCUPANCY_MODULE_O)
+EFFICIENCY_PLOTS_MODULE_S = ./src/EfficiencyPlotsModule.$(SrcSuf)
+EFFICIENCY_PLOTS_MODULE_O = ./obj/EfficiencyPlotsModule.$(ObjSuf)
+OBJS     += $(EFFICIENCY_PLOTS_MODULE_O)
 
 # PROGRAMS
 
@@ -49,6 +45,12 @@ EFFICIENCY_MAIN_O = ./obj/efficiencyMain.$(ObjSuf)
 EFFICIENCY_MAIN_A = ./bin/efficiencyMain$(ExeSuf)
 OBJS     += $(EFFICIENCY_MAIN_O)
 PROGRAMS += $(EFFICIENCY_MAIN_A)
+
+EFFICIENCY_TIMING_S = ./src/programs/efficiencyTiming.$(SrcSuf)
+EFFICIENCY_TIMING_O = ./obj/efficiencyTiming.$(ObjSuf)
+EFFICIENCY_TIMING_A = ./bin/efficiencyTiming$(ExeSuf)
+OBJS     += $(EFFICIENCY_TIMING_O)
+PROGRAMS += $(EFFICIENCY_TIMING_A)
 
 # EFFICIENCY_MULTIHITMEAS_S = ./src/programs/efficiency_multiHitMeas.$(SrcSuf)
 # EFFICIENCY_MULTIHITMEAS_O = ./obj/efficiency_multiHitMeas.$(ObjSuf)
@@ -66,8 +68,15 @@ all: $(PROGRAMS)
 
 # Executables
 
-$(EFFICIENCY_MAIN_A): $(EFFICIENCY_MAIN_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(CLUSTEROCCUPANCY_MODULE_O) $(TRAJMEAS_EFFICIENCY_PLOTS_MODULE_O)
-	@printf "Compiling done, linking efficiency_main...\n"
+$(EFFICIENCY_MAIN_A): $(EFFICIENCY_MAIN_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O)
+	@printf "Compiling done, linking \""$@"\"...\n"
+	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
+	$(MT_EXE)
+	@echo "Succesful make..."
+	@echo "...$@ is ready to use."
+
+$(EFFICIENCY_TIMING_A): $(EFFICIENCY_TIMING_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O)
+	@printf "Compiling done, linking \""$@"\"...\n"
 	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
 	$(MT_EXE)
 	@echo "Succesful make..."
@@ -80,7 +89,7 @@ $(EFFICIENCY_MAIN_A): $(EFFICIENCY_MAIN_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) 
 # 	@echo "Succesful make..."
 # 	@echo "...$@ is ready to use."
 
-# $(MERGE_SIMHIT_PLOTS_A): $(MERGE_SIMHIT_PLOTS_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(CLUSTEROCCUPANCY_MODULE_O) $(TRAJMEAS_EFFICIENCY_PLOTS_MODULE_O)
+# $(MERGE_SIMHIT_PLOTS_A): $(MERGE_SIMHIT_PLOTS_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O)
 # 	@printf "Compiling done, linking mergeSimhitPlots...\n"
 # 	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
 # 	$(MT_EXE)
@@ -124,20 +133,20 @@ $(CANVASEXTRAS_O): $(CANVASEXTRAS_S)
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 
-$(TRAJMEAS_EFFICIENCY_PLOTS_MODULE_O): $(TRAJMEAS_EFFICIENCY_PLOTS_MODULE_S)
-	@printf "Compiling utility: \"TrajMeasEfficiencyPlotsModule\"...\n"
-	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
-	@printf "Done.\n"
-
-$(CLUSTEROCCUPANCY_MODULE_O): $(CLUSTEROCCUPANCY_MODULE_S)
-	@printf "Compiling utility: \"ClusterOccupancyModule\"...\n"
+$(EFFICIENCY_PLOTS_MODULE_O): $(EFFICIENCY_PLOTS_MODULE_S)
+	@printf "Compiling utility: \"EfficiencyPlotsModule\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 
 ###
 
 $(EFFICIENCY_MAIN_O): $(EFFICIENCY_MAIN_S)  
-	@printf "Compiling program: \"efficiency_main\"...\n"
+	@printf "Compiling program: \""$<"\"...\n"
+	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
+	@printf "Done.\n"
+
+$(EFFICIENCY_TIMING_O): $(EFFICIENCY_TIMING_S)  
+	@printf "Compiling program: \""$<"\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 

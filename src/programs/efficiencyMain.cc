@@ -17,8 +17,7 @@
 #include "../../interface/TimerColored.h"
 #include "../../interface/ProgressBar.h"
 // #include "../../interface/common_functions_jkarancs.h"
-#include "../../interface/TrajMeasEfficiencyPlotsModule.h"
-#include "../../interface/ClusterOccupancyModule.h"
+#include "../../interface/EfficiencyPlotsModule.h"
 #include "../../interface/WilsonScoreInterval.h"
 
 // Root
@@ -75,11 +74,7 @@ void                                        testSaveFolders(const JSON& config);
 TFile*                                      generateOutputNtuple(const JSON& config);
 std::vector<std::string>                    getFilesFromConfig(const JSON& config, const std::string& configKey, const std::string& innerKey);
 void                                        readInFilesAndAddToChain(const JSON& config, const std::string& configKey, const std::string& innerKey, TChain* chain);
-std::map<std::string, std::shared_ptr<TH1>> processHistogramDefinitions(const JSON& config, const std::string& configKey, const std::string& innerKey);
-TH1*                                        getEfficiencyNumeratorHisto(const std::map<std::string, std::shared_ptr<TH1>>& histograms, const std::string& efficiencyHistoName);
 TGraphAsymmErrors*                          getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram);
-void                                        addLegend(TH1* histogram);
-void                                        addLegend(TH1* histogram, TGraphAsymmErrors* graph);
 
 int main(int argc, char** argv) try
 {
@@ -93,8 +88,10 @@ int main(int argc, char** argv) try
    TimerColored timer(timer_prompt);
    TFile* histogramsNtuple = generateOutputNtuple(config);
    gROOT -> SetBatch(kFALSE);
-   EventData       eventField;
+   // EventData       eventField;
+   EventData       clusterEventField;
    Cluster         clusterField;
+   EventData       trajEventField;
    TrajMeasurement trajField;
    // trajTreeChain -> Draw("d_cl >> hsqrt(1000, 0.0, 500.0)");
    // std::cout << "Running the app." << std::endl;
@@ -121,55 +118,54 @@ int main(int argc, char** argv) try
    std::cout << process_prompt << "Loading histogram definitions... ";
    std::cout << "Done." << std::endl;
    // Modules
-   // ClusterOccupancyModule     clusterOccupancyModule (histograms, clusterField);
-   TrajMeasEfficiencyPlotsModule trajMeasefficiencyPlotsModule(eventField, trajField);
+   EfficiencyPlotsModule efficiencyPlotsModule(clusterEventField, clusterField, trajEventField, trajField);
    //////////////////
    // Cluster loop //
    //////////////////
-   // if(CLUST_LOOP_REQUESTED) try
-   // {
-   //    TChain* clustTreeChain = new TChain("clustTree", "List of the clusters.");
-   //    readInFilesAndAddToChain(config, "input_files_list", "input_files", clustTreeChain);
-   //    clustTreeChain -> SetBranchAddress("event",  &eventField);
-   //    // clustTreeChain -> SetBranchAddress("mod",    &(clusterField.mod));
-   //    clustTreeChain -> SetBranchAddress("mod_on", &(clusterField.mod_on));
-   //    clustTreeChain -> SetBranchAddress("clust",  &clusterField);
-   //    // check if data is present
-   //    Long64_t clustTreeNumEntries  = clustTreeChain  -> GetEntries();
-   //    std::cout << debug_prompt << "total entries in the clustTree chain: " << clustTreeNumEntries << std::endl;
-   //    if(clustTreeNumEntries == 0 ) throw std::runtime_error("No entries found in tree: clustTree.");
-   //    ProgressBar progressBar;
-   //    const int    progressBarUpdateInterval = 10000;
-   //    const double progressBarUpdateBy       = progressBarUpdateInterval / static_cast<double>(clustTreeNumEntries) * 100;
-   //    auto  updateAndPrintProgress =  [&] (const int& entryIndex)
-   //    {
-   //       if(entryIndex % progressBarUpdateInterval == 0)
-   //       {
-   //          progressBar.update(progressBarUpdateBy);
-   //          progressBar.print();
-   //          std::cout << " -- Estimated time left: " << std::setw(6) << std::fixed << std::setprecision(1) << timer.getSecondsElapsed() * (1 / progressBar.getProgressionRate() - 1) << " second(s).";
-   //       }
-   //    };
-   //    timer.restart("Measuring the time required for looping on the clusters...");
-   //    for(Long64_t entryIndex = 0; entryIndex < clustTreeNumEntries; ++entryIndex)
-   //    {
-   //       clustTreeChain -> GetEntry(entryIndex);
-   //       if(filterForRunNumberPresent) if(eventField.run <  runNumberLowerBound || runNumberUpperBound <= eventField.run)
-   //       {
-   //          updateAndPrintProgress(entryIndex);
-   //          continue;
-   //       }
-   //       clusterOccupancyModule.fillHistograms();
-   //       updateAndPrintProgress(entryIndex);
-   //    }
-   //    std::cout << std::endl;
-   //    timer.printSeconds("Loop done. Took about: ", " second(s).");
-   // }
-   // catch(const std::exception& e)
-   // {
-   //    std::cout << error_prompt << "In the clusters loop: " << e.what() << " exception occured." << std::endl;
-   //    exit(-1);
-   // }
+   if(CLUST_LOOP_REQUESTED) try
+   {
+      TChain* clustTreeChain = new TChain("clustTree", "List of the clusters.");
+      readInFilesAndAddToChain(config, "input_files_list", "input_files", clustTreeChain);
+      clustTreeChain -> SetBranchAddress("event",  &clusterEventField);
+      // clustTreeChain -> SetBranchAddress("mod",    &(clusterField.mod));
+      clustTreeChain -> SetBranchAddress("mod_on", &(clusterField.mod_on));
+      clustTreeChain -> SetBranchAddress("clust",  &clusterField);
+      // check if data is present
+      Long64_t clustTreeNumEntries  = clustTreeChain  -> GetEntries();
+      std::cout << debug_prompt << "total entries in the clustTree chain: " << clustTreeNumEntries << std::endl;
+      if(clustTreeNumEntries == 0 ) throw std::runtime_error("No entries found in tree: clustTree.");
+      ProgressBar progressBar;
+      const int    progressBarUpdateInterval = 10000;
+      const double progressBarUpdateBy       = progressBarUpdateInterval / static_cast<double>(clustTreeNumEntries) * 100;
+      auto  updateAndPrintProgress =  [&] (const int& entryIndex)
+      {
+         if(entryIndex % progressBarUpdateInterval == 0)
+         {
+            progressBar.update(progressBarUpdateBy);
+            progressBar.print();
+            std::cout << " -- Estimated time left: " << std::setw(6) << std::fixed << std::setprecision(1) << timer.getSecondsElapsed() * (1 / progressBar.getProgressionRate() - 1) << " second(s).";
+         }
+      };
+      timer.restart("Measuring the time required for looping on the clusters...");
+      for(Long64_t entryIndex = 0; entryIndex < clustTreeNumEntries; ++entryIndex)
+      {
+         clustTreeChain -> GetEntry(entryIndex);
+         if(filterForRunNumberPresent) if(clusterEventField.run <  runNumberLowerBound || runNumberUpperBound <= clusterEventField.run)
+         {
+            updateAndPrintProgress(entryIndex);
+            continue;
+         }
+         efficiencyPlotsModule.fillClusterHistograms();
+         updateAndPrintProgress(entryIndex);
+      }
+      std::cout << std::endl;
+      timer.printSeconds("Loop done. Took about: ", " second(s).");
+   }
+   catch(const std::exception& e)
+   {
+      std::cout << error_prompt << "In the clusters loop: " << e.what() << " exception occured." << std::endl;
+      exit(-1);
+   }
    ////////////////////////////////
    // Trajector measurement loop //
    ////////////////////////////////
@@ -178,14 +174,13 @@ int main(int argc, char** argv) try
       TChain* trajTreeChain  = new TChain("trajTree", "List of the trajectory measurements.");
       readInFilesAndAddToChain(config, "input_files_list", "input_files", trajTreeChain);
       // Trajectory measurement tree
-      trajTreeChain -> SetBranchAddress("event",  &eventField);
-      // trajTreeChain -> SetBranchAddress("mod",    &(trajField.mod));
+      trajTreeChain -> SetBranchAddress("event",     &trajEventField);
+      // trajTreeChain -> SetBranchAddress("mod",       &(trajField.mod));
       trajTreeChain -> SetBranchAddress("mod_on",    &(trajField.mod_on));
       trajTreeChain -> SetBranchAddress("clust",     &(trajField.clu));
       trajTreeChain -> SetBranchAddress("track",     &(trajField.trk));
       trajTreeChain -> SetBranchAddress("clust_pix", &(trajField.clu.pix));
-
-      trajTreeChain -> SetBranchAddress("traj",   &trajField);
+      trajTreeChain -> SetBranchAddress("traj",      &trajField);
       // check if data is present
       Long64_t trajTreeNumEntries  = trajTreeChain  -> GetEntries();
       std::cout << debug_prompt << "total entries in the trajTree chain: " << trajTreeNumEntries << std::endl;
@@ -206,18 +201,18 @@ int main(int argc, char** argv) try
       for(Long64_t entryIndex = 0; entryIndex < trajTreeNumEntries; ++entryIndex)
       {
          trajTreeChain -> GetEntry(entryIndex);
-         if(filterForRunNumberPresent) if(eventField.run <  runNumberLowerBound || runNumberUpperBound <= eventField.run)
+         if(filterForRunNumberPresent) if(trajEventField.run <  runNumberLowerBound || runNumberUpperBound <= trajEventField.run)
          {
             updateAndPrintProgress(entryIndex);
             continue;
          }
          // printTrajFieldInfoTrajOnly(trajField);
-         trajMeasefficiencyPlotsModule.fillHistograms();
+         efficiencyPlotsModule.fillTrajMeasHistograms();
          updateAndPrintProgress(entryIndex);
       }
       std::cout << std::endl;
       timer.printSeconds("Loop done. Took about: ", " second(s).");
-      trajMeasefficiencyPlotsModule.printCounters();
+      efficiencyPlotsModule.printCounters();
    }
    catch(const std::exception& e)
    {
@@ -228,7 +223,9 @@ int main(int argc, char** argv) try
    // Scale Efficiency plots //
    ////////////////////////////
    {
-      // trajMeasefficiencyPlotsModule.postLoopScaleAveragesSpecialEfficiencies();
+      efficiencyPlotsModule.downscaleEfficiencyPlots();
+
+      // efficiencyPlotsModule.postLoopScaleAveragesSpecialEfficiencies();
       // for(const auto& histogramPair: histograms)
       // {
       //    std::string efficiencyHistoName = histogramPair.first;
@@ -251,7 +248,7 @@ int main(int argc, char** argv) try
    ////////////////
    try
    {
-      trajMeasefficiencyPlotsModule.savePlots(config);
+      efficiencyPlotsModule.savePlots(config);
    }
    catch(const std::exception& e)
    {
@@ -361,56 +358,6 @@ T checkGetElement(const JSON& definition, const std::string& propertyName)
    return propertyIt.value();
 }
 
-std::map<std::string, std::shared_ptr<TH1>> processHistogramDefinitions(const JSON& config, const std::string& configKey, const std::string& innerKey)
-{
-   auto noDeletionPolicyTH1D = [] (TH1D*) -> void {};
-   auto noDeletionPolicyTH2D = [] (TH2D*) -> void {};
-   std::map<std::string, std::shared_ptr<TH1>> histograms;
-   std::string histogramDefinitionListPath = config[configKey];
-   JSON inputListJSON = JSON::parse(fileToString(histogramDefinitionListPath));
-   std::vector<JSON> histogramDefinitionList = inputListJSON[innerKey];
-   for(const auto& definition: histogramDefinitionList)
-   {
-      std::string name  = checkGetElement<std::string>(definition, "name");
-      std::string title = checkGetElement<std::string>(definition, "title");
-      std::string type  = checkGetElement<std::string>(definition, "type");
-      int nbinsx        = checkGetElement<int>(definition, "nbinsx");
-      float xMin        = checkGetElement<float>(definition, "xMin");
-      float xMax        = checkGetElement<float>(definition, "xMax");
-      if(type == "TH1D") histograms.insert({name, std::shared_ptr<TH1D>(new TH1D(name.c_str(),  title.c_str(),  nbinsx, xMin, xMax), noDeletionPolicyTH1D)});
-      if(type == "TH2D")
-      {
-         int nbinsy        = checkGetElement<int>(definition, "nbinsy");
-         float yMin        = checkGetElement<float>(definition, "yMin");
-         float yMax        = checkGetElement<float>(definition, "yMax");
-         histograms.insert({name, std::shared_ptr<TH2D>(new TH2D(name.c_str(),  title.c_str(),  nbinsx, xMin, xMax, nbinsy, yMin, yMax), noDeletionPolicyTH2D)});
-      }
-   }
-   return histograms;
-}
-
-TH1* getEfficiencyNumeratorHisto(const std::map<std::string, std::shared_ptr<TH1>>& histograms, const std::string& efficiencyHistoName)
-{
-   if(histograms.find(efficiencyHistoName) == histograms.end())
-   {
-      std::cout << error_prompt << "Looking up efficiency histogram called " << efficiencyHistoName << " failed." << std::endl;
-      return nullptr;
-   }
-   size_t effPos = efficiencyHistoName.find(EFFICIENCY_PLOT_IDENTIFIER);
-   if(effPos != std::string::npos)
-   {
-      std::string numeratorHistoName = std::string(efficiencyHistoName).replace(effPos, EFFICIENCY_PLOT_IDENTIFIER.size(), EFFICIENCY_NUMERATOR_IDENTIFIER);
-      auto numHitsHisto              = histograms.find(numeratorHistoName);
-      if(numHitsHisto == histograms.end())
-      {
-         std::cout << error_prompt << "Efficiency histo: " << efficiencyHistoName << " exist, but there is no histogram called: " << numeratorHistoName << std::endl;
-         return nullptr;
-      }
-      return numHitsHisto -> second.get();
-   }
-   return nullptr;
-}
-
 TGraphAsymmErrors* getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram)
 {
    const TAxis* xAxis = efficiencyHistogram.GetXaxis();
@@ -451,53 +398,4 @@ TGraphAsymmErrors* getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficie
    graph -> SetLineStyle(1);
    return graph;
    // const_cast<TH1D*>(&efficiencyHistogram) -> Draw("HIST");
-}
-
-void addLegend(TH1* histogram)
-{
-   histogram -> SetTitleSize(0);
-   TH2D* histo2D = dynamic_cast<TH2D*>(histogram);
-   TLegend* legend = new TLegend(0.45, 0.6, 0.8625, 0.9551);
-   if(histo2D != nullptr)
-   {
-      legend -> AddEntry(histogram -> GetName(), histogram -> GetTitle(), "");
-      legend -> AddEntry("", ("Entries: " + std::to_string(histogram -> GetEntries())).c_str(), "");
-      legend -> AddEntry("", ("X Mean: "    + std::to_string(histogram -> GetMean(1)  )).c_str(), "");
-      legend -> AddEntry("", ("X Std Dev: " + std::to_string(histogram -> GetStdDev(1))).c_str(), "");
-      legend -> AddEntry("", ("Y Mean: "    + std::to_string(histogram -> GetMean(2)  )).c_str(), "");
-      legend -> AddEntry("", ("Y Std Dev: " + std::to_string(histogram -> GetStdDev(2))).c_str(), "");
-   }
-   else
-   {
-      legend -> AddEntry(histogram -> GetName(), histogram -> GetTitle(), "cf");
-      legend -> AddEntry("", ("Entries: " + std::to_string(histogram -> GetEntries())).c_str(), "");
-      legend -> AddEntry("", ("Mean: "    + std::to_string(histogram -> GetMean(1)  )).c_str(), "");
-      legend -> AddEntry("", ("Std Dev: " + std::to_string(histogram -> GetStdDev(1))).c_str(), "");
-   }
-   legend -> SetBorderSize(1);
-   legend -> SetFillColor(10);
-   legend -> SetFillStyle(3001);
-   // legend -> SetFillStyle(1);
-   // legend -> SetFillColorAlpha(10, 0.5);
-   legend -> SetTextFont(42);
-   legend -> SetTextSize(0.02);
-   legend -> Draw();
-}
-
-void addLegend(TH1* histogram, TGraphAsymmErrors* graph)
-{
-   histogram -> SetTitleSize(0);
-   TLegend* legend = new TLegend(0.45, 0.6, 0.8625, 0.9551);
-   legend -> AddEntry(graph -> GetName(), graph -> GetTitle(), "pe");
-   legend -> AddEntry("", ("Entries: " + std::to_string(histogram -> GetEntries())).c_str(), ""); 
-   legend -> AddEntry("", ("Mean: "         + std::to_string(histogram -> GetMean(1)  )).c_str(), "");
-   legend -> AddEntry("", ("Std Dev: "      + std::to_string(histogram -> GetStdDev(1))).c_str(), "");
-   legend -> SetBorderSize(1);
-   // legend -> SetFillStyle(1);
-   // legend -> SetFillColorAlpha(10, 0.5);
-   legend -> SetFillColor(10);
-   legend -> SetFillStyle(3001);
-   legend -> SetTextFont(42);
-   legend -> SetTextSize(0.02);
-   legend -> Draw();
 }
