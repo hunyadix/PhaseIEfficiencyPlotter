@@ -18,6 +18,7 @@ constexpr float                EfficiencyPlotsModule::MEAS_HITSEP_CUT_N_MINUS_1_
 constexpr float                EfficiencyPlotsModule::HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_X_CUT;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_Y_CUT;
+EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {{}, {}};
 
 EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg): 
    clusterEventField_     (clusterEventFieldArg),
@@ -26,6 +27,11 @@ EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldA
    trajField_             (trajFieldArg)
 {
    defineHistograms();
+}
+
+void EfficiencyPlotsModule::setBadRocList(BadROClist&& badROCs)
+{
+   EfficiencyPlotsModule::badROClist = badROCs;
 }
 
 void EfficiencyPlotsModule::defineHistograms()
@@ -402,24 +408,14 @@ void EfficiencyPlotsModule::addExtraEfficiencyPlots()
    {
       const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
       const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
-std::cout << detectorPartROCHits -> GetTitle() << std::endl;
-std::cout << detectorPartROCEfficiencies -> GetTitle() << std::endl;
-std::cout << __LINE__ << std::endl;
       if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
-std::cout << __LINE__ << std::endl;
       unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
-std::cout << __LINE__ << std::endl;
       for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
       {
-std::cout << __LINE__ << std::endl;
          if((*detectorPartROCHits)[rocBin] == 0) continue;
-std::cout << __LINE__ << std::endl;
          rocEfficiencyDistributionPlots[plotIndex] -> Fill((*detectorPartROCEfficiencies)[rocBin]);
-std::cout << __LINE__ << std::endl;
       }
-std::cout << __LINE__ << std::endl;
       std::cout << "rocEfficiencyDistributionPlots.size(): " << rocEfficiencyDistributionPlots[plotIndex] -> GetEntries() << std::endl;
-std::cout << __LINE__ << std::endl;
    }
 }
 
@@ -561,6 +557,7 @@ void EfficiencyPlotsModule::printCounters()
    std::cout << "lyFidCut:    " << std::setw(12) << lyFidCut_counter_    << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << lyFidCut_counter_    * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << "valmisCut:   " << std::setw(12) << valmisCut_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << valmisCut_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << "hitsepCut:   " << std::setw(12) << hitsepCut_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << hitsepCut_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
+   std::cout << "badROCCut:   " << std::setw(12) << badROCCut_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << hitsepCut_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << "total:       " << std::setw(12) << effCutAll_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << effCutAll_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << " --- End cut counter values --- " << std::endl;
 }
@@ -581,6 +578,7 @@ void EfficiencyPlotsModule::printCutValues()
    std::cout << "lyFidCut:    " << lyFidCut    << std::endl;
    std::cout << "valmisCut:   " << valmisCut   << std::endl;
    std::cout << "hitsepCut:   " << hitsepCut   << std::endl;
+   std::cout << "badROCCut:   " << badROCCut   << std::endl;
    std::cout << " --- End cut values --- " << std::endl;
 }
 
@@ -770,6 +768,8 @@ void EfficiencyPlotsModule::calculateCuts()
    static const int&       det             = trajField_.mod_on.det;
    static const int&       layer           = trajField_.mod_on.layer;  
    static const int&       disk            = trajField_.mod_on.disk;
+   static const int&       module          = trajField_.mod_on.module;
+   static const int&       ladder          = trajField_.mod_on.ladder;
    static const float&     lx              = trajField_.lx;
    static const float&     ly              = trajField_.ly;
    static const float&     d_tr            = trajField_.d_tr;
@@ -837,15 +837,17 @@ void EfficiencyPlotsModule::calculateCuts()
    valmisCut = trajField_.validhit || trajField_.missing;
    // Hitsep cut
    hitsepCut = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
-   effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
-   noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
-   // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
-   noPtCut        = nvtxCut && zerobiasCut && federrCut && hpCut          && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
-   noNStripCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut              && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
-   noD0Cut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut          && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
-   noDZCut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut          && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
-   noFidicualsCut = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut                         && valmisCut && hitsepCut;
-   noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut             ;
+   std::pair<int, int> moduleLadder = std::make_pair(module, ladder);
+   badROCCut = std::find(badROClist.begin(), badROClist.end(), moduleLadder) == badROClist.end();
+   effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noPtCut        = nvtxCut && zerobiasCut && federrCut && hpCut          && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noNStripCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut              && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noD0Cut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut          && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noDZCut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut          && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noFidicualsCut = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut                         && valmisCut && hitsepCut && badROCCut;
+   noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut              && badROCCut;
 }
 
 bool EfficiencyPlotsModule::testForForwardFidicualCuts()
@@ -1006,83 +1008,6 @@ void EfficiencyPlotsModule::fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, c
    for(const auto& cut: cuts) if(!cut) return;
    numHitsHisto -> Fill(xFill, yFill);
    if(fillEfficiencyCondition) efficiencyHisto -> Fill(xFill, yFill);
-}
-
-void EfficiencyPlotsModule::filterBadRocs()
-{
-   // int max_module_bin_number = layer_total_hits_p -> GetXaxis() -> GetNbins();
-   // int max_ladder_bin_number = layer_total_hits_p -> GetYaxis() -> GetNbins();
-   // std::string layer_name = "layer_"; 
-   // layer_name += std::to_string(layer_number_p);
-   // // std::cerr << debug_prompt << "layer name: " << layer_name << std::endl;
-   // // std::cerr << debug_prompt << "layer number: " << layer_number_p << std::endl;
-   // std::string distribution_name("ROC_efficiency_distribution_simple_");
-   // distribution_name += layer_name;
-   // TH1D* roc_efficiency_distribution = new TH1D(distribution_name.c_str(), "ROC efficiency distribution, non-weighted;efficiency;num_rocs", 1000, 0.0, 1.0);
-   // distribution_name += "_second";
-   // TH1D* roc_efficiency_distribution_weighted = new TH1D(distribution_name.c_str(), "ROC efficiency distribution, weighted;efficiency;num_rocs", 1000, 0.0, 1.0);
-   // for(int module_ROC_bin = 1; module_ROC_bin <= max_module_bin_number; ++module_ROC_bin)
-   // {
-   //    for(int ladder_ROC_bin = 1; ladder_ROC_bin <= max_ladder_bin_number; ++ladder_ROC_bin)
-   //    {
-   //       double current_ROC_efficiency = layer_efficiency_p -> GetBinContent(module_ROC_bin, ladder_ROC_bin);
-   //       double current_number_of_hits = layer_total_hits_p -> GetBinContent(module_ROC_bin, ladder_ROC_bin);
-   //       if(!(check_coordinate_pair(layer_efficiency_p, layer_number_p, module_ROC_bin, ladder_ROC_bin)))
-   //       {
-   //          continue;
-   //       }
-   //       if(current_ROC_efficiency == -1.0 || current_ROC_efficiency > 1.0 )
-   //       {
-   //          std::cerr << error_prompt << "Data processing error, found a pixel with -1.0 or bigger than 1.0 efficiency." << std::endl;
-   //          continue;
-   //       }
-   //       if(current_ROC_efficiency != 0)
-   //       {
-   //          roc_efficiency_distribution -> Fill(current_ROC_efficiency - 0.0005);
-   //          roc_efficiency_distribution_weighted -> Fill(current_ROC_efficiency - 0.0005, current_number_of_hits);
-   //       }
-   //    }
-   // }
-
-   // bad_ROC_eff_limit_p        = roc_efficiency_distribution          -> GetMean() - 0.02;
-   // double bad_ROC_eff_limit_weighted = roc_efficiency_distribution_weighted -> GetMean() - 0.02;
-
-   // for(int module_ROC_bin = 1; module_ROC_bin <= max_module_bin_number; ++module_ROC_bin)
-   // {
-   //    for(int ladder_ROC_bin = 1; ladder_ROC_bin <= max_ladder_bin_number; ++ladder_ROC_bin)
-   //    {
-   //       double current_ROC_efficiency = layer_efficiency_p -> GetBinContent(module_ROC_bin, ladder_ROC_bin);
-   //       if(!(check_coordinate_pair(layer_efficiency_p, layer_number_p, module_ROC_bin, ladder_ROC_bin)))
-   //       {
-   //          bad_ROCs_map_p        -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 0.0);
-   //          bad_ROCs_map_second_p -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 0.0);
-   //          continue;
-   //       }
-   //       if(current_ROC_efficiency == -1.0 || current_ROC_efficiency > 1.0 )
-   //       {
-   //          bad_ROCs_map_p        -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 0.0);
-   //          bad_ROCs_map_second_p -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 0.0);
-   //          std::cerr << error_prompt << "Data processing error, found a pixel with -1.0 or bigger than 1.0 efficiency." << std::endl;
-   //          continue;
-   //       }
-   //       if(current_ROC_efficiency < bad_ROC_eff_limit_p)
-   //       {
-   //          bad_ROCs_map_p -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 1.0);
-   //       }
-   //       else
-   //       {
-   //          bad_ROCs_map_p -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 0.0);
-   //       }
-   //       if(current_ROC_efficiency < bad_ROC_eff_limit_weighted)
-   //       {
-   //          bad_ROCs_map_second_p -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 1.0);
-   //       }
-   //       else
-   //       {
-   //          bad_ROCs_map_second_p -> SetBinContent(module_ROC_bin, ladder_ROC_bin, 0.0);
-   //       }
-   //    }
-   // }
 }
 
 bool EfficiencyPlotsModule::isPointInPolygon(const float& pointX, const float& pointY, const std::pair<std::vector<float>, std::vector<float>>& poligonVertices)

@@ -35,6 +35,7 @@ class EfficiencyPlotsModule
 {
    using LayersDiskPlotsCollection = std::array<TH1*, 46>;
    using EfficiencyPlotPair        = std::array<TH1*, 2>;
+   using BadROClist                = std::vector<std::pair<int, int>>;
    private:
       static constexpr int                  ZEROBIAS_TRIGGER_BIT               = 0;
       static constexpr int                  ZEROBIAS_BITMASK                   = 1 << ZEROBIAS_TRIGGER_BIT;
@@ -51,6 +52,7 @@ class EfficiencyPlotsModule
       static constexpr float                HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL   = 0.10f;
       static constexpr float                BARREL_MODULE_EDGE_X_CUT           = 0.6f;
       static constexpr float                BARREL_MODULE_EDGE_Y_CUT           = 3.0f;
+      static BadROClist                     badROClist;
       const EventData&       clusterEventField_;
       const Cluster&         clusterField_;
       const EventData&       trajEventField_;
@@ -69,6 +71,7 @@ class EfficiencyPlotsModule
       int lyFidCut    = 0;
       int valmisCut   = 0;
       int hitsepCut   = 0;
+      int badROCCut   = 0;
       int effCutAll   = 0;
       int noVtxCut       = 0;
       // int noHpCut        = 0;
@@ -93,6 +96,7 @@ class EfficiencyPlotsModule
       int lyFidCut_counter_    = 0;
       int valmisCut_counter_   = 0;
       int hitsepCut_counter_   = 0;
+      int badROCCut_counter_   = 0;
       int effCutAll_counter_   = 0;
       // Histogram helpers
       enum LayersDiskPlotIndecies
@@ -246,6 +250,7 @@ class EfficiencyPlotsModule
    public:
       EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg);
       ~EfficiencyPlotsModule() = default;
+      static void setBadRocList(BadROClist&& badROCs);
       void  defineHistograms();
       void  fillClusterHistograms();
       void  fillTrajMeasHistograms();

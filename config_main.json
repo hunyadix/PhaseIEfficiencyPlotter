@@ -1,5 +1,5 @@
 {
-	"input_files_list": "./input_lists/config_input_files_ttbar_nopileup.json",
+	"input_files_list": "./input_lists/config_input_files_test.json",
 	"filter_for_runs": false,
 	"run_filter_lower_bound": -1,
 	"run_filter_upper_bound": -1,
