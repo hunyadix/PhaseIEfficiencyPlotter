@@ -237,7 +237,7 @@ int main(int argc, char** argv) try
       for(auto& delayPlotterModulePair: delayToPlotterModuleMap)
       {
          delayPlotterModulePair.second.downscaleEfficiencyPlots();
-         delayPlotterModulePair.second.addExtraEfficiencyPlots();
+         // delayPlotterModulePair.second.addExtraEfficiencyPlots();
          std::cout << "Average efficiency for delay " << std::setprecision(1) << delayPlotterModulePair.first << ": " << std::setprecision(6) << delayPlotterModulePair.second.getAvarageEfficiency() << std::endl;
       }
    }

@@ -30,6 +30,44 @@ EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldA
 
 void EfficiencyPlotsModule::defineHistograms()
 {
+   std::cout << process_prompt << "Loading histogram definitions. " << std::endl;
+   setCollectionElementsToNullptr(clusterOccupancyROCPlots);
+   setCollectionElementsToNullptr(clusterPhiVsZPlots);
+   setCollectionElementsToNullptr(clusterGlyVsGlxPlots);
+   setCollectionElementsToNullptr(clusterZPlots);
+   setCollectionElementsToNullptr(layersDisksEfficiencyPlots);
+   setCollectionElementsToNullptr(rechitOccupancyROCPlots);
+   setCollectionElementsToNullptr(efficiencyROCPlots);
+   setCollectionElementsToNullptr(rechitOccupancyPhiVsZPlots);
+   setCollectionElementsToNullptr(efficiencyPhiVsZPlots);
+   setCollectionElementsToNullptr(rechitOccupancyGlyVsGlxPlots);
+   setCollectionElementsToNullptr(efficiencyGlyVsGlxPlots);
+   setCollectionElementsToNullptr(vtxNtrkEfficiencyPreCutsPlots);
+   setCollectionElementsToNullptr(vtxNtrkEfficiencyWithCutsPlots);
+   setCollectionElementsToNullptr(ptEfficiencyPreCutsPlots);
+   setCollectionElementsToNullptr(ptEfficiencyWithCutsPlots);
+   setCollectionElementsToNullptr(striphitsEfficiencyPreCutsPlots);
+   setCollectionElementsToNullptr(striphitsEfficiencyWithCutsPlots);
+   setCollectionElementsToNullptr(lxEfficiencyPreCutsPlots);
+   setCollectionElementsToNullptr(lxEfficiencyWithCutsPlots);
+   setCollectionElementsToNullptr(lyEfficiencyPreCutsPlots);
+   setCollectionElementsToNullptr(lyEfficiencyWithCutsPlots);
+   setCollectionElementsToNullptr(lyVsLxEfficiencyPreCutsPlots);
+   setCollectionElementsToNullptr(lyVsLxEfficiencyWithCutsPlots);
+   setCollectionElementsToNullptr(clustDistPreCutsPlots);
+   setCollectionElementsToNullptr(clustDistWithCutsPlots);
+   setCollectionElementsToNullptr(hitDistPreCuts);
+   setCollectionElementsToNullptr(hitDistWithCutsPlots);
+   setCollectionElementsToNullptr(d0PreCutsPlots);
+   setCollectionElementsToNullptr(d0WithCutsPlots);
+   setCollectionElementsToNullptr(dzPreCutsPlots);
+   setCollectionElementsToNullptr(dzWithCutsPlots);
+   setCollectionElementsToNullptr(rocEfficiencyDistributionPlots);
+   for(unsigned int orientationIndex      = 0; orientationIndex < 8;                      ++orientationIndex)
+   {
+      forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex]    = std::array<TH1*, 46> {nullptr};
+      forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex] = std::array<TH1*, 46> {nullptr};
+   }
    // Plot pairs
    layersDisksEfficiencyPlots[0]       = new TH1D("layersDisksEfficiencyPlots_Hits",       "num. hits. used to calculate efficiency, layers 1-4, disks 1-3 [with cuts]",                    7,   0.5,   7.5);
    layersDisksEfficiencyPlots[1]       = new TH1D("layersDisksEfficiencyPlots_Eff.",       "efficiency, layers 1-4, disks 1-3 [with cuts];;efficiency",                                     7,   0.5,   7.5);
@@ -52,19 +90,19 @@ void EfficiencyPlotsModule::defineHistograms()
    // Plot collections
    for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
    {
-      clusterPhiVsZPlots[plotIndex]                 = new TH2D(("clusterPhiVsZPlots_"            + plotNameSuffices[plotIndex]         ).c_str(), ("cluster occupancy, phi vs Z - " + plotTitleSuffices[plotIndex] + ";z;phi").c_str(),                                       150, -52.15, 52.15, 300,  -3.14159,  3.14159);
-      clusterGlyVsGlxPlots[plotIndex]               = new TH2D(("clusterGlyVsGlxPlots_"          + plotNameSuffices[plotIndex]         ).c_str(), ("cluster occupancy, Y vs X - " + plotTitleSuffices[plotIndex] + ";global x (cm);global y (cm)").c_str(),                   300, -16.2,  16.2,  300, -16.2,     16.2);
-      clusterZPlots[plotIndex]                      = new TH1D(("clusterZPlots_"                 + plotNameSuffices[plotIndex]         ).c_str(), ("cluster Z distribution - " + plotTitleSuffices[plotIndex] + ";global z (cm)").c_str(),                                    150, -52.15, 52.15);
+      clusterPhiVsZPlots[plotIndex]                 = new TH2D(("clusterPhiVsZPlots_"            + plotNameSuffices[plotIndex]          ).c_str(), ("cluster occupancy, phi vs Z - " + plotTitleSuffices[plotIndex] + ";z;phi").c_str(),                                      150, -52.15, 52.15, 300,  -3.14159,  3.14159);
+      clusterGlyVsGlxPlots[plotIndex]               = new TH2D(("clusterGlyVsGlxPlots_"          + plotNameSuffices[plotIndex]          ).c_str(), ("cluster occupancy, Y vs X - " + plotTitleSuffices[plotIndex] + ";global x (cm);global y (cm)").c_str(),                  300, -16.2,  16.2,  300, -16.2,     16.2);
+      clusterZPlots[plotIndex]                      = new TH1D(("clusterZPlots_"                 + plotNameSuffices[plotIndex]          ).c_str(), ("cluster Z distribution - " + plotTitleSuffices[plotIndex] + ";global z (cm)").c_str(),                                   150, -52.15, 52.15);
       rechitOccupancyPhiVsZPlots[plotIndex]         = new TH2D(("rechitOccupancyPhiVsZPlots_"    + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("rechit occupancy, phi vs Z - " + plotTitleSuffices[plotIndex] + ";z;phi").c_str(),                                       150, -52.15, 52.15, 300,  -3.14159,  3.14159);
       efficiencyPhiVsZPlots[plotIndex]              = new TH2D(("efficiencyPhiVsZPlots_"         + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("num. hits used to calc. eff., phi vs Z - " + plotTitleSuffices[plotIndex] + ";z;phi").c_str(),                           150, -52.15, 52.15, 300,  -3.14159,  3.14159);
       efficiencyPhiVsZPlots[plotIndex + 23]         = new TH2D(("efficiencyPhiVsZPlots_"         + plotNameSuffices[plotIndex] + "_Eff.").c_str(), ("efficiency, phi vs Z - " + plotTitleSuffices[plotIndex] + ";z;phi").c_str(),                                             150, -52.15, 52.15, 300,  -3.14159,  3.14159);
       rechitOccupancyGlyVsGlxPlots[plotIndex]       = new TH2D(("rechitOccupancyGlyVsGlxPlots_"  + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("rechit occupancy, Y vs X - " + plotTitleSuffices[plotIndex] + ";global x (cm);global y (cm)").c_str(),                   300, -16.2,  16.2,  300, -16.2,     16.2);
       efficiencyGlyVsGlxPlots[plotIndex]            = new TH2D(("efficiencyGlyVsGlxPlots_"       + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("num. hits used to calc. eff., Y vs X - " + plotTitleSuffices[plotIndex] + ";global x (cm);global y (cm)").c_str(),       300, -16.2,  16.2,  300, -16.2,     16.2);
       efficiencyGlyVsGlxPlots[plotIndex + 23]       = new TH2D(("efficiencyGlyVsGlxPlots_"       + plotNameSuffices[plotIndex] + "_Eff.").c_str(), ("efficiency, Y vs X - " + plotTitleSuffices[plotIndex] + ";global x (cm);global y (cm)").c_str(),                         300, -16.2,  16.2,  300, -16.2,     16.2);
-      lxEfficiencyPreCutsPlots[plotIndex]           = new TH1D(("lxEfficiencyPreCutsPlots"       + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("eff. vs lx - " + plotTitleSuffices[plotIndex] + " [no cuts];lx (cm)").c_str(),                                           40,   -0.9,   0.9);
+      lxEfficiencyPreCutsPlots[plotIndex]           = new TH1D(("lxEfficiencyPreCutsPlots"       + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("lx - " + plotTitleSuffices[plotIndex] + " [no cuts];lx (cm)").c_str(),                                                   40,   -0.9,   0.9);
       lxEfficiencyWithCutsPlots[plotIndex]          = new TH1D(("lxEfficiencyWithCutsPlots"      + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("lx - " + plotTitleSuffices[plotIndex] + " [with other effcuts];lx (cm)").c_str(),                                        40,   -0.9,   0.9);
       lxEfficiencyWithCutsPlots[plotIndex + 23]     = new TH1D(("lxEfficiencyWithCutsPlots_"     + plotNameSuffices[plotIndex] + "_Eff.").c_str(), ("eff. vs lx - " + plotTitleSuffices[plotIndex] + " [with other effcuts];lx (cm);efficiency").c_str(),                     40,   -0.9,   0.9);
-      lyEfficiencyPreCutsPlots[plotIndex]           = new TH1D(("lyEfficiencyPreCutsPlots"       + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("eff. vs ly - " + plotTitleSuffices[plotIndex] + " [no cuts];ly (cm)").c_str(),                                           104,  -3.5,   3.5);
+      lyEfficiencyPreCutsPlots[plotIndex]           = new TH1D(("lyEfficiencyPreCutsPlots"       + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("ly - " + plotTitleSuffices[plotIndex] + " [no cuts];ly (cm)").c_str(),                                                   104,  -3.5,   3.5);
       lyEfficiencyWithCutsPlots[plotIndex]          = new TH1D(("lyEfficiencyWithCutsPlots"      + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("ly - " + plotTitleSuffices[plotIndex] + " [with other effcuts];ly (cm)").c_str(),                                        104,  -3.5,   3.5);
       lyEfficiencyWithCutsPlots[plotIndex + 23]     = new TH1D(("lyEfficiencyWithCutsPlots_"     + plotNameSuffices[plotIndex] + "_Eff.").c_str(), ("eff. vs ly - " + plotTitleSuffices[plotIndex] + " [with other effcuts];ly (cm);efficiency").c_str(),                     104,  -3.5,   3.5);
       lyVsLxEfficiencyPreCutsPlots[plotIndex]       = new TH2D(("lyVsLxEfficiencyPreCutsPlots"   + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("num. of hits vs hit position lay1 - " + plotTitleSuffices[plotIndex] + " [no cuts];lx (cm);ly (cm)").c_str(),            40,   -0.9,   0.9,  104,  -3.5,      3.5);
@@ -73,7 +111,7 @@ void EfficiencyPlotsModule::defineHistograms()
       clustDistPreCutsPlots[plotIndex]              = new TH1D(("clustDistPreCutsPlots_"         + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("closest cluster distance to traj. meas. - " + plotTitleSuffices[plotIndex] + " [no cuts];distance (cm)").c_str(),        200,   0.0,   0.025);
       hitDistPreCuts[plotIndex]                     = new TH1D(("hitDistPreCuts_"                + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("closest hit distance to traj. meas. - " + plotTitleSuffices[plotIndex] + " [no cuts];distance (cm)").c_str(),            200,   0.0,   0.12);
       d0PreCutsPlots[plotIndex]                     = new TH1D(("d0PreCutsPlots_"                + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("d0 - " + plotTitleSuffices[plotIndex] + " hits [no cuts];d0 (cm)").c_str(),                                              200,   0.0,   0.15);
-      d0WithCutsPlots[plotIndex]                    = new TH1D(("d0WithCutsPlots_"               + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("d0 - " + plotTitleSuffices[plotIndex] + "[with other effcuts];d0 (cm)").c_str(),                                         200,   0.0,   0.15);
+      d0WithCutsPlots[plotIndex]                    = new TH1D(("d0WithCutsPlots_"               + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("d0 - " + plotTitleSuffices[plotIndex] + " [with other effcuts];d0 (cm)").c_str(),                                         200,   0.0,   0.15);
       d0WithCutsPlots[plotIndex + 23]               = new TH1D(("d0WithCutsPlots_"               + plotNameSuffices[plotIndex] + "_Eff.").c_str(), ("eff. vs d0 - " + plotTitleSuffices[plotIndex] + " [with other effcuts];d0 (cm);efficiency").c_str(),                     200,   0.0,   0.15);
       dzPreCutsPlots[plotIndex]                     = new TH1D(("dzPreCutsPlots_"                + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("dz - " + plotTitleSuffices[plotIndex] + " [no cuts];dz (cm)").c_str(),                                                   200,   0.0,   0.5);
       dzWithCutsPlots[plotIndex]                    = new TH1D(("dzWithCutsPlots_"               + plotNameSuffices[plotIndex] + "_Hits").c_str(), ("dz - " + plotTitleSuffices[plotIndex] + " [with other effcuts];dz (cm)").c_str(),                                        200,   0.0,   0.5);
@@ -113,15 +151,18 @@ void EfficiencyPlotsModule::defineHistograms()
    rocEfficiencyDistributionPlots[Layer4] = new TH1D(("rocEfficiencyDistributionPlots_"   + plotNameSuffices[Layer4] + "_Hits").c_str(), ("ROC efficiency distribution - " + plotTitleSuffices[Layer4] + " [with effcuts];").c_str(),                               401, 0.0, 1.025);
    for(unsigned int orientationIndex      = 0; orientationIndex < 8;                      ++orientationIndex)
    {
-      forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex] = std::array<TH1*, 46> {nullptr};
       std::string orientationIndexString = std::to_string(orientationIndex + 1);
-      forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][AllDisks]           = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_AllDisks_"           + orientationIndexString).c_str(), ("num. of hits vs hit position - all disks, " + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm)")           .c_str(), 40, -0.9, 0.9, 104, -3.5, 3.5);
-      forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][AllDisksEfficiency] = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_AllDisksEfficiency_" + orientationIndexString).c_str(), ("eff. vs hit position - all disks, "          + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm);efficiency").c_str(), 40, -0.9, 0.9, 104, -3.5, 3.5);
+      forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][AllDisks]              = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_AllDisks_"           + orientationIndexString).c_str(), ("num. of hits vs hit position - all disks, " + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm)").c_str(),              40, -0.9, 0.9, 104, -3.5, 3.5);
+      forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][AllDisksEfficiency]    = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_AllDisksEfficiency_" + orientationIndexString).c_str(), ("eff. vs hit position - all disks, "          + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm);efficiency").c_str(),  40, -0.9, 0.9, 104, -3.5, 3.5);
+      forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex][AllDisks]           = new TH2D(("forwardLocalPositionsWithFidicualCutsEfficiencyPlots_AllDisks_"           + orientationIndexString).c_str(), ("num. of hits vs hit position - all disks, " + orientationTextDefinitions[orientationIndex] + " [with all effcuts];lx (cm);ly (cm)").c_str(),             40, -0.9, 0.9, 104, -3.5, 3.5);
+      forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex][AllDisksEfficiency] = new TH2D(("forwardLocalPositionsWithFidicualCutsEfficiencyPlots_AllDisksEfficiency_" + orientationIndexString).c_str(), ("eff. vs hit position - all disks, "          + orientationTextDefinitions[orientationIndex] + " [with all effcuts];lx (cm);ly (cm);efficiency").c_str(), 40, -0.9, 0.9, 104, -3.5, 3.5);
       std::array<LayersDiskPlotIndecies, 6> disks = {Disk1, Disk2, Disk3, Disk4, Disk5, Disk6};
       for(unsigned int diskIndex = 0; diskIndex < disks.size(); ++diskIndex)
       {
-         forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][disks[diskIndex]]              = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_Disk" + std::to_string(diskIndex + 1) + "_"              + orientationIndexString).c_str(), ("num. of hits vs hit position - disk " + std::to_string(diskIndex + 1) + ", "    + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm)")           .c_str(), 40, -0.9, 0.9, 104, -3.5, 3.5);
-         forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][disks[diskIndex] + 23]         = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_Disk" + std::to_string(diskIndex + 1) + "Efficiency_"    + orientationIndexString).c_str(), ("eff. vs hit position - disk " + std::to_string(diskIndex + 1) + ", "            + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm);efficiency").c_str(), 40, -0.9, 0.9, 104, -3.5, 3.5);
+         forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][disks[diskIndex]]         = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_Disk" + std::to_string(diskIndex + 1) + "_"              + orientationIndexString).c_str(), ("num. of hits vs hit position - disk " + std::to_string(diskIndex + 1) + ", "    + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm)")           .c_str(),               40, -0.9, 0.9, 104, -3.5, 3.5);
+         forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex][disks[diskIndex] + 23]    = new TH2D(("forwardLocalPositionsByOrientationEfficiencyPlots_Disk" + std::to_string(diskIndex + 1) + "Efficiency_"    + orientationIndexString).c_str(), ("eff. vs hit position - disk " + std::to_string(diskIndex + 1) + ", "            + orientationTextDefinitions[orientationIndex] + " [with other effcuts];lx (cm);ly (cm);efficiency").c_str(),               40, -0.9, 0.9, 104, -3.5, 3.5);
+         forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex][disks[diskIndex]]      = new TH2D(("forwardLocalPositionsByOrientationWithFidicualCutsEfficiencyPlots_Disk" + std::to_string(diskIndex + 1) + "_"              + orientationIndexString).c_str(), ("num. of hits vs hit position - disk " + std::to_string(diskIndex + 1) + ", "    + orientationTextDefinitions[orientationIndex] + " [with all effcuts];lx (cm);ly (cm)")           .c_str(), 40, -0.9, 0.9, 104, -3.5, 3.5);
+         forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex][disks[diskIndex] + 23] = new TH2D(("forwardLocalPositionsByOrientationWithFidicualCutsEfficiencyPlots_Disk" + std::to_string(diskIndex + 1) + "Efficiency_"    + orientationIndexString).c_str(), ("eff. vs hit position - disk " + std::to_string(diskIndex + 1) + ", "            + orientationTextDefinitions[orientationIndex] + " [with all effcuts];lx (cm);ly (cm);efficiency").c_str(), 40, -0.9, 0.9, 104, -3.5, 3.5);
       }
    }
    std::cout << process_prompt << __PRETTY_FUNCTION__ << " successful." << std::endl;
@@ -214,7 +255,7 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    const int   clust_near              = (0 < d_cl) && (d_cl < HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL);
    const int   fillEfficiencyCondition = !missing || clust_near;
    const int   absDisk          = std::abs(disk);
-   const int   panelOrientation = (side - 1) * 4 + std::abs(ring % 2) * 2 + panel - 1; // +Z, -Z, ring 1, ring 2, panel 1, panel 2
+   const int   panelOrientation = ((side - 1) << 2) + (std::abs(ring % 2) << 1) + panel - 1; // -Z, +Z, ring 1, ring 2, panel 1, panel 2
    const int   layersDisks = det == 0 ? layer : 4 + absDisk;
    auto fillFullLayersDiskPlotsCollectionsAtDetectorPart = [&] (const LayersDiskPlotIndecies& index, const LayersDiskPlotIndecies& efficiencyIndex)
    {
@@ -228,7 +269,7 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
       d0PreCutsPlots[index]               -> Fill(trk.d0);
       dzPreCutsPlots[index]               -> Fill(trk.dz);
       fillPairs(efficiencyPhiVsZPlots[index],         efficiencyPhiVsZPlots[efficiencyIndex],         glz,    phi, fillEfficiencyCondition, effCutAll     );
-      fillPairs(efficiencyGlyVsGlxPlots[index],       efficiencyGlyVsGlxPlots[efficiencyIndex],       glx,    glx, fillEfficiencyCondition, effCutAll     );
+      fillPairs(efficiencyGlyVsGlxPlots[index],       efficiencyGlyVsGlxPlots[efficiencyIndex],       glx,    gly, fillEfficiencyCondition, effCutAll     );
       fillPairs(lxEfficiencyWithCutsPlots[index],     lxEfficiencyWithCutsPlots[efficiencyIndex],     lx,          fillEfficiencyCondition, noFidicualsCut);
       fillPairs(lyEfficiencyWithCutsPlots[index],     lyEfficiencyWithCutsPlots[efficiencyIndex],     ly,          fillEfficiencyCondition, noFidicualsCut);
       fillPairs(lyVsLxEfficiencyWithCutsPlots[index], lyVsLxEfficiencyWithCutsPlots[efficiencyIndex], lx,     ly,  fillEfficiencyCondition, noFidicualsCut);
@@ -279,37 +320,44 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
       rechitOccupancyROCPlots[AllDisks] -> Fill(diskRingCoord, bladePanelCoord);
       fillPairs(efficiencyROCPlots[AllDisks], efficiencyROCPlots[AllDisksEfficiency], diskRingCoord, bladePanelCoord, fillEfficiencyCondition, effCutAll);
       fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation - 1][AllDisks], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation - 1][AllDisksEfficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+      fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation - 1][AllDisks], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation - 1][AllDisksEfficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
       fillFullLayersDiskPlotsCollectionsAtDetectorPart(AllDisks, AllDisksEfficiency);
       if(0 <= glz) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksNegativeZ, DisksNegativeZEfficiency);
       if(glz < 0 ) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksPositiveZ, DisksPositiveZEfficiency);
       if(disk == -1)
       {
          fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk1], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk1Efficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+         fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk1], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk1Efficiency], lx, ly, fillEfficiencyCondition, effCutAll);
          fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk1, Disk1Efficiency);
       }
       if(disk == -2)
       {
          fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk2], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk2Efficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+         fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk2], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk2Efficiency], lx, ly, fillEfficiencyCondition, effCutAll);
          fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk2, Disk2Efficiency);
       }
       if(disk == -3)
       {
          fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk3], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk3Efficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+         fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk3], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk3Efficiency], lx, ly, fillEfficiencyCondition, effCutAll);
          fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk3, Disk3Efficiency);
       }
       if(disk == 1)
       {
          fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk4], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk4Efficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+         fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk4], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk4Efficiency], lx, ly, fillEfficiencyCondition, effCutAll);
          fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk4, Disk4Efficiency);
       }
       if(disk == 2)
       {
          fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk5], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk5Efficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+         fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk5], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk5Efficiency], lx, ly, fillEfficiencyCondition, effCutAll);
          fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk5, Disk5Efficiency);
       }
       if(disk == 3)
       {
          fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk6], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk6Efficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+         fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk6], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][Disk6Efficiency], lx, ly, fillEfficiencyCondition, effCutAll);
          fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk6, Disk6Efficiency);
       }
    }
@@ -338,6 +386,7 @@ void EfficiencyPlotsModule::downscaleEfficiencyPlots()
    for(unsigned int orientationIndex = 0; orientationIndex < 8; ++orientationIndex)
    {
       efficiencyCollections.insert(efficiencyCollections.end(), forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex]);
+      // efficiencyCollections.insert(efficiencyCollections.end(), forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex]);
    }
    for(auto& collection: efficiencyCollections)
    {
@@ -353,19 +402,30 @@ void EfficiencyPlotsModule::addExtraEfficiencyPlots()
    {
       const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
       const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
+std::cout << detectorPartROCHits -> GetTitle() << std::endl;
+std::cout << detectorPartROCEfficiencies -> GetTitle() << std::endl;
+std::cout << __LINE__ << std::endl;
       if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+std::cout << __LINE__ << std::endl;
       unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
+std::cout << __LINE__ << std::endl;
       for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
       {
+std::cout << __LINE__ << std::endl;
          if((*detectorPartROCHits)[rocBin] == 0) continue;
+std::cout << __LINE__ << std::endl;
          rocEfficiencyDistributionPlots[plotIndex] -> Fill((*detectorPartROCEfficiencies)[rocBin]);
+std::cout << __LINE__ << std::endl;
       }
+std::cout << __LINE__ << std::endl;
       std::cout << "rocEfficiencyDistributionPlots.size(): " << rocEfficiencyDistributionPlots[plotIndex] -> GetEntries() << std::endl;
+std::cout << __LINE__ << std::endl;
    }
 }
 
 void EfficiencyPlotsModule::savePlots(const JSON& config, std::string saveDirectoryName)
 {
+   // printCheckHistogramPointers();
    std::array<std::string, 7> layersDiskLabels
    {{
             "Lay 1",
@@ -425,6 +485,7 @@ void EfficiencyPlotsModule::savePlots(const JSON& config, std::string saveDirect
    for(unsigned int orientationIndex = 0; orientationIndex < 8; ++orientationIndex)
    {
       saveHistogramsInCollectionIfNotEmpty(forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex], saveDirectoryName.c_str(), "forwardLocalPositionsByOrientationEfficiencyPlots", config);
+      saveHistogramsInCollectionIfNotEmpty(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex], saveDirectoryName.c_str(), "forwardLocalPositionsWithFidicualCutsEfficiencyPlots", config);
    }
 }
 
@@ -448,6 +509,40 @@ float EfficiencyPlotsModule::getAvarageEfficiency()
       effDenominator += efficiencyWeightPair.second;
    }
    return effNumerator / effDenominator;
+}
+
+void EfficiencyPlotsModule::printCheckHistogramPointers()
+{
+   std::cout << "layersDisksEfficiencyPlots: " <<       std::endl; for(const auto& histogram: layersDisksEfficiencyPlots)       { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "rechitOccupancyROCPlots: " <<          std::endl; for(const auto& histogram: rechitOccupancyROCPlots)          { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "efficiencyROCPlots: " <<               std::endl; for(const auto& histogram: efficiencyROCPlots)               { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "rechitOccupancyPhiVsZPlots: " <<       std::endl; for(const auto& histogram: rechitOccupancyPhiVsZPlots)       { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "efficiencyPhiVsZPlots: " <<            std::endl; for(const auto& histogram: efficiencyPhiVsZPlots)            { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "rechitOccupancyGlyVsGlxPlots: " <<     std::endl; for(const auto& histogram: rechitOccupancyGlyVsGlxPlots)     { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "efficiencyGlyVsGlxPlots: " <<          std::endl; for(const auto& histogram: efficiencyGlyVsGlxPlots)          { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "vtxNtrkEfficiencyPreCutsPlots: " <<    std::endl; for(const auto& histogram: vtxNtrkEfficiencyPreCutsPlots)    { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "vtxNtrkEfficiencyWithCutsPlots: " <<   std::endl; for(const auto& histogram: vtxNtrkEfficiencyWithCutsPlots)   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "ptEfficiencyPreCutsPlots: " <<         std::endl; for(const auto& histogram: ptEfficiencyPreCutsPlots)         { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "ptEfficiencyWithCutsPlots: " <<        std::endl; for(const auto& histogram: ptEfficiencyWithCutsPlots)        { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "striphitsEfficiencyPreCutsPlots: " <<  std::endl; for(const auto& histogram: striphitsEfficiencyPreCutsPlots)  { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "striphitsEfficiencyWithCutsPlots: " << std::endl; for(const auto& histogram: striphitsEfficiencyWithCutsPlots) { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "lxEfficiencyPreCutsPlots: " <<         std::endl; for(const auto& histogram: lxEfficiencyPreCutsPlots)         { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "lxEfficiencyWithCutsPlots: " <<        std::endl; for(const auto& histogram: lxEfficiencyWithCutsPlots)        { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "lyEfficiencyPreCutsPlots: " <<         std::endl; for(const auto& histogram: lyEfficiencyPreCutsPlots)         { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "lyEfficiencyWithCutsPlots: " <<        std::endl; for(const auto& histogram: lyEfficiencyWithCutsPlots)        { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "lyVsLxEfficiencyPreCutsPlots: " <<     std::endl; for(const auto& histogram: lyVsLxEfficiencyPreCutsPlots)     { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "lyVsLxEfficiencyWithCutsPlots: " <<    std::endl; for(const auto& histogram: lyVsLxEfficiencyWithCutsPlots)    { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "clustDistPreCutsPlots: " <<            std::endl; for(const auto& histogram: clustDistPreCutsPlots)            { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "clustDistWithCutsPlots: " <<           std::endl; for(const auto& histogram: clustDistWithCutsPlots)           { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "hitDistPreCuts: " <<                   std::endl; for(const auto& histogram: hitDistPreCuts)                   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "hitDistWithCutsPlots: " <<             std::endl; for(const auto& histogram: hitDistWithCutsPlots)             { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "d0PreCutsPlots: " <<                   std::endl; for(const auto& histogram: d0PreCutsPlots)                   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "d0WithCutsPlots: " <<                  std::endl; for(const auto& histogram: d0WithCutsPlots)                  { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "dzPreCutsPlots: " <<                   std::endl; for(const auto& histogram: dzPreCutsPlots)                   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "dzWithCutsPlots: " <<                  std::endl; for(const auto& histogram: dzWithCutsPlots)                  { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "rocEfficiencyDistributionPlots: " <<   std::endl; for(const auto& histogram: rocEfficiencyDistributionPlots)   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
+   std::cout << "forwardLocalPositionsByOrientationEfficiencyPlots"    << std::endl; for(const auto& collection: forwardLocalPositionsByOrientationEfficiencyPlots)    { for(const auto& histogram: collection) { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }}
+   std::cout << "forwardLocalPositionsWithFidicualCutsEfficiencyPlots" << std::endl; for(const auto& collection: forwardLocalPositionsWithFidicualCutsEfficiencyPlots) { for(const auto& histogram: collection) { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }}
 }
 
 void EfficiencyPlotsModule::printCounters()
@@ -491,7 +586,7 @@ void EfficiencyPlotsModule::printCutValues()
 
 void EfficiencyPlotsModule::downscaleCollectionIfNotEmpty(EfficiencyPlotPair& plotPair)
 {
-   if(!histogramExistAndNotEmpty(plotPair[0]) || !histogramExistAndNotEmpty(plotPair[1])) return;
+   if(!histogramExistsAndNotEmpty(plotPair[0]) || !histogramExistsAndNotEmpty(plotPair[1])) return;
    std::array<TH2D*, 2> pairOf2DPointers = { dynamic_cast<TH2D*>(plotPair[0]), dynamic_cast<TH2D*>(plotPair[1]) };
    if(pairOf2DPointers[0] != nullptr && pairOf2DPointers[1] != nullptr)
    {
@@ -514,7 +609,7 @@ void EfficiencyPlotsModule::downscaleCollectionIfNotEmpty(LayersDiskPlotsCollect
 template <typename T>
 void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config)
 {
-   if(std::any_of(collection.begin(), collection.end(), [&] (const auto& histogram) { return this -> histogramExistAndNotEmpty(histogram); }))
+   if(std::any_of(collection.begin(), collection.end(), [&] (const auto& histogram) { return this -> histogramExistsAndNotEmpty(histogram); }))
    {
       std::cout << "Saving plots of collection: " << subdirectoryName << std::endl;
       for(const auto& histogram: collection) saveHistogramInSubdirectory(histogram, parentDirectoryName, subdirectoryName, config);
@@ -535,7 +630,7 @@ void EfficiencyPlotsModule::saveHistogramInSubdirectory(TH1* histogram, std::str
    }
    // gDirectory -> cd(subdirectoryName.c_str());
    gDirectory -> cd(subdirectoryName.c_str());
-   if(!histogramExistAndNotEmpty(histogram)) return;
+   if(!histogramExistsAndNotEmpty(histogram)) return;
    std::string histogramName      = histogram -> GetName();
    std::string originalHistoTitle = histogram -> GetTitle();
    std::string xAxisTitle         = histogram -> GetXaxis() -> GetTitle();
@@ -588,7 +683,7 @@ void EfficiencyPlotsModule::saveHistogramInSubdirectory(TH1* histogram, std::str
    gDirectory -> cd(originalDirectory);
 }
 
-bool EfficiencyPlotsModule::histogramExistAndNotEmpty(TH1* histogram)
+bool EfficiencyPlotsModule::histogramExistsAndNotEmpty(TH1* histogram)
 {
    if(!histogram) return false;
    if(histogram -> GetEntries() == 0) return false;
@@ -676,6 +771,7 @@ void EfficiencyPlotsModule::calculateCuts()
    static const int&       layer           = trajField_.mod_on.layer;  
    static const int&       disk            = trajField_.mod_on.disk;
    static const float&     lx              = trajField_.lx;
+   static const float&     ly              = trajField_.ly;
    static const float&     d_tr            = trajField_.d_tr;
    nvtxCut = VERTEX_NUMTRACK_CUT_N_MINUS_1_VAL < trk.fromVtxNtrk;
    // Zerobias cut
@@ -730,7 +826,12 @@ void EfficiencyPlotsModule::calculateCuts()
    if(det == 0)
    {
       lxFidCut = std::abs(lx) < BARREL_MODULE_EDGE_X_CUT;
-      lyFidCut = std::abs(lx) < BARREL_MODULE_EDGE_Y_CUT;
+      lyFidCut = std::abs(ly) < BARREL_MODULE_EDGE_Y_CUT;
+   }
+   else if(det == 1)
+   {
+      lxFidCut = testForForwardFidicualCuts();
+      lyFidCut = lxFidCut;
    }
    // Valmis cut
    valmisCut = trajField_.validhit || trajField_.missing;
@@ -745,6 +846,111 @@ void EfficiencyPlotsModule::calculateCuts()
    noDZCut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut          && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut;
    noFidicualsCut = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut                         && valmisCut && hitsepCut;
    noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut             ;
+}
+
+bool EfficiencyPlotsModule::testForForwardFidicualCuts()
+{
+   using PolygonDefinition = const std::pair<std::vector<float>, std::vector<float>>;
+   static const int&   side  = trajField_.mod_on.side;
+   static const int&   disk  = trajField_.mod_on.disk;
+   static const int&   panel = trajField_.mod_on.panel;
+   static const int&   ring  = trajField_.mod_on.ring;
+   static const float& lx    = trajField_.lx;
+   static const float& ly    = trajField_.ly;
+   const int           panelOrientation = ((side - 1) << 2) + (std::abs(ring % 2) << 1) + panel - 1; // -Z, +Z, ring 1, ring 2, panel 1, panel 2
+   // Test these by plotting with TCutG
+   static PolygonDefinition filterForDisk1NegativeZRing1Panel1 = {{-0.35, 0.65, 0.65, 0.35}, {1.4, 1.4, -2.4, -2.4}};
+   static PolygonDefinition filterForDisk1NegativeZRing1Panel2 = {{-0.4, 0.7, 0.7, 0.4}, {1.5, 1.5, -2.2, -2.2}};
+   static PolygonDefinition filterForDisk1NegativeZRing2Panel1 = {{-0.65, 0.62, 0.14}, {2.2, 2.6, -1.8}};
+   static PolygonDefinition filterForDisk1NegativeZRing2Panel2 = {{-0.65, -0.60, -1.18}, {2.2, -2.2, -2.0}};
+   static PolygonDefinition filterForDisk1PositiveZRing1Panel1 = {{-0.7, 0.4, -0.38, -0.7}, {1.6, 1.6, -2.4, 2.4}};
+   static PolygonDefinition filterForDisk1PositiveZRing1Panel2 = {{-0.7, 0.4, -0.38, -0.7}, {1.5, 1.5, -2.6, -2.6}};
+   static PolygonDefinition filterForDisk1PositiveZRing2Panel1 = {{-0.7, 0.7, -0.16}, {2.6, 2.4, -2.2}};
+   static PolygonDefinition filterForDisk1PositiveZRing2Panel2 = {{-0.7, 0.7, -0.18}, {2.3, 2.3, -2.0}};
+   static PolygonDefinition filterForDisk2NegativeZRing1Panel1 = {{-0.65, 0.6, 0.0, -0.25}, {2.2, 2.3, -1.2, -1.2}};
+   static PolygonDefinition filterForDisk2NegativeZRing1Panel2 = {{-0.35, 0.65, 0.65, 0.35}, {1.4, 1.4, -2.4, -2.4}};
+   static PolygonDefinition filterForDisk2NegativeZRing2Panel1 = {{-0.65, 0.65, 0.2, 0.0}, {2.4, 2.4, -1.5, -1.5}};
+   static PolygonDefinition filterForDisk2NegativeZRing2Panel2 = {{-0.65, 0.60, 0.24, 0.0}, {2.2, 2.2, -1.6, -1.5}};
+   static PolygonDefinition filterForDisk2PositiveZRing1Panel1 = {{-0.7, 0.45, -0.34, -0.7}, {1.8, 2.0, -2.3, 2.3}};
+   static PolygonDefinition filterForDisk2PositiveZRing1Panel2 = {{-0.7, 0.45, -0.37, -0.7}, {1.8, 1.8, -2.3, 2.3}};
+   static PolygonDefinition filterForDisk2PositiveZRing2Panel1 = {{-0.65, 0.6, 0.0, -0.22}, {2.4, 2.2, -1.3, -1.25}};
+   static PolygonDefinition filterForDisk2PositiveZRing2Panel2 = {{-0.65, 0.6, 0.0, -0.25}, {2.2, 2.3, -1.2, -1.2}};
+   static PolygonDefinition filterForDisk3NegativeZRing1Panel1 = {{-0.45, 0.7, 0.7, 0.3}, {2.0, 2.2, -2.2, -2.2}};
+   static PolygonDefinition filterForDisk3NegativeZRing1Panel2 = {{-0.45, 0.7, 0.7, 0.3}, {2.0, 2.2, -2.2, -2.2}};
+   static PolygonDefinition filterForDisk3NegativeZRing2Panel1 = {{-0.6, 0.6, 0.4, -0.35}, {2.2, 2.4, 0.4, 0.4}};
+   static PolygonDefinition filterForDisk3NegativeZRing2Panel2 = {{-0.6, 0.6, 0.4, -0.35}, {2.2, 2.0, 0.4, 0.4}};
+   static PolygonDefinition filterForDisk3PositiveZRing1Panel1 = {{-0.7, 0.45, -0.3, -0.7}, {2.0, 2.0, -2.0, -2.0}};
+   static PolygonDefinition filterForDisk3PositiveZRing1Panel2 = {{-0.7, 0.45, -0.3, -0.7}, {1.0, 2.0, -2.0, -2.0}};
+   static PolygonDefinition filterForDisk3PositiveZRing2Panel1 = {{-0.65, 0.65, 0.3, -0.4}, {2.4, 2.1, 0.42, 0.4}};
+   static PolygonDefinition filterForDisk3PositiveZRing2Panel2 = {{-0.65, 0.6, 0.3, -0.4}, {2.2, 2.2, 0.4, 0.4}};
+   {
+      // Disk 1, negative Z, ring 1, panel 1
+      if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel1);
+      // Disk 1, negative Z, ring 1, panel 2
+      if(panelOrientation == 1) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel2);
+      // Disk 1, negative Z, ring 2, panel 1
+      if(panelOrientation == 2) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing2Panel1);
+      // Disk 1, negative Z, ring 2, panel 2
+      if(panelOrientation == 3) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing2Panel2);
+   }
+   if(disk == -2)
+   {
+      // Disk 2, negative Z, ring 1, panel 1 
+      if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk2NegativeZRing1Panel1);
+      // Disk 2, negative Z, ring 1, panel 2 
+      if(panelOrientation == 1) return isPointInPolygon(lx, ly, filterForDisk2NegativeZRing1Panel2);
+      // Disk 2, negative Z, ring 2, panel 1 
+      if(panelOrientation == 2) return isPointInPolygon(lx, ly, filterForDisk2NegativeZRing2Panel1);
+      // Disk 2, negative Z, ring 2, panel 2 
+      if(panelOrientation == 3) return isPointInPolygon(lx, ly, filterForDisk2NegativeZRing2Panel2);
+   }
+   if(disk == -3)
+   {
+      // Disk 3, negative Z, ring 1, panel 1 
+      if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing1Panel1);
+      // Disk 3, negative Z, ring 1, panel 2 
+      if(panelOrientation == 1) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing1Panel2);
+      // Disk 3, negative Z, ring 2, panel 1 
+      if(panelOrientation == 2) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing2Panel1);
+      // Disk 3, negative Z, ring 2, panel 2 
+      if(panelOrientation == 3) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing2Panel2);
+   }
+   if(disk ==  1)
+   {
+      // Disk 1, positive Z, ring 1, panel 1 
+      if(panelOrientation == 4) return isPointInPolygon(lx, ly, filterForDisk1PositiveZRing1Panel1);
+      // Disk 1, positive Z, ring 1, panel 2 
+      if(panelOrientation == 5) return isPointInPolygon(lx, ly, filterForDisk1PositiveZRing1Panel2);
+      // Disk 1, positive Z, ring 2, panel 1 
+      if(panelOrientation == 6) return isPointInPolygon(lx, ly, filterForDisk1PositiveZRing2Panel1);
+      // Disk 1, positive Z, ring 2, panel 2 
+      if(panelOrientation == 7) return isPointInPolygon(lx, ly, filterForDisk1PositiveZRing2Panel2);
+   }
+   if(disk ==  2)
+   {
+      // Disk 2, positive Z, ring 1, panel 1 
+      if(panelOrientation == 4) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing1Panel1);
+      // Disk 2, positive Z, ring 1, panel 2 
+      if(panelOrientation == 5) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing1Panel2);
+      // Disk 2, positive Z, ring 2, panel 1 
+      if(panelOrientation == 6) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing2Panel1);
+      // Disk 2, positive Z, ring 2, panel 2 
+      if(panelOrientation == 7) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing2Panel2);
+   }
+   if(disk ==  3)
+   {
+      // Disk 3, positive Z, ring 1, panel 1 
+      if(panelOrientation == 4) return isPointInPolygon(lx, ly, filterForDisk3PositiveZRing1Panel1);
+      // Disk 3, positive Z, ring 1, panel 2 
+      if(panelOrientation == 5) return isPointInPolygon(lx, ly, filterForDisk3PositiveZRing1Panel2);
+      // Disk 3, positive Z, ring 2, panel 1 
+      if(panelOrientation == 6) return isPointInPolygon(lx, ly, filterForDisk3PositiveZRing2Panel1);
+      // Disk 3, positive Z, ring 2, panel 2 
+      if(panelOrientation == 7) return isPointInPolygon(lx, ly, filterForDisk3PositiveZRing2Panel2);
+   }
+   std::cout << error_prompt << __PRETTY_FUNCTION__ << ": end of control statement reached. This is an unexpected scenario." << std::endl;
+   std::cout << debug_prompt << " disk: " << disk << ", panelOrientation: " << panelOrientation << std::endl;
+   return false;
 }
 
 void EfficiencyPlotsModule::incrementCounters()
@@ -766,6 +972,15 @@ void EfficiencyPlotsModule::incrementCounters()
    // missing_counter_     += missing;
    // clust_near_counter_  += clust_near;
    entry_counter_++;
+}
+
+template <typename T>
+void EfficiencyPlotsModule::setCollectionElementsToNullptr(T& collection)
+{
+   for(auto& histogram: collection)
+   {
+      histogram = nullptr;
+   }
 }
 
 void EfficiencyPlotsModule::fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const int& fillEfficiencyCondition, const int& cuts)
@@ -868,4 +1083,18 @@ void EfficiencyPlotsModule::filterBadRocs()
    //       }
    //    }
    // }
+}
+
+bool EfficiencyPlotsModule::isPointInPolygon(const float& pointX, const float& pointY, const std::pair<std::vector<float>, std::vector<float>>& poligonVertices)
+{
+   bool answer = false;
+   int numVertices = poligonVertices.first.size();
+   for(int i = 0, j = numVertices - 1; i < numVertices; j = i++)
+   {
+      if(((poligonVertices.second[i] > pointY) != (poligonVertices.second[j] > pointY)) && (pointX < (poligonVertices.first[j] - poligonVertices.first[i]) * (pointY - poligonVertices.second[i]) / (poligonVertices.second[j] - poligonVertices.second[i]) + poligonVertices.first[i]))
+      {
+        answer = !answer;
+      }
+   }
+   return answer;
 }

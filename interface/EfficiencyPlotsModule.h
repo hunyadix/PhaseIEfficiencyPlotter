@@ -45,7 +45,7 @@ class EfficiencyPlotsModule
       static constexpr int                  TRACK_NSTRIP_CUT_N_MINUS_1_VAL     = 10;
       static constexpr std::array<float, 4> TRACK_D0_CUT_BARREL_N_MINUS_1_VAL  = {0.01f, 0.02f, 0.02f, 0.02f};
       static constexpr float                TRACK_D0_CUT_FORWARD_N_MINUS_1_VAL = 0.05f;
-      static constexpr float                TRACK_DZ_CUT_BARREL_N_MINUS_1_VAL  = 0.01f;
+      static constexpr float                TRACK_DZ_CUT_BARREL_N_MINUS_1_VAL  = 0.1f;
       static constexpr float                TRACK_DZ_CUT_FORWARD_N_MINUS_1_VAL = 0.5f;
       static constexpr float                MEAS_HITSEP_CUT_N_MINUS_1_VAL      = 0.01f;
       static constexpr float                HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL   = 0.10f;
@@ -241,6 +241,7 @@ class EfficiencyPlotsModule
       LayersDiskPlotsCollection                dzPreCutsPlots;
       LayersDiskPlotsCollection                dzWithCutsPlots;
       std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsByOrientationEfficiencyPlots;
+      std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsWithFidicualCutsEfficiencyPlots;
       LayersDiskPlotsCollection                rocEfficiencyDistributionPlots;
    public:
       EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg);
@@ -252,6 +253,7 @@ class EfficiencyPlotsModule
       void  addExtraEfficiencyPlots();
       void  savePlots(const JSON& config, std::string saveDirectoryName);
       float getAvarageEfficiency();
+      void  printCheckHistogramPointers();
       void  printCounters();
       void  printCutValues();
    private:
@@ -260,13 +262,17 @@ class EfficiencyPlotsModule
       template <typename T> 
       void saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
       void saveHistogramInSubdirectory(TH1* histogram, std::string parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
-      bool histogramExistAndNotEmpty(TH1* histogram);
+      bool histogramExistsAndNotEmpty(TH1* histogram);
       void draw1DPlot(TH1D* histogram, TCanvas* canvas);
       void draw2DPlot(TH2D* histogram, TCanvas* canvas);
       void dressIfROCPlot(TH2D* histogram);
       int  plotIndexToLayerToDress(LayersDiskPlotIndecies plotIndex);
       void calculateCuts();
+      bool testForForwardFidicualCuts();
+      bool isPointInPolygon(const float& pointX, const float& pointY, const std::pair<std::vector<float>, std::vector<float>>& poligonVertices);
       void incrementCounters();
+      template <typename T>
+      void setCollectionElementsToNullptr(T& collection);
       void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const int& fillEfficiencyCondition, const int& cuts = 1);
       void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const int& fillEfficiencyCondition, const std::initializer_list<int>& cuts);
       void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const float& yFill, const int& fillEfficiencyCondition, const int& cuts = 1);
