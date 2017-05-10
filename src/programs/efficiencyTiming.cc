@@ -67,7 +67,7 @@ constexpr auto                    CONFIG_FILE_PATH                = "./config_ma
 const     std::string             EFFICIENCY_PLOT_IDENTIFIER      = "Efficiency";
 const     std::string             EFFICIENCY_NUMERATOR_IDENTIFIER = "Numhits";
 
-const bool CLUST_LOOP_REQUESTED = true;
+const bool CLUST_LOOP_REQUESTED = false;
 const bool TRAJ_LOOP_REQUESTED  = true;
 
 void                                        testSaveFolders(const JSON& config);
@@ -119,55 +119,63 @@ int main(int argc, char** argv) try
    std::cout << process_prompt << "Loading histogram definitions... ";
    std::cout << "Done." << std::endl;
    // Modules
-   // EfficiencyPlotsModule efficiencyPlotsModule(clusterEventField, clusterField, trajEventField, trajField);
    std::map<float, EfficiencyPlotsModule> delayToPlotterModuleMap;
    //////////////////
    // Cluster loop //
    //////////////////
-   // if(CLUST_LOOP_REQUESTED) try
-   // {
-   //    TChain* clustTreeChain = new TChain("clustTree", "List of the clusters.");
-   //    readInFilesAndAddToChain(config, "input_files_list", "input_files", clustTreeChain);
-   //    clustTreeChain -> SetBranchAddress("event",  &clusterEventField);
-   //    // clustTreeChain -> SetBranchAddress("mod",    &(clusterField.mod));
-   //    clustTreeChain -> SetBranchAddress("mod_on", &(clusterField.mod_on));
-   //    clustTreeChain -> SetBranchAddress("clust",  &clusterField);
-   //    // check if data is present
-   //    Long64_t clustTreeNumEntries  = clustTreeChain  -> GetEntries();
-   //    std::cout << debug_prompt << "total entries in the clustTree chain: " << clustTreeNumEntries << std::endl;
-   //    if(clustTreeNumEntries == 0 ) throw std::runtime_error("No entries found in tree: clustTree.");
-   //    ProgressBar progressBar;
-   //    const int    progressBarUpdateInterval = 10000;
-   //    const double progressBarUpdateBy       = progressBarUpdateInterval / static_cast<double>(clustTreeNumEntries) * 100;
-   //    auto  updateAndPrintProgress =  [&] (const int& entryIndex)
-   //    {
-   //       if(entryIndex % progressBarUpdateInterval == 0)
-   //       {
-   //          progressBar.update(progressBarUpdateBy);
-   //          progressBar.print();
-   //          std::cout << " -- Estimated time left: " << std::setw(6) << std::fixed << std::setprecision(1) << timer.getSecondsElapsed() * (1 / progressBar.getProgressionRate() - 1) << " second(s).";
-   //       }
-   //    };
-   //    timer.restart("Measuring the time required for looping on the clusters...");
-   //    for(Long64_t entryIndex = 0; entryIndex < clustTreeNumEntries; ++entryIndex)
-   //    {
-   //       clustTreeChain -> GetEntry(entryIndex);
-   //       if(filterForRunNumberPresent) if(clusterEventField.run <  runNumberLowerBound || runNumberUpperBound <= clusterEventField.run)
-   //       {
-   //          updateAndPrintProgress(entryIndex);
-   //          continue;
-   //       }
-   //       efficiencyPlotsModule.fillClusterHistograms();
-   //       updateAndPrintProgress(entryIndex);
-   //    }
-   //    std::cout << std::endl;
-   //    timer.printSeconds("Loop done. Took about: ", " second(s).");
-   // }
-   // catch(const std::exception& e)
-   // {
-   //    std::cout << error_prompt << "In the clusters loop: " << e.what() << " exception occured." << std::endl;
-   //    exit(-1);
-   // }
+   if(CLUST_LOOP_REQUESTED) try
+   {
+      TChain* clustTreeChain = new TChain("clustTree", "List of the clusters.");
+      readInFilesAndAddToChain(config, "input_files_list", "input_files", clustTreeChain);
+      clustTreeChain -> SetBranchAddress("event",  &clusterEventField);
+      // clustTreeChain -> SetBranchAddress("mod",    &(clusterField.mod));
+      clustTreeChain -> SetBranchAddress("mod_on", &(clusterField.mod_on));
+      clustTreeChain -> SetBranchAddress("clust",  &clusterField);
+      // check if data is present
+      Long64_t clustTreeNumEntries  = clustTreeChain  -> GetEntries();
+      std::cout << debug_prompt << "total entries in the clustTree chain: " << clustTreeNumEntries << std::endl;
+      if(clustTreeNumEntries == 0 ) throw std::runtime_error("No entries found in tree: clustTree.");
+      ProgressBar progressBar;
+      const int    progressBarUpdateInterval = 10000;
+      const double progressBarUpdateBy       = progressBarUpdateInterval / static_cast<double>(clustTreeNumEntries) * 100;
+      auto  updateAndPrintProgress =  [&] (const int& entryIndex)
+      {
+         if(entryIndex % progressBarUpdateInterval == 0)
+         {
+            progressBar.update(progressBarUpdateBy);
+            progressBar.print();
+            std::cout << " -- Estimated time left: " << std::setw(6) << std::fixed << std::setprecision(1) << timer.getSecondsElapsed() * (1 / progressBar.getProgressionRate() - 1) << " second(s).";
+         }
+      };
+      timer.restart("Measuring the time required for looping on the clusters...");
+      for(Long64_t entryIndex = 0; entryIndex < clustTreeNumEntries; ++entryIndex)
+      {
+         clustTreeChain -> GetEntry(entryIndex);
+         if(filterForRunNumberPresent) if(clusterEventField.run <  runNumberLowerBound || runNumberUpperBound <= clusterEventField.run)
+         {
+            updateAndPrintProgress(entryIndex);
+            continue;
+         }
+         static const int&  runNumber   = clusterEventField.run;
+         static const int&  lumisection = clusterEventField.ls;
+         const        float delayInNs   = getDelayNs(runNumber, lumisection);
+         auto plotterModuleIt = delayToPlotterModuleMap.find(delayInNs);
+         // If key does not exist yet: add key
+         if(plotterModuleIt == delayToPlotterModuleMap.end())
+         {
+            plotterModuleIt = delayToPlotterModuleMap.emplace(std::make_pair(delayInNs, EfficiencyPlotsModule(clusterEventField, clusterField, clusterEventField, trajField, delayInNs))).first;
+         }
+         plotterModuleIt -> second.fillClusterHistograms();
+         updateAndPrintProgress(entryIndex);
+      }
+      std::cout << std::endl;
+      timer.printSeconds("Loop done. Took about: ", " second(s).");
+   }
+   catch(const std::exception& e)
+   {
+      std::cout << error_prompt << "In the clusters loop: " << e.what() << " exception occured." << std::endl;
+      exit(-1);
+   }
    ////////////////////////////////
    // Trajector measurement loop //
    ////////////////////////////////
@@ -215,7 +223,8 @@ int main(int argc, char** argv) try
          // If key does not exist yet: add key
          if(plotterModuleIt == delayToPlotterModuleMap.end())
          {
-            plotterModuleIt = delayToPlotterModuleMap.emplace(std::make_pair(delayInNs, EfficiencyPlotsModule(clusterEventField, clusterField, trajEventField, trajField))).first;
+            std::cout << std::endl << process_prompt << "adding plot collection for a new delay scenario. Delay: " << delayInNs << std::endl;
+            plotterModuleIt = delayToPlotterModuleMap.emplace(std::make_pair(delayInNs, EfficiencyPlotsModule(clusterEventField, clusterField, trajEventField, trajField, delayInNs))).first;
          }
          // printTrajFieldInfoTrajOnly(trajField);
          plotterModuleIt -> second.fillTrajMeasHistograms();
@@ -223,7 +232,10 @@ int main(int argc, char** argv) try
       }
       std::cout << std::endl;
       timer.printSeconds("Loop done. Took about: ", " second(s).");
-      // efficiencyPlotsModule.printCounters();
+      for(auto& delayPlotterModulePair: delayToPlotterModuleMap)
+      {
+         delayPlotterModulePair.second.printCounters();
+      }
    }
    catch(const std::exception& e)
    {
@@ -248,10 +260,10 @@ int main(int argc, char** argv) try
    {
       for(auto& delayPlotterModulePair: delayToPlotterModuleMap)
       {
-         std::stringstream directoryNameStream;
-         directoryNameStream << "Delay_" << std::fixed << std::setprecision(2) << delayPlotterModulePair.first;
-         std::string directoryName = directoryNameStream.str();
-         delayPlotterModulePair.second.savePlots(config, directoryName);
+         // std::stringstream directoryNameStream;
+         // directoryNameStream << "Delay_" << std::fixed << std::setprecision(2) << delayPlotterModulePair.first;
+         // std::string directoryName = directoryNameStream.str();
+         delayPlotterModulePair.second.savePlots(config, "");
       }
    }
    catch(const std::exception& e)
@@ -402,10 +414,16 @@ float getDelayNs(int runNumber, int lumisectionNumber) try
    if(runNumber == NOVAL_F || runNumber == 1) return NOVAL_F;
    static const std::map<int, std::map<int, float>> delayList =
    {
-      { 291877, {{ 1, 1.0 }, { 2, 1.0 }} },
-      { 291878, {{ 1, 1.0 }, { 2, 1.0 }} }
+      // { 291877, {{ -1, 1.0 }, { 2, 1.0 }} },
+      { 291877, {{ -1, 164.0f * 25 }}},
+      { 291879, {{ -1, 164.0f * 25 + 18 }}},
+      { 291880, {{ -1, 164.0f * 25 + 18 }}},
+      { 291881, {{ -1, 164.0f * 25 + 18 }}}
    };
-   return delayList.at(runNumber).at(lumisectionNumber);
+   const std::map<int, float>& runLsToDelayMap = delayList.at(runNumber);
+   const auto& universalLumisectionIt = runLsToDelayMap.find(-1);
+   if(universalLumisectionIt != runLsToDelayMap.end()) return universalLumisectionIt -> second;
+   return runLsToDelayMap.at(lumisectionNumber);
 }
 catch(const std::out_of_range& e)
 {

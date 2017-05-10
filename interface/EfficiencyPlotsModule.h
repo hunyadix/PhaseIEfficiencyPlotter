@@ -57,6 +57,7 @@ class EfficiencyPlotsModule
       const Cluster&         clusterField_;
       const EventData&       trajEventField_;
       const TrajMeasurement& trajField_;
+      const float            delayInNs_;
       // Cut values
       int nvtxCut     = 0;
       int zerobiasCut = 0;
@@ -248,7 +249,12 @@ class EfficiencyPlotsModule
       std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsWithFidicualCutsEfficiencyPlots;
       LayersDiskPlotsCollection                rocEfficiencyDistributionPlots;
    public:
-      EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg);
+      enum Scenario
+      {
+         Collisions = 0,
+         Cosmics
+      };
+      EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg, const float& delayInNsArg = -9999.0f);
       ~EfficiencyPlotsModule() = default;
       static void setBadRocList(BadROClist&& badROCs);
       void  defineHistograms();
@@ -256,12 +262,14 @@ class EfficiencyPlotsModule
       void  fillTrajMeasHistograms();
       void  downscaleEfficiencyPlots();
       void  addExtraEfficiencyPlots();
-      void  savePlots(const JSON& config, std::string saveDirectoryName);
+      void  savePlots(const JSON& config, std::string mainDirectoryName);
       float getAvarageEfficiency();
       void  printCheckHistogramPointers();
       void  printCounters();
       void  printCutValues();
    private:
+      template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
+      void calculateCuts();
       void downscaleCollectionIfNotEmpty(EfficiencyPlotPair& plotPair);
       void downscaleCollectionIfNotEmpty(LayersDiskPlotsCollection& plotCollection);
       template <typename T> 
@@ -272,7 +280,6 @@ class EfficiencyPlotsModule
       void draw2DPlot(TH2D* histogram, TCanvas* canvas);
       void dressIfROCPlot(TH2D* histogram);
       int  plotIndexToLayerToDress(LayersDiskPlotIndecies plotIndex);
-      void calculateCuts();
       bool testForForwardFidicualCuts();
       bool isPointInPolygon(const float& pointX, const float& pointY, const std::pair<std::vector<float>, std::vector<float>>& poligonVertices);
       void incrementCounters();

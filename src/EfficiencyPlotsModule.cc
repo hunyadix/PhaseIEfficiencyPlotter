@@ -20,11 +20,12 @@ constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_X_CUT;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_Y_CUT;
 EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {{}, {}};
 
-EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg): 
+EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg, const float& delayInNsArg): 
    clusterEventField_     (clusterEventFieldArg),
    clusterField_          (clusterFieldArg),
    trajEventField_        (trajEventFieldArg),
-   trajField_             (trajFieldArg)
+   trajField_             (trajFieldArg),
+   delayInNs_             (delayInNsArg)
 {
    defineHistograms();
 }
@@ -69,7 +70,13 @@ void EfficiencyPlotsModule::defineHistograms()
    setCollectionElementsToNullptr(dzPreCutsPlots);
    setCollectionElementsToNullptr(dzWithCutsPlots);
    setCollectionElementsToNullptr(rocEfficiencyDistributionPlots);
-   for(unsigned int orientationIndex      = 0; orientationIndex < 8;                      ++orientationIndex)
+   std::stringstream directoryNameStream;
+   directoryNameStream << "Delay_" << std::fixed << std::setprecision(2) << delayInNs_;
+   std::string directoryName = directoryNameStream.str();
+   gDirectory -> cd("/");
+   gDirectory -> mkdir(directoryName.c_str());
+   gDirectory -> cd(directoryName.c_str());
+   for(unsigned int orientationIndex = 0; orientationIndex < 8; ++orientationIndex)
    {
       forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex]    = std::array<TH1*, 46> {nullptr};
       forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex] = std::array<TH1*, 46> {nullptr};
@@ -233,6 +240,146 @@ void EfficiencyPlotsModule::fillClusterHistograms()
    }
 }
 
+template <>
+void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Collisions>()
+{
+   static const TrackData& trk             = trajField_.trk;
+   static const int&       det             = trajField_.mod_on.det;
+   static const int&       layer           = trajField_.mod_on.layer;  
+   static const int&       disk            = trajField_.mod_on.disk;
+   static const int&       module          = trajField_.mod_on.module;
+   static const int&       ladder          = trajField_.mod_on.ladder;
+   static const float&     lx              = trajField_.lx;
+   static const float&     ly              = trajField_.ly;
+   static const float&     d_tr            = trajField_.d_tr;
+   nvtxCut = VERTEX_NUMTRACK_CUT_N_MINUS_1_VAL < trk.fromVtxNtrk;
+   // Zerobias cut
+   zerobiasCut = trajEventField_.trig & ZEROBIAS_BITMASK >> ZEROBIAS_TRIGGER_BIT;
+   // Federr cut
+   federrCut = trajEventField_.federrs_size == 0;
+   // Hp cut
+   hpCut = (trk.quality & TRACK_QUALITY_HIGH_PURITY_MASK) >> TRACK_QUALITY_HIGH_PURITY_BIT;
+   // Pt cut
+   ptCut = TRACK_PT_CUT_N_MINUS_1_VAL < trk.pt;
+   // Nstrip cut
+   nstripCut = TRACK_NSTRIP_CUT_N_MINUS_1_VAL < trk.strip;
+   // D0 cut
+   if(det == 0) d0Cut = std::abs(trk.d0) < TRACK_D0_CUT_BARREL_N_MINUS_1_VAL[layer - 1];
+   if(det == 1) d0Cut = std::abs(trk.d0) < TRACK_D0_CUT_FORWARD_N_MINUS_1_VAL;
+   // Dz cut
+   if(det == 0) dzCut = std::abs(trk.dz) < TRACK_DZ_CUT_BARREL_N_MINUS_1_VAL;
+   if(det == 1) dzCut = std::abs(trk.dz) < TRACK_DZ_CUT_FORWARD_N_MINUS_1_VAL;
+   // Pixhit cut
+   if(det == 0)
+   {
+      if(layer == 1) pixhitCut =
+         (trk.validbpix[1] > 0 && trk.validbpix[2] > 0 && trk.validbpix[3] > 0) ||
+         (trk.validbpix[1] > 0 && trk.validbpix[2] > 0 && trk.validfpix[0] > 0) ||
+         (trk.validbpix[1] > 0 && trk.validfpix[0] > 0 && trk.validfpix[1] > 0) ||
+         (trk.validfpix[0] > 0 && trk.validfpix[2] > 0 && trk.validfpix[2] > 0);
+      if(layer == 2) pixhitCut =
+         (trk.validbpix[0] > 0 && trk.validbpix[2] > 0 && trk.validbpix[3] > 0) ||
+         (trk.validbpix[0] > 0 && trk.validbpix[2] > 0 && trk.validfpix[0] > 0) ||
+         (trk.validbpix[0] > 0 && trk.validfpix[0] > 0 && trk.validfpix[1] > 0);
+      if(layer == 3) pixhitCut =
+         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validbpix[3] > 0) ||
+         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validfpix[0] > 0);
+      if(layer == 4) pixhitCut =
+         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validbpix[2] > 0);
+   }
+   if(det == 1)
+   {
+      if(std::abs(disk) == 1) pixhitCut =
+         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validbpix[2] > 0) ||
+         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validfpix[1] > 0) ||
+         (trk.validbpix[0] > 0 && trk.validfpix[1] > 0 && trk.validfpix[2] > 0);
+      if(std::abs(disk) == 2) pixhitCut =
+         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validfpix[0] > 0) ||
+         (trk.validbpix[0] > 0 && trk.validfpix[0] > 0 && trk.validfpix[2] > 0);
+      if(std::abs(disk) == 3) pixhitCut =
+         (trk.validbpix[0] > 0 && trk.validfpix[0] > 0 && trk.validfpix[1] > 0);
+   }
+   // Fidicual cuts
+   if(det == 0)
+   {
+      lxFidCut = std::abs(lx) < BARREL_MODULE_EDGE_X_CUT;
+      lyFidCut = std::abs(ly) < BARREL_MODULE_EDGE_Y_CUT;
+   }
+   else if(det == 1)
+   {
+      lxFidCut = testForForwardFidicualCuts();
+      lyFidCut = lxFidCut;
+   }
+   // Valmis cut
+   valmisCut = trajField_.validhit || trajField_.missing;
+   // Hitsep cut
+   hitsepCut = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
+   std::pair<int, int> moduleLadder = std::make_pair(module, ladder);
+   badROCCut = std::find(badROClist.begin(), badROClist.end(), moduleLadder) == badROClist.end();
+   effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noPtCut        = nvtxCut && zerobiasCut && federrCut && hpCut          && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noNStripCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut              && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noD0Cut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut          && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noDZCut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut          && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noFidicualsCut = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut                         && valmisCut && hitsepCut && badROCCut;
+   noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut              && badROCCut;
+}
+template <>
+void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmics>()
+{
+   static const TrackData& trk             = trajField_.trk;
+   static const int&       det             = trajField_.mod_on.det;
+   static const int&       module          = trajField_.mod_on.module;
+   static const int&       ladder          = trajField_.mod_on.ladder;
+   static const float&     lx              = trajField_.lx;
+   static const float&     ly              = trajField_.ly;
+   static const float&     d_tr            = trajField_.d_tr;
+   nvtxCut = 1;
+   // Zerobias cut
+   zerobiasCut = trajEventField_.trig & ZEROBIAS_BITMASK >> ZEROBIAS_TRIGGER_BIT;
+   // Federr cut
+   federrCut = trajEventField_.federrs_size == 0;
+   // Hp cut
+   hpCut = 1;
+   // Pt cut
+   ptCut = TRACK_PT_CUT_N_MINUS_1_VAL < trk.pt;
+   // Nstrip cut
+   nstripCut = TRACK_NSTRIP_CUT_N_MINUS_1_VAL < trk.strip;
+   // D0 cut
+   d0Cut = 1;
+   dzCut = 1;
+   // Pixhit cut
+   pixhitCut = 1;
+   // Fidicual cuts
+   if(det == 0)
+   {
+      lxFidCut = std::abs(lx) < BARREL_MODULE_EDGE_X_CUT;
+      lyFidCut = std::abs(ly) < BARREL_MODULE_EDGE_Y_CUT;
+   }
+   else if(det == 1)
+   {
+      lxFidCut = testForForwardFidicualCuts();
+      lyFidCut = lxFidCut;
+   }
+   // Valmis cut
+   valmisCut = trajField_.validhit || trajField_.missing;
+   // Hitsep cut
+   hitsepCut = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
+   std::pair<int, int> moduleLadder = std::make_pair(module, ladder);
+   badROCCut = std::find(badROClist.begin(), badROClist.end(), moduleLadder) == badROClist.end();
+   effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noPtCut        = nvtxCut && zerobiasCut && federrCut && hpCut          && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noNStripCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut              && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noD0Cut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut          && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noDZCut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut          && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
+   noFidicualsCut = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut                         && valmisCut && hitsepCut && badROCCut;
+   noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut              && badROCCut;
+}
+
 void EfficiencyPlotsModule::fillTrajMeasHistograms()
 {
    // Shortcuts
@@ -282,7 +429,7 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
       fillPairs(d0WithCutsPlots[index],               d0WithCutsPlots[efficiencyIndex],               trk.d0,      fillEfficiencyCondition, noD0Cut       );
       fillPairs(dzWithCutsPlots[index],               dzWithCutsPlots[efficiencyIndex],               trk.dz,      fillEfficiencyCondition, noDZCut       );
    };
-   calculateCuts();
+   calculateCuts<Cosmics>();
    vtxNtrkEfficiencyPreCutsPlots[0]   -> Fill(trk.fromVtxNtrk);
    ptEfficiencyPreCutsPlots[0]        -> Fill(trk.pt);
    striphitsEfficiencyPreCutsPlots[0] -> Fill(trk.strip);
@@ -419,7 +566,7 @@ void EfficiencyPlotsModule::addExtraEfficiencyPlots()
    }
 }
 
-void EfficiencyPlotsModule::savePlots(const JSON& config, std::string saveDirectoryName)
+void EfficiencyPlotsModule::savePlots(const JSON& config, std::string mainDirectoryName)
 {
    // printCheckHistogramPointers();
    std::array<std::string, 7> layersDiskLabels
@@ -444,7 +591,11 @@ void EfficiencyPlotsModule::savePlots(const JSON& config, std::string saveDirect
    gStyle -> SetNumberContours(999);
    gStyle -> SetOptStat(1112211); // Integral overflow Underflow RMS (value 2: +error) Mean (value 2: +error) Entries Title
    gErrorIgnoreLevel = kError;
-   if(saveDirectoryName.back() == '/') saveDirectoryName.pop_back();
+   gDirectory -> cd("/");
+   if(mainDirectoryName.back() == '/') mainDirectoryName.pop_back();
+   std::stringstream delayAsStringStream;
+   delayAsStringStream << "Delay_" << std::fixed << std::setprecision(2) << delayInNs_;
+   std::string saveDirectoryName = mainDirectoryName + "/" + delayAsStringStream.str();
    if(saveDirectoryName != "") gDirectory -> mkdir(saveDirectoryName.c_str());
    saveHistogramsInCollectionIfNotEmpty(clusterOccupancyROCPlots,         saveDirectoryName.c_str(), "clusterOccupancyROCPlots",         config);
    saveHistogramsInCollectionIfNotEmpty(clusterPhiVsZPlots,               saveDirectoryName.c_str(), "clusterPhiVsZPlots",               config);
@@ -670,8 +821,11 @@ void EfficiencyPlotsModule::saveHistogramInSubdirectory(TH1* histogram, std::str
    {
       std::string epsFilename = (std::string(canvas -> GetTitle()) + ".eps");
       std::transform(epsFilename.begin(), epsFilename.end(), epsFilename.begin(), [] (char ch) { return ch == ' ' ? '_' : ch; });
-      std::string savePath = config["plots_save_directory"].get<std::string>() + "/" + epsFilename;
-      canvas -> SaveAs(savePath.c_str());
+      if(config["save_plots"] == true)
+      {
+         std::string savePath = config["plots_save_directory"].get<std::string>() + "/" + epsFilename;
+         canvas -> SaveAs(savePath.c_str());
+      }
       if(config["save_histograms_to_ntuple"] == true)
       {
          canvas -> Write();
@@ -760,94 +914,6 @@ int EfficiencyPlotsModule::plotIndexToLayerToDress(LayersDiskPlotIndecies plotIn
    if(plotIndex == Layer4)             return 4;
    if(plotIndex == Layer4Efficiency)   return 4;
    return -1;
-}
-
-void EfficiencyPlotsModule::calculateCuts()
-{
-   static const TrackData& trk             = trajField_.trk;
-   static const int&       det             = trajField_.mod_on.det;
-   static const int&       layer           = trajField_.mod_on.layer;  
-   static const int&       disk            = trajField_.mod_on.disk;
-   static const int&       module          = trajField_.mod_on.module;
-   static const int&       ladder          = trajField_.mod_on.ladder;
-   static const float&     lx              = trajField_.lx;
-   static const float&     ly              = trajField_.ly;
-   static const float&     d_tr            = trajField_.d_tr;
-   nvtxCut = VERTEX_NUMTRACK_CUT_N_MINUS_1_VAL < trk.fromVtxNtrk;
-   // Zerobias cut
-   zerobiasCut = trajEventField_.trig & ZEROBIAS_BITMASK >> ZEROBIAS_TRIGGER_BIT;
-   // Federr cut
-   federrCut = trajEventField_.federrs_size == 0;
-   // Hp cut
-   hpCut = (trk.quality & TRACK_QUALITY_HIGH_PURITY_MASK) >> TRACK_QUALITY_HIGH_PURITY_BIT;
-   // Pt cut
-   ptCut = TRACK_PT_CUT_N_MINUS_1_VAL < trk.pt;
-   // Nstrip cut
-   nstripCut = TRACK_NSTRIP_CUT_N_MINUS_1_VAL < trk.strip;
-   // D0 cut
-   if(det == 0) d0Cut = std::abs(trk.d0) < TRACK_D0_CUT_BARREL_N_MINUS_1_VAL[layer - 1];
-   if(det == 1) d0Cut = std::abs(trk.d0) < TRACK_D0_CUT_FORWARD_N_MINUS_1_VAL;
-   // Dz cut
-   if(det == 0) dzCut = std::abs(trk.dz) < TRACK_DZ_CUT_BARREL_N_MINUS_1_VAL;
-   if(det == 1) dzCut = std::abs(trk.dz) < TRACK_DZ_CUT_FORWARD_N_MINUS_1_VAL;
-   // Pixhit cut
-   if(det == 0)
-   {
-      if(layer == 1) pixhitCut =
-         (trk.validbpix[1] > 0 && trk.validbpix[2] > 0 && trk.validbpix[3] > 0) ||
-         (trk.validbpix[1] > 0 && trk.validbpix[2] > 0 && trk.validfpix[0] > 0) ||
-         (trk.validbpix[1] > 0 && trk.validfpix[0] > 0 && trk.validfpix[1] > 0) ||
-         (trk.validfpix[0] > 0 && trk.validfpix[2] > 0 && trk.validfpix[2] > 0);
-      if(layer == 2) pixhitCut =
-         (trk.validbpix[0] > 0 && trk.validbpix[2] > 0 && trk.validbpix[3] > 0) ||
-         (trk.validbpix[0] > 0 && trk.validbpix[2] > 0 && trk.validfpix[0] > 0) ||
-         (trk.validbpix[0] > 0 && trk.validfpix[0] > 0 && trk.validfpix[1] > 0);
-      if(layer == 3) pixhitCut =
-         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validbpix[3] > 0) ||
-         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validfpix[0] > 0);
-      if(layer == 4) pixhitCut =
-         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validbpix[2] > 0);
-   }
-   if(det == 1)
-   {
-      if(std::abs(disk) == 1) pixhitCut =
-         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validbpix[2] > 0) ||
-         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validfpix[1] > 0) ||
-         (trk.validbpix[0] > 0 && trk.validfpix[1] > 0 && trk.validfpix[2] > 0);
-      if(std::abs(disk) == 2) pixhitCut =
-         (trk.validbpix[0] > 0 && trk.validbpix[1] > 0 && trk.validfpix[0] > 0) ||
-         (trk.validbpix[0] > 0 && trk.validfpix[0] > 0 && trk.validfpix[2] > 0);
-      if(std::abs(disk) == 3) pixhitCut =
-         (trk.validbpix[0] > 0 && trk.validfpix[0] > 0 && trk.validfpix[1] > 0);
-   }
-   // Fidicual cuts
-   lxFidCut = 1;
-   lyFidCut = 1;
-   if(det == 0)
-   {
-      lxFidCut = std::abs(lx) < BARREL_MODULE_EDGE_X_CUT;
-      lyFidCut = std::abs(ly) < BARREL_MODULE_EDGE_Y_CUT;
-   }
-   else if(det == 1)
-   {
-      lxFidCut = testForForwardFidicualCuts();
-      lyFidCut = lxFidCut;
-   }
-   // Valmis cut
-   valmisCut = trajField_.validhit || trajField_.missing;
-   // Hitsep cut
-   hitsepCut = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
-   std::pair<int, int> moduleLadder = std::make_pair(module, ladder);
-   badROCCut = std::find(badROClist.begin(), badROClist.end(), moduleLadder) == badROClist.end();
-   effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
-   noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
-   // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
-   noPtCut        = nvtxCut && zerobiasCut && federrCut && hpCut          && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
-   noNStripCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut              && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
-   noD0Cut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut          && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
-   noDZCut        = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut          && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
-   noFidicualsCut = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut                         && valmisCut && hitsepCut && badROCCut;
-   noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut              && badROCCut;
 }
 
 bool EfficiencyPlotsModule::testForForwardFidicualCuts()
