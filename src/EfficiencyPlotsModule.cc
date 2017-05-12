@@ -2,7 +2,6 @@
 
 #include "../interface/common_functions_jkarancs.h"
 
-
 constexpr int                  EfficiencyPlotsModule::ZEROBIAS_TRIGGER_BIT;
 constexpr int                  EfficiencyPlotsModule::ZEROBIAS_BITMASK;
 constexpr int                  EfficiencyPlotsModule::VERTEX_NUMTRACK_CUT_N_MINUS_1_VAL;
@@ -20,6 +19,8 @@ constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_X_CUT;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_Y_CUT;
 EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {{}, {}};
 
+template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
+
 EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg, const float& delayInNsArg): 
    clusterEventField_     (clusterEventFieldArg),
    clusterField_          (clusterFieldArg),
@@ -28,6 +29,7 @@ EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldA
    delayInNs_             (delayInNsArg)
 {
    defineHistograms();
+   // printCheckHistogramPointers();
 }
 
 void EfficiencyPlotsModule::setBadRocList(BadROClist&& badROCs)
@@ -38,49 +40,12 @@ void EfficiencyPlotsModule::setBadRocList(BadROClist&& badROCs)
 void EfficiencyPlotsModule::defineHistograms()
 {
    std::cout << process_prompt << "Loading histogram definitions. " << std::endl;
-   setCollectionElementsToNullptr(clusterOccupancyROCPlots);
-   setCollectionElementsToNullptr(clusterPhiVsZPlots);
-   setCollectionElementsToNullptr(clusterGlyVsGlxPlots);
-   setCollectionElementsToNullptr(clusterZPlots);
-   setCollectionElementsToNullptr(layersDisksEfficiencyPlots);
-   setCollectionElementsToNullptr(rechitOccupancyROCPlots);
-   setCollectionElementsToNullptr(efficiencyROCPlots);
-   setCollectionElementsToNullptr(rechitOccupancyPhiVsZPlots);
-   setCollectionElementsToNullptr(efficiencyPhiVsZPlots);
-   setCollectionElementsToNullptr(rechitOccupancyGlyVsGlxPlots);
-   setCollectionElementsToNullptr(efficiencyGlyVsGlxPlots);
-   setCollectionElementsToNullptr(vtxNtrkEfficiencyPreCutsPlots);
-   setCollectionElementsToNullptr(vtxNtrkEfficiencyWithCutsPlots);
-   setCollectionElementsToNullptr(ptEfficiencyPreCutsPlots);
-   setCollectionElementsToNullptr(ptEfficiencyWithCutsPlots);
-   setCollectionElementsToNullptr(striphitsEfficiencyPreCutsPlots);
-   setCollectionElementsToNullptr(striphitsEfficiencyWithCutsPlots);
-   setCollectionElementsToNullptr(lxEfficiencyPreCutsPlots);
-   setCollectionElementsToNullptr(lxEfficiencyWithCutsPlots);
-   setCollectionElementsToNullptr(lyEfficiencyPreCutsPlots);
-   setCollectionElementsToNullptr(lyEfficiencyWithCutsPlots);
-   setCollectionElementsToNullptr(lyVsLxEfficiencyPreCutsPlots);
-   setCollectionElementsToNullptr(lyVsLxEfficiencyWithCutsPlots);
-   setCollectionElementsToNullptr(clustDistPreCutsPlots);
-   setCollectionElementsToNullptr(clustDistWithCutsPlots);
-   setCollectionElementsToNullptr(hitDistPreCuts);
-   setCollectionElementsToNullptr(hitDistWithCutsPlots);
-   setCollectionElementsToNullptr(d0PreCutsPlots);
-   setCollectionElementsToNullptr(d0WithCutsPlots);
-   setCollectionElementsToNullptr(dzPreCutsPlots);
-   setCollectionElementsToNullptr(dzWithCutsPlots);
-   setCollectionElementsToNullptr(rocEfficiencyDistributionPlots);
    std::stringstream directoryNameStream;
    directoryNameStream << "Delay_" << std::fixed << std::setprecision(2) << delayInNs_;
    std::string directoryName = directoryNameStream.str();
    gDirectory -> cd("/");
    gDirectory -> mkdir(directoryName.c_str());
    gDirectory -> cd(directoryName.c_str());
-   for(unsigned int orientationIndex = 0; orientationIndex < 8; ++orientationIndex)
-   {
-      forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex]    = std::array<TH1*, 46> {nullptr};
-      forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex] = std::array<TH1*, 46> {nullptr};
-   }
    // Plot pairs
    layersDisksEfficiencyPlots[0]       = new TH1D("layersDisksEfficiencyPlots_Hits",       "num. hits. used to calculate efficiency, layers 1-4, disks 1-3 [with cuts]",                    7,   0.5,   7.5);
    layersDisksEfficiencyPlots[1]       = new TH1D("layersDisksEfficiencyPlots_Eff.",       "efficiency, layers 1-4, disks 1-3 [with cuts];;efficiency",                                     7,   0.5,   7.5);
@@ -229,8 +194,8 @@ void EfficiencyPlotsModule::fillClusterHistograms()
    {
       clusterOccupancyROCPlots[AllDisks] -> Fill(diskRingCoord, bladePanelCoord);
       fillFullLayersDiskPlotsCollectionsAtDetectorPart(AllDisks);
-      if(0 <= glz) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksNegativeZ);
-      if(glz < 0 ) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksPositiveZ);
+      if(0 <= disk) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksNegativeZ);
+      if(disk < 0 ) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksPositiveZ);
       if(disk == -1) fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk1);
       if(disk == -2) fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk2);
       if(disk == -3) fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk3);
@@ -384,7 +349,10 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
 {
    // Shortcuts
    static const int&       det             = trajField_.mod_on.det;
+   static const int&       module          = trajField_.mod_on.module;
    static const int&       layer           = trajField_.mod_on.layer;
+   static const int&       sec             = trajField_.mod_on.sec;
+   static const int&       ladder             = trajField_.mod_on.ladder;
    static const int&       side            = trajField_.mod_on.side;
    static const int&       disk            = trajField_.mod_on.disk;
    static const int&       panel           = trajField_.mod_on.panel;
@@ -408,7 +376,14 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    const int   clust_near              = (0 < d_cl) && (d_cl < HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL);
    const int   fillEfficiencyCondition = !missing || clust_near;
    const int   absDisk          = std::abs(disk);
-   const int   panelOrientation = ((side - 1) << 2) + (std::abs(ring % 2) << 1) + panel - 1; // -Z, +Z, ring 1, ring 2, panel 1, panel 2
+   // if(det)
+   // {
+   //    std::cout << "ring: " << ring << std::endl;
+   //    std::cout << "ring % 2: " << ring % 2 << std::endl;
+   //    std::cout << "std::abs(ring % 2): " << std::abs(ring % 2) << std::endl;
+   //    std::cin.get();
+   // }
+   const int   panelOrientation = ((side - 1) << 2) + ((ring - 1) << 1) + panel - 1; // -Z, +Z, ring 1 (inner), ring 2 (outer), panel 1, panel 2
    const int   layersDisks = det == 0 ? layer : 4 + absDisk;
    auto fillFullLayersDiskPlotsCollectionsAtDetectorPart = [&] (const LayersDiskPlotIndecies& index, const LayersDiskPlotIndecies& efficiencyIndex)
    {
@@ -472,11 +447,11 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    {
       rechitOccupancyROCPlots[AllDisks] -> Fill(diskRingCoord, bladePanelCoord);
       fillPairs(efficiencyROCPlots[AllDisks], efficiencyROCPlots[AllDisksEfficiency], diskRingCoord, bladePanelCoord, fillEfficiencyCondition, effCutAll);
-      fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation - 1][AllDisks], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation - 1][AllDisksEfficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
-      fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation - 1][AllDisks], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation - 1][AllDisksEfficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+      fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][AllDisks], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][AllDisksEfficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
+      fillPairs(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][AllDisks], forwardLocalPositionsWithFidicualCutsEfficiencyPlots[panelOrientation][AllDisksEfficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
       fillFullLayersDiskPlotsCollectionsAtDetectorPart(AllDisks, AllDisksEfficiency);
-      if(0 <= glz) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksNegativeZ, DisksNegativeZEfficiency);
-      if(glz < 0 ) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksPositiveZ, DisksPositiveZEfficiency);
+      if(0 <= disk) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksNegativeZ, DisksNegativeZEfficiency);
+      if(disk < 0 ) fillFullLayersDiskPlotsCollectionsAtDetectorPart(DisksPositiveZ, DisksPositiveZEfficiency);
       if(disk == -1)
       {
          fillPairs(forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk1], forwardLocalPositionsByOrientationEfficiencyPlots[panelOrientation][Disk1Efficiency], lx, ly, fillEfficiencyCondition, noFidicualsCut);
@@ -515,6 +490,21 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
       }
    }
    incrementCounters();
+   // For efficiency calculations
+   const int layersNegativePositive = (layer - 1) * 2 + (0 <= module);
+   const int disksInnerOuter =  (0 <= disk) * 4 + (std::abs(disk) - 1) * 2 + ring - 1;
+   const int eBNPZHSSIOLP = (0 <= module) * 32 + (0 <= ladder) * 16 + (sec - 1) * 2 + (2 < layer);
+   efficiencyBpixFpix[det].first++;
+   efficiencyLayersNegativePositive[layersNegativePositive].first++;
+   efficiencyDisksInnerOuter[disksInnerOuter].first++;
+   efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].first++; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+   if(fillEfficiencyCondition)
+   {
+      efficiencyLayersNegativePositive[layersNegativePositive].second++;
+      efficiencyBpixFpix[det].second++;
+      efficiencyDisksInnerOuter[disksInnerOuter].second++;
+      efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].second++;
+   }
 }
 
 void EfficiencyPlotsModule::downscaleEfficiencyPlots()
@@ -539,7 +529,7 @@ void EfficiencyPlotsModule::downscaleEfficiencyPlots()
    for(unsigned int orientationIndex = 0; orientationIndex < 8; ++orientationIndex)
    {
       efficiencyCollections.insert(efficiencyCollections.end(), forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex]);
-      // efficiencyCollections.insert(efficiencyCollections.end(), forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex]);
+      efficiencyCollections.insert(efficiencyCollections.end(), forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex]);
    }
    for(auto& collection: efficiencyCollections)
    {
@@ -660,36 +650,46 @@ float EfficiencyPlotsModule::getAvarageEfficiency()
 
 void EfficiencyPlotsModule::printCheckHistogramPointers()
 {
-   std::cout << "layersDisksEfficiencyPlots: " <<       std::endl; for(const auto& histogram: layersDisksEfficiencyPlots)       { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "rechitOccupancyROCPlots: " <<          std::endl; for(const auto& histogram: rechitOccupancyROCPlots)          { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "efficiencyROCPlots: " <<               std::endl; for(const auto& histogram: efficiencyROCPlots)               { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "rechitOccupancyPhiVsZPlots: " <<       std::endl; for(const auto& histogram: rechitOccupancyPhiVsZPlots)       { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "efficiencyPhiVsZPlots: " <<            std::endl; for(const auto& histogram: efficiencyPhiVsZPlots)            { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "rechitOccupancyGlyVsGlxPlots: " <<     std::endl; for(const auto& histogram: rechitOccupancyGlyVsGlxPlots)     { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "efficiencyGlyVsGlxPlots: " <<          std::endl; for(const auto& histogram: efficiencyGlyVsGlxPlots)          { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "vtxNtrkEfficiencyPreCutsPlots: " <<    std::endl; for(const auto& histogram: vtxNtrkEfficiencyPreCutsPlots)    { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "vtxNtrkEfficiencyWithCutsPlots: " <<   std::endl; for(const auto& histogram: vtxNtrkEfficiencyWithCutsPlots)   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "ptEfficiencyPreCutsPlots: " <<         std::endl; for(const auto& histogram: ptEfficiencyPreCutsPlots)         { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "ptEfficiencyWithCutsPlots: " <<        std::endl; for(const auto& histogram: ptEfficiencyWithCutsPlots)        { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "striphitsEfficiencyPreCutsPlots: " <<  std::endl; for(const auto& histogram: striphitsEfficiencyPreCutsPlots)  { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "striphitsEfficiencyWithCutsPlots: " << std::endl; for(const auto& histogram: striphitsEfficiencyWithCutsPlots) { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "lxEfficiencyPreCutsPlots: " <<         std::endl; for(const auto& histogram: lxEfficiencyPreCutsPlots)         { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "lxEfficiencyWithCutsPlots: " <<        std::endl; for(const auto& histogram: lxEfficiencyWithCutsPlots)        { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "lyEfficiencyPreCutsPlots: " <<         std::endl; for(const auto& histogram: lyEfficiencyPreCutsPlots)         { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "lyEfficiencyWithCutsPlots: " <<        std::endl; for(const auto& histogram: lyEfficiencyWithCutsPlots)        { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "lyVsLxEfficiencyPreCutsPlots: " <<     std::endl; for(const auto& histogram: lyVsLxEfficiencyPreCutsPlots)     { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "lyVsLxEfficiencyWithCutsPlots: " <<    std::endl; for(const auto& histogram: lyVsLxEfficiencyWithCutsPlots)    { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "clustDistPreCutsPlots: " <<            std::endl; for(const auto& histogram: clustDistPreCutsPlots)            { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "clustDistWithCutsPlots: " <<           std::endl; for(const auto& histogram: clustDistWithCutsPlots)           { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "hitDistPreCuts: " <<                   std::endl; for(const auto& histogram: hitDistPreCuts)                   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "hitDistWithCutsPlots: " <<             std::endl; for(const auto& histogram: hitDistWithCutsPlots)             { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "d0PreCutsPlots: " <<                   std::endl; for(const auto& histogram: d0PreCutsPlots)                   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "d0WithCutsPlots: " <<                  std::endl; for(const auto& histogram: d0WithCutsPlots)                  { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "dzPreCutsPlots: " <<                   std::endl; for(const auto& histogram: dzPreCutsPlots)                   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "dzWithCutsPlots: " <<                  std::endl; for(const auto& histogram: dzWithCutsPlots)                  { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "rocEfficiencyDistributionPlots: " <<   std::endl; for(const auto& histogram: rocEfficiencyDistributionPlots)   { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }
-   std::cout << "forwardLocalPositionsByOrientationEfficiencyPlots"    << std::endl; for(const auto& collection: forwardLocalPositionsByOrientationEfficiencyPlots)    { for(const auto& histogram: collection) { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }}
-   std::cout << "forwardLocalPositionsWithFidicualCutsEfficiencyPlots" << std::endl; for(const auto& collection: forwardLocalPositionsWithFidicualCutsEfficiencyPlots) { for(const auto& histogram: collection) { if(histogramExistsAndNotEmpty(histogram)) std::cout << histogram -> GetTitle() << std::endl; }}
+   auto printCollectionInfo = [&] (auto& collection)
+   {
+      for(const auto& histogram: collection)
+      {
+         if(histogram)
+         {
+            std::cout << "Address: " << histogram << ", entries: " << histogram -> GetEntries() << ", title: " << histogram -> GetTitle() << std::endl;
+         }
+      }
+   };
+   std::cout << "layersDisksEfficiencyPlots: " <<       std::endl; printCollectionInfo(layersDisksEfficiencyPlots);
+   std::cout << "rechitOccupancyROCPlots: " <<          std::endl; printCollectionInfo(rechitOccupancyROCPlots);
+   std::cout << "efficiencyROCPlots: " <<               std::endl; printCollectionInfo(efficiencyROCPlots);
+   std::cout << "rechitOccupancyPhiVsZPlots: " <<       std::endl; printCollectionInfo(rechitOccupancyPhiVsZPlots);
+   std::cout << "efficiencyPhiVsZPlots: " <<            std::endl; printCollectionInfo(efficiencyPhiVsZPlots);
+   std::cout << "rechitOccupancyGlyVsGlxPlots: " <<     std::endl; printCollectionInfo(rechitOccupancyGlyVsGlxPlots);
+   std::cout << "efficiencyGlyVsGlxPlots: " <<          std::endl; printCollectionInfo(efficiencyGlyVsGlxPlots);
+   std::cout << "vtxNtrkEfficiencyPreCutsPlots: " <<    std::endl; printCollectionInfo(vtxNtrkEfficiencyPreCutsPlots);
+   std::cout << "vtxNtrkEfficiencyWithCutsPlots: " <<   std::endl; printCollectionInfo(vtxNtrkEfficiencyWithCutsPlots);
+   std::cout << "ptEfficiencyPreCutsPlots: " <<         std::endl; printCollectionInfo(ptEfficiencyPreCutsPlots);
+   std::cout << "ptEfficiencyWithCutsPlots: " <<        std::endl; printCollectionInfo(ptEfficiencyWithCutsPlots);
+   std::cout << "striphitsEfficiencyPreCutsPlots: " <<  std::endl; printCollectionInfo(striphitsEfficiencyPreCutsPlots);
+   std::cout << "striphitsEfficiencyWithCutsPlots: " << std::endl; printCollectionInfo(striphitsEfficiencyWithCutsPlots);
+   std::cout << "lxEfficiencyPreCutsPlots: " <<         std::endl; printCollectionInfo(lxEfficiencyPreCutsPlots);
+   std::cout << "lxEfficiencyWithCutsPlots: " <<        std::endl; printCollectionInfo(lxEfficiencyWithCutsPlots);
+   std::cout << "lyEfficiencyPreCutsPlots: " <<         std::endl; printCollectionInfo(lyEfficiencyPreCutsPlots);
+   std::cout << "lyEfficiencyWithCutsPlots: " <<        std::endl; printCollectionInfo(lyEfficiencyWithCutsPlots);
+   std::cout << "lyVsLxEfficiencyPreCutsPlots: " <<     std::endl; printCollectionInfo(lyVsLxEfficiencyPreCutsPlots);
+   std::cout << "lyVsLxEfficiencyWithCutsPlots: " <<    std::endl; printCollectionInfo(lyVsLxEfficiencyWithCutsPlots);
+   std::cout << "clustDistPreCutsPlots: " <<            std::endl; printCollectionInfo(clustDistPreCutsPlots);
+   std::cout << "clustDistWithCutsPlots: " <<           std::endl; printCollectionInfo(clustDistWithCutsPlots);
+   std::cout << "hitDistPreCuts: " <<                   std::endl; printCollectionInfo(hitDistPreCuts);
+   std::cout << "hitDistWithCutsPlots: " <<             std::endl; printCollectionInfo(hitDistWithCutsPlots);
+   std::cout << "d0PreCutsPlots: " <<                   std::endl; printCollectionInfo(d0PreCutsPlots);
+   std::cout << "d0WithCutsPlots: " <<                  std::endl; printCollectionInfo(d0WithCutsPlots);
+   std::cout << "dzPreCutsPlots: " <<                   std::endl; printCollectionInfo(dzPreCutsPlots);
+   std::cout << "dzWithCutsPlots: " <<                  std::endl; printCollectionInfo(dzWithCutsPlots);
+   std::cout << "rocEfficiencyDistributionPlots: " <<   std::endl; printCollectionInfo(rocEfficiencyDistributionPlots);
+   std::cout << "forwardLocalPositionsByOrientationEfficiencyPlots"    << std::endl; for(unsigned int orientationIndex = 0; orientationIndex < 8; ++orientationIndex) printCollectionInfo(forwardLocalPositionsByOrientationEfficiencyPlots[orientationIndex]);
+   std::cout << "forwardLocalPositionsWithFidicualCutsEfficiencyPlots" << std::endl; for(unsigned int orientationIndex = 0; orientationIndex < 8; ++orientationIndex) printCollectionInfo(forwardLocalPositionsWithFidicualCutsEfficiencyPlots[orientationIndex]);
 }
 
 void EfficiencyPlotsModule::printCounters()
@@ -708,7 +708,7 @@ void EfficiencyPlotsModule::printCounters()
    std::cout << "lyFidCut:    " << std::setw(12) << lyFidCut_counter_    << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << lyFidCut_counter_    * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << "valmisCut:   " << std::setw(12) << valmisCut_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << valmisCut_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << "hitsepCut:   " << std::setw(12) << hitsepCut_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << hitsepCut_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
-   std::cout << "badROCCut:   " << std::setw(12) << badROCCut_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << hitsepCut_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
+   std::cout << "badROCCut:   " << std::setw(12) << badROCCut_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << badROCCut_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << "total:       " << std::setw(12) << effCutAll_counter_   << " / " << std::setw(12) << entry_counter_ << " (" << std::setprecision(5) << effCutAll_counter_   * 100.0 / entry_counter_<< "%)" << std::endl;
    std::cout << " --- End cut counter values --- " << std::endl;
 }
@@ -731,6 +731,70 @@ void EfficiencyPlotsModule::printCutValues()
    std::cout << "hitsepCut:   " << hitsepCut   << std::endl;
    std::cout << "badROCCut:   " << badROCCut   << std::endl;
    std::cout << " --- End cut values --- " << std::endl;
+}
+
+std::array<std::pair<int, int>, 2>*  EfficiencyPlotsModule::getEfficiencyBpixFpix() // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+{
+   return &efficiencyBpixFpix;
+}
+
+std::array<std::pair<int, int>, 8>*  EfficiencyPlotsModule::getEfficiencyLayersNegativePositive()
+{
+   return &efficiencyLayersNegativePositive;
+}
+
+std::array<std::pair<int, int>, 12>* EfficiencyPlotsModule::getEfficiencyDisksInnerOuter()
+{
+   return &efficiencyDisksInnerOuter;
+}
+
+std::array<std::pair<int, int>, 64>* EfficiencyPlotsModule::getEfficiencyBNPZHSSIOLP()
+{
+   return &efficiencyBNPZHSSIOLP;
+}
+
+
+TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram)
+{
+   const TAxis* xAxis = efficiencyHistogram.GetXaxis();
+   const TAxis* yAxis = efficiencyHistogram.GetYaxis();
+   const int numBins = xAxis -> GetNbins();
+   std::vector<Double_t> valuesX;
+   std::vector<Double_t> valuesY;
+   std::vector<Double_t> errorsXLow (numBins, 0.5 * xAxis -> GetBinWidth(xAxis -> GetFirst()));
+   std::vector<Double_t> errorsXHigh(numBins, 0.5 * xAxis -> GetBinWidth(xAxis -> GetFirst()));
+   std::vector<Double_t> errorsYLow;
+   std::vector<Double_t> errorsYHigh;
+   for(int bin = 0; bin < numBins; ++bin)
+   {
+      // if(numHitsHistogram.GetBinContent(bin + 1) == 0) continue;
+      valuesX.push_back(xAxis -> GetBinCenter(bin + 1));
+      // if(std::string(efficiencyHistogram.GetName()) == std::string("layersDisksEfficiency"))
+      // {
+      //    std::cout << efficiencyHistogram.GetBinContent(bin + 1) << std::endl;
+      // }
+      valuesY.push_back(efficiencyHistogram.GetBinContent(bin + 1));
+      double lowerBound, upperBound;
+      std::tie(lowerBound, upperBound) = WilsonScoreIntervalErrorCalculator(numHitsHistogram.GetBinContent(bin + 1), valuesY[bin], 1.0).getError();
+      errorsYLow .emplace_back(std::move(valuesY[bin] - lowerBound  ));
+      errorsYHigh.emplace_back(std::move(upperBound   - valuesY[bin]));
+   }
+   TGraphAsymmErrors* graph = new TGraphAsymmErrors(numBins, valuesX.data(), valuesY.data(), errorsXLow.data(), errorsXHigh.data(), errorsYLow.data(), errorsYHigh.data());
+   graph -> SetTitle(efficiencyHistogram.GetTitle());
+   graph -> GetXaxis() -> SetTitle (xAxis -> GetTitle());
+   graph -> GetYaxis() -> SetTitle (yAxis -> GetTitle());
+   graph -> GetXaxis() -> SetRangeUser (xAxis -> GetXmin(), xAxis -> GetXmax());
+   // graph -> GetYaxis() -> SetRangeUser (yAxis -> GetXmin(), yAxis -> GetXmax());
+   graph -> GetXaxis() -> SetNdivisions(xAxis -> GetNdivisions());
+   graph -> GetYaxis() -> SetNdivisions(yAxis -> GetNdivisions());
+   graph -> GetXaxis() -> SetLabelOffset(xAxis -> GetLabelOffset());
+   graph -> GetYaxis() -> SetLabelOffset(yAxis -> GetLabelOffset());
+   graph -> SetMarkerColor(4);
+   graph -> SetMarkerStyle(24);
+   graph -> SetLineWidth(1);
+   graph -> SetLineStyle(1);
+   return graph;
+   // const_cast<TH1D*>(&efficiencyHistogram) -> Draw("HIST");
 }
 
 void EfficiencyPlotsModule::downscaleCollectionIfNotEmpty(EfficiencyPlotPair& plotPair)
@@ -758,9 +822,9 @@ void EfficiencyPlotsModule::downscaleCollectionIfNotEmpty(LayersDiskPlotsCollect
 template <typename T>
 void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config)
 {
-   if(std::any_of(collection.begin(), collection.end(), [&] (const auto& histogram) { return this -> histogramExistsAndNotEmpty(histogram); }))
+   if(std::any_of(collection.begin(), collection.end(), [&] (const auto& histogram) { return EfficiencyPlotsModule::histogramExistsAndNotEmpty(histogram); }))
    {
-      std::cout << "Saving plots of collection: " << subdirectoryName << std::endl;
+      // std::cout << "Saving plots of collection: " << subdirectoryName << std::endl;
       for(const auto& histogram: collection) saveHistogramInSubdirectory(histogram, parentDirectoryName, subdirectoryName, config);
    }
 }
@@ -803,34 +867,21 @@ void EfficiencyPlotsModule::saveHistogramInSubdirectory(TH1* histogram, std::str
    }
    if(histo2D != nullptr)
    {
-      draw2DPlot(histo2D, canvas);
-      dressIfROCPlot(histo2D);
+      draw2DPlot(histo2D);
+      // dressIfROCPlot(histo2D);
    }
    else if(histo1D != nullptr)
    {
-      draw1DPlot(histo1D, canvas);
+      draw1DPlot(histo1D);
    }
    canvas -> Update();
    gPad -> Update();
    if(config["save_histograms_to_ntuple"] == true)
    {
       histogram -> Write();
+      canvas -> Write();
    }
-   // static int print = 0;
-   // if(print++ == 0) canvas -> SaveAs("CanvasTest.C");
-   {
-      std::string epsFilename = (std::string(canvas -> GetTitle()) + ".eps");
-      std::transform(epsFilename.begin(), epsFilename.end(), epsFilename.begin(), [] (char ch) { return ch == ' ' ? '_' : ch; });
-      if(config["save_plots"] == true)
-      {
-         std::string savePath = config["plots_save_directory"].get<std::string>() + "/" + epsFilename;
-         canvas -> SaveAs(savePath.c_str());
-      }
-      if(config["save_histograms_to_ntuple"] == true)
-      {
-         canvas -> Write();
-      }
-   }
+   if(config["save_plots"] == true) saveCanvasAsEps(canvas, config["plots_save_directory"].get<std::string>());
    gDirectory -> cd("/");
    gDirectory -> cd(originalDirectory);
 }
@@ -842,7 +893,7 @@ bool EfficiencyPlotsModule::histogramExistsAndNotEmpty(TH1* histogram)
    return true;
 }
 
-void EfficiencyPlotsModule::draw1DPlot(TH1D* histogram, TCanvas* canvas)
+void EfficiencyPlotsModule::draw1DPlot(TH1D* histogram)
 {
    histogram -> SetFillColor(38);
    histogram -> Draw("HIST");
@@ -866,18 +917,30 @@ void EfficiencyPlotsModule::draw1DPlot(TH1D* histogram, TCanvas* canvas)
    //          graph -> GetYaxis() -> SetRangeUser(EFFICIENCY_ZOOM_RANGE_1D.first, EFFICIENCY_ZOOM_RANGE_1D.second);
    //       }
    //    }
-   //    graph -> Draw("AP");
-   //    // addLegend(histogram, graph);
-   //    if(config["save_histograms_to_ntuple"] == true)
-   //    {
-   //       graph -> Write();
-   //    }
    // }
 }
 
-void EfficiencyPlotsModule::draw2DPlot(TH2D* histogram, TCanvas* canvas)
+void EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram)
+{
+   TGraphAsymmErrors* graph = getEfficiencyGraphAsymmErrors(*efficiencyHistogram, *numHitsHistogram);
+   graph -> SetName((efficiencyHistogram -> GetName() + std::string("AsGraph")).c_str());
+   graph -> Draw("AP");
+   graph -> Write();
+}
+
+void EfficiencyPlotsModule::draw2DPlot(TH2D* histogram)
 {
    histogram -> Draw("COLZ");
+}
+
+void EfficiencyPlotsModule::saveCanvasAsEps(TCanvas* canvas, const std::string& parentDirectoryName)
+{
+   std::string epsFilename = (std::string(canvas -> GetTitle()) + ".eps");
+   std::transform(epsFilename.begin(), epsFilename.end(), epsFilename.begin(), [] (char ch) { return ch == ' ' ? '_' : ch; });
+   {
+      std::string savePath = parentDirectoryName + "/" + epsFilename;
+      canvas -> SaveAs(savePath.c_str());
+   }
 }
 
 void EfficiencyPlotsModule::dressIfROCPlot(TH2D* histogram)
@@ -925,7 +988,7 @@ bool EfficiencyPlotsModule::testForForwardFidicualCuts()
    static const int&   ring  = trajField_.mod_on.ring;
    static const float& lx    = trajField_.lx;
    static const float& ly    = trajField_.ly;
-   const int           panelOrientation = ((side - 1) << 2) + (std::abs(ring % 2) << 1) + panel - 1; // -Z, +Z, ring 1, ring 2, panel 1, panel 2
+   const int           panelOrientation = ((side - 1) << 2) + ((ring - 1) << 1) + panel - 1; // -Z, +Z, ring 1, ring 2, panel 1, panel 2
    // Test these by plotting with TCutG
    static PolygonDefinition filterForDisk1NegativeZRing1Panel1 = {{-0.35, 0.65, 0.65, 0.35}, {1.4, 1.4, -2.4, -2.4}};
    static PolygonDefinition filterForDisk1NegativeZRing1Panel2 = {{-0.4, 0.7, 0.7, 0.4}, {1.5, 1.5, -2.2, -2.2}};
@@ -1036,6 +1099,7 @@ void EfficiencyPlotsModule::incrementCounters()
    lyFidCut_counter_    += lyFidCut;
    valmisCut_counter_   += valmisCut;
    hitsepCut_counter_   += hitsepCut;
+   badROCCut_counter_   += badROCCut;
    effCutAll_counter_   += effCutAll;
    // missing_counter_     += missing;
    // clust_near_counter_  += clust_near;

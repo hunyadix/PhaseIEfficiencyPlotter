@@ -4,6 +4,7 @@
 #include "../interface/DataStructures_v4.h"
 #include "../interface/TimerColored.h"
 #include "../interface/CommonActors.h"
+#include "../interface/WilsonScoreInterval.h"
 
 #include <TROOT.h>
 #include <TApplication.h>
@@ -16,6 +17,7 @@
 #include <TH1I.h>
 #include <TH1F.h>
 #include <TH2D.h>
+#include <TGraphAsymmErrors.h>
 
 #include <iostream>
 #include <iomanip>
@@ -58,6 +60,10 @@ class EfficiencyPlotsModule
       const EventData&       trajEventField_;
       const TrajMeasurement& trajField_;
       const float            delayInNs_;
+      std::array<std::pair<int, int>, 2>  efficiencyBpixFpix               {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 8>  efficiencyLayersNegativePositive {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 12> efficiencyDisksInnerOuter        {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 64> efficiencyBNPZHSSIOLP            {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       // Cut values
       int nvtxCut     = 0;
       int zerobiasCut = 0;
@@ -213,41 +219,40 @@ class EfficiencyPlotsModule
          "positive Z, outer ring, panel 2"
       }};
       // Histograms
-      LayersDiskPlotsCollection                clusterOccupancyROCPlots;
-      LayersDiskPlotsCollection                clusterPhiVsZPlots;
-      LayersDiskPlotsCollection                clusterGlyVsGlxPlots;
-      LayersDiskPlotsCollection                clusterZPlots;
-
-      EfficiencyPlotPair                       layersDisksEfficiencyPlots;
-      LayersDiskPlotsCollection                rechitOccupancyROCPlots;
-      LayersDiskPlotsCollection                efficiencyROCPlots;
-      LayersDiskPlotsCollection                rechitOccupancyPhiVsZPlots;
-      LayersDiskPlotsCollection                efficiencyPhiVsZPlots;
-      LayersDiskPlotsCollection                rechitOccupancyGlyVsGlxPlots;
-      LayersDiskPlotsCollection                efficiencyGlyVsGlxPlots;
-      EfficiencyPlotPair                       vtxNtrkEfficiencyPreCutsPlots;
-      EfficiencyPlotPair                       vtxNtrkEfficiencyWithCutsPlots;
-      EfficiencyPlotPair                       ptEfficiencyPreCutsPlots;
-      EfficiencyPlotPair                       ptEfficiencyWithCutsPlots;
-      EfficiencyPlotPair                       striphitsEfficiencyPreCutsPlots;
-      EfficiencyPlotPair                       striphitsEfficiencyWithCutsPlots;
-      LayersDiskPlotsCollection                lxEfficiencyPreCutsPlots;
-      LayersDiskPlotsCollection                lxEfficiencyWithCutsPlots;
-      LayersDiskPlotsCollection                lyEfficiencyPreCutsPlots;
-      LayersDiskPlotsCollection                lyEfficiencyWithCutsPlots;
-      LayersDiskPlotsCollection                lyVsLxEfficiencyPreCutsPlots;
-      LayersDiskPlotsCollection                lyVsLxEfficiencyWithCutsPlots;
-      LayersDiskPlotsCollection                clustDistPreCutsPlots;
-      EfficiencyPlotPair                       clustDistWithCutsPlots;
-      LayersDiskPlotsCollection                hitDistPreCuts;
-      EfficiencyPlotPair                       hitDistWithCutsPlots;
-      LayersDiskPlotsCollection                d0PreCutsPlots;
-      LayersDiskPlotsCollection                d0WithCutsPlots;
-      LayersDiskPlotsCollection                dzPreCutsPlots;
-      LayersDiskPlotsCollection                dzWithCutsPlots;
-      std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsByOrientationEfficiencyPlots;
-      std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsWithFidicualCutsEfficiencyPlots;
-      LayersDiskPlotsCollection                rocEfficiencyDistributionPlots;
+      LayersDiskPlotsCollection                clusterOccupancyROCPlots         {{ nullptr }};
+      LayersDiskPlotsCollection                clusterPhiVsZPlots               {{ nullptr }};
+      LayersDiskPlotsCollection                clusterGlyVsGlxPlots             {{ nullptr }};
+      LayersDiskPlotsCollection                clusterZPlots                    {{ nullptr }};
+      EfficiencyPlotPair                       layersDisksEfficiencyPlots       {{ nullptr }};
+      LayersDiskPlotsCollection                rechitOccupancyROCPlots          {{ nullptr }};
+      LayersDiskPlotsCollection                efficiencyROCPlots               {{ nullptr }};
+      LayersDiskPlotsCollection                rechitOccupancyPhiVsZPlots       {{ nullptr }};
+      LayersDiskPlotsCollection                efficiencyPhiVsZPlots            {{ nullptr }};
+      LayersDiskPlotsCollection                rechitOccupancyGlyVsGlxPlots     {{ nullptr }};
+      LayersDiskPlotsCollection                efficiencyGlyVsGlxPlots          {{ nullptr }};
+      EfficiencyPlotPair                       vtxNtrkEfficiencyPreCutsPlots    {{ nullptr }};
+      EfficiencyPlotPair                       vtxNtrkEfficiencyWithCutsPlots   {{ nullptr }};
+      EfficiencyPlotPair                       ptEfficiencyPreCutsPlots         {{ nullptr }};
+      EfficiencyPlotPair                       ptEfficiencyWithCutsPlots        {{ nullptr }};
+      EfficiencyPlotPair                       striphitsEfficiencyPreCutsPlots  {{ nullptr }};
+      EfficiencyPlotPair                       striphitsEfficiencyWithCutsPlots {{ nullptr }};
+      LayersDiskPlotsCollection                lxEfficiencyPreCutsPlots         {{ nullptr }};
+      LayersDiskPlotsCollection                lxEfficiencyWithCutsPlots        {{ nullptr }};
+      LayersDiskPlotsCollection                lyEfficiencyPreCutsPlots         {{ nullptr }};
+      LayersDiskPlotsCollection                lyEfficiencyWithCutsPlots        {{ nullptr }};
+      LayersDiskPlotsCollection                lyVsLxEfficiencyPreCutsPlots     {{ nullptr }};
+      LayersDiskPlotsCollection                lyVsLxEfficiencyWithCutsPlots    {{ nullptr }};
+      LayersDiskPlotsCollection                clustDistPreCutsPlots            {{ nullptr }};
+      EfficiencyPlotPair                       clustDistWithCutsPlots           {{ nullptr }};
+      LayersDiskPlotsCollection                hitDistPreCuts                   {{ nullptr }};
+      EfficiencyPlotPair                       hitDistWithCutsPlots             {{ nullptr }};
+      LayersDiskPlotsCollection                d0PreCutsPlots                   {{ nullptr }};
+      LayersDiskPlotsCollection                d0WithCutsPlots                  {{ nullptr }};
+      LayersDiskPlotsCollection                dzPreCutsPlots                   {{ nullptr }};
+      LayersDiskPlotsCollection                dzWithCutsPlots                  {{ nullptr }};
+      LayersDiskPlotsCollection                rocEfficiencyDistributionPlots   {{ nullptr }};
+      std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsByOrientationEfficiencyPlots    {{ {{nullptr}} }};
+      std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsWithFidicualCutsEfficiencyPlots {{ {{nullptr}} }};
    public:
       enum Scenario
       {
@@ -263,21 +268,28 @@ class EfficiencyPlotsModule
       void  downscaleEfficiencyPlots();
       void  addExtraEfficiencyPlots();
       void  savePlots(const JSON& config, std::string mainDirectoryName);
+      template <typename T> 
+      static void saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
+      static void saveHistogramInSubdirectory(TH1* histogram, std::string parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
+      static bool histogramExistsAndNotEmpty(TH1* histogram);
+      static void draw1DPlot(TH1D* histogram);
+      static void draw2DPlot(TH2D* histogram);
+      static void writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram);
+      static void saveCanvasAsEps(TCanvas* canvas, const std::string& parentDirectoryName);
       float getAvarageEfficiency();
       void  printCheckHistogramPointers();
       void  printCounters();
       void  printCutValues();
+      std::array<std::pair<int, int>, 2>*  getEfficiencyBpixFpix();
+      std::array<std::pair<int, int>, 8>*  getEfficiencyLayersNegativePositive();
+      std::array<std::pair<int, int>, 12>* getEfficiencyDisksInnerOuter();
+      std::array<std::pair<int, int>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram);
    private:
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void calculateCuts();
       void downscaleCollectionIfNotEmpty(EfficiencyPlotPair& plotPair);
       void downscaleCollectionIfNotEmpty(LayersDiskPlotsCollection& plotCollection);
-      template <typename T> 
-      void saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
-      void saveHistogramInSubdirectory(TH1* histogram, std::string parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
-      bool histogramExistsAndNotEmpty(TH1* histogram);
-      void draw1DPlot(TH1D* histogram, TCanvas* canvas);
-      void draw2DPlot(TH2D* histogram, TCanvas* canvas);
       void dressIfROCPlot(TH2D* histogram);
       int  plotIndexToLayerToDress(LayersDiskPlotIndecies plotIndex);
       bool testForForwardFidicualCuts();
@@ -285,10 +297,10 @@ class EfficiencyPlotsModule
       void incrementCounters();
       template <typename T>
       void setCollectionElementsToNullptr(T& collection);
-      void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const int& fillEfficiencyCondition, const int& cuts = 1);
-      void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const int& fillEfficiencyCondition, const std::initializer_list<int>& cuts);
-      void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const float& yFill, const int& fillEfficiencyCondition, const int& cuts = 1);
-      void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const float& yFill, const int& fillEfficiencyCondition, const std::initializer_list<int>& cuts);
-   public:
-      void filterBadRocs();
+      static void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const int& fillEfficiencyCondition, const int& cuts = 1);
+      static void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const int& fillEfficiencyCondition, const std::initializer_list<int>& cuts);
+      static void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const float& yFill, const int& fillEfficiencyCondition, const int& cuts = 1);
+      static void fillPairs(TH1* numHitsHisto, TH1* efficiencyHisto, const float& xFill, const float& yFill, const int& fillEfficiencyCondition, const std::initializer_list<int>& cuts);
 };
+
+extern template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
