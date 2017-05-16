@@ -1,12 +1,12 @@
 {
-	"input_files_list": "./input_lists/config_input_files_cosmics_[291877-291882[.json",
+	"input_files_list": "./input_lists/config_input_files_MinBias_90X_mcRun2_eff_85_PU_40_evt50k_RECO.json",
 	"filter_for_runs": false,
 	"run_filter_lower_bound": -1,
 	"run_filter_upper_bound": -1,
 	"WBC_setting": "164++0ns",
 	"save_histograms_to_ntuple": true,
 	"ntuple_save_directory": ".",
-	"ntuple_name": "histograms_cosmics_291877-291881_new.root",
+	"ntuple_name": "histograms_9_0_0.root",
 	"save_plots": false,
 	"plots_save_directory": "./results"
 }
