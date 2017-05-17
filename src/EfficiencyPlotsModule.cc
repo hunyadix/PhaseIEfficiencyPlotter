@@ -990,30 +990,32 @@ bool EfficiencyPlotsModule::testForForwardFidicualCuts()
    static const float& ly    = trajField_.ly;
    const int           panelOrientation = ((side - 1) << 2) + ((ring - 1) << 1) + panel - 1; // -Z, +Z, ring 1, ring 2, panel 1, panel 2
    // Test these by plotting with TCutG
-   static PolygonDefinition filterForDisk1NegativeZRing1Panel1 = {{-0.35, 0.65, 0.65, 0.35}, {1.4, 1.4, -2.4, -2.4}};
-   static PolygonDefinition filterForDisk1NegativeZRing1Panel2 = {{-0.4, 0.7, 0.7, 0.4}, {1.5, 1.5, -2.2, -2.2}};
-   static PolygonDefinition filterForDisk1NegativeZRing2Panel1 = {{-0.65, 0.62, 0.14}, {2.2, 2.6, -1.8}};
-   static PolygonDefinition filterForDisk1NegativeZRing2Panel2 = {{-0.65, -0.60, -1.18}, {2.2, -2.2, -2.0}};
-   static PolygonDefinition filterForDisk1PositiveZRing1Panel1 = {{-0.7, 0.4, -0.38, -0.7}, {1.6, 1.6, -2.4, 2.4}};
-   static PolygonDefinition filterForDisk1PositiveZRing1Panel2 = {{-0.7, 0.4, -0.38, -0.7}, {1.5, 1.5, -2.6, -2.6}};
-   static PolygonDefinition filterForDisk1PositiveZRing2Panel1 = {{-0.7, 0.7, -0.16}, {2.6, 2.4, -2.2}};
-   static PolygonDefinition filterForDisk1PositiveZRing2Panel2 = {{-0.7, 0.7, -0.18}, {2.3, 2.3, -2.0}};
-   static PolygonDefinition filterForDisk2NegativeZRing1Panel1 = {{-0.65, 0.6, 0.0, -0.25}, {2.2, 2.3, -1.2, -1.2}};
-   static PolygonDefinition filterForDisk2NegativeZRing1Panel2 = {{-0.35, 0.65, 0.65, 0.35}, {1.4, 1.4, -2.4, -2.4}};
-   static PolygonDefinition filterForDisk2NegativeZRing2Panel1 = {{-0.65, 0.65, 0.2, 0.0}, {2.4, 2.4, -1.5, -1.5}};
-   static PolygonDefinition filterForDisk2NegativeZRing2Panel2 = {{-0.65, 0.60, 0.24, 0.0}, {2.2, 2.2, -1.6, -1.5}};
-   static PolygonDefinition filterForDisk2PositiveZRing1Panel1 = {{-0.7, 0.45, -0.34, -0.7}, {1.8, 2.0, -2.3, 2.3}};
-   static PolygonDefinition filterForDisk2PositiveZRing1Panel2 = {{-0.7, 0.45, -0.37, -0.7}, {1.8, 1.8, -2.3, 2.3}};
-   static PolygonDefinition filterForDisk2PositiveZRing2Panel1 = {{-0.65, 0.6, 0.0, -0.22}, {2.4, 2.2, -1.3, -1.25}};
-   static PolygonDefinition filterForDisk2PositiveZRing2Panel2 = {{-0.65, 0.6, 0.0, -0.25}, {2.2, 2.3, -1.2, -1.2}};
-   static PolygonDefinition filterForDisk3NegativeZRing1Panel1 = {{-0.45, 0.7, 0.7, 0.3}, {2.0, 2.2, -2.2, -2.2}};
-   static PolygonDefinition filterForDisk3NegativeZRing1Panel2 = {{-0.45, 0.7, 0.7, 0.3}, {2.0, 2.2, -2.2, -2.2}};
-   static PolygonDefinition filterForDisk3NegativeZRing2Panel1 = {{-0.6, 0.6, 0.4, -0.35}, {2.2, 2.4, 0.4, 0.4}};
-   static PolygonDefinition filterForDisk3NegativeZRing2Panel2 = {{-0.6, 0.6, 0.4, -0.35}, {2.2, 2.0, 0.4, 0.4}};
-   static PolygonDefinition filterForDisk3PositiveZRing1Panel1 = {{-0.7, 0.45, -0.3, -0.7}, {2.0, 2.0, -2.0, -2.0}};
-   static PolygonDefinition filterForDisk3PositiveZRing1Panel2 = {{-0.7, 0.45, -0.3, -0.7}, {1.0, 2.0, -2.0, -2.0}};
-   static PolygonDefinition filterForDisk3PositiveZRing2Panel1 = {{-0.65, 0.65, 0.3, -0.4}, {2.4, 2.1, 0.42, 0.4}};
-   static PolygonDefinition filterForDisk3PositiveZRing2Panel2 = {{-0.65, 0.6, 0.3, -0.4}, {2.2, 2.2, 0.4, 0.4}};
+
+   static PolygonDefinition filterForDisk1NegativeZRing1Panel1 = {{-0.70,   0.70, -0.16       }, {2.6, 2.40, -2.20       }};
+   static PolygonDefinition filterForDisk1NegativeZRing1Panel2 = {{-0.65,   0.60,  0.2        }, {2.5, 2.40, -2.00       }}; 
+   static PolygonDefinition filterForDisk1NegativeZRing2Panel1 = {{-0.35,   0.65,  0.65,  0.30}, {1.4, 1.40, -2.40, -2.40}};
+   static PolygonDefinition filterForDisk1NegativeZRing2Panel2 = {{-0.35,   0.65,  0.65,  0.35}, {1.3, 1.30, -2.50, -2.50}}; 
+   static PolygonDefinition filterForDisk1PositiveZRing1Panel1 = {{-0.60,   0.64, -0.18       }, {2.7, 2.50, -1.80       }};
+   static PolygonDefinition filterForDisk1PositiveZRing1Panel2 = {{-0.65,   0.65, -0.20       }, {2.2, 2.45, -1.80       }};
+   static PolygonDefinition filterForDisk1PositiveZRing2Panel1 = {{-0.70,   0.33, -0.34, -0.70}, {1.5, 1.50, -2.40, -2.40}};
+   static PolygonDefinition filterForDisk1PositiveZRing2Panel2 = {{-0.70,   0.25, -0.8,  -0.70}, {1.2, 1.20, -2.50, -2.50}};
+   static PolygonDefinition filterForDisk2NegativeZRing1Panel1 = {{-0.66,   0.66,  0.3,   0.00}, {2.4, 2.60, -0.90, -0.90}};
+   static PolygonDefinition filterForDisk2NegativeZRing1Panel2 = {{-0.70,   0.63,  0.25,  0.00}, {2.2, 2.10, -1.40, -1.40}};
+   static PolygonDefinition filterForDisk2NegativeZRing2Panel1 = {{-0.37,   0.67,  0.68,  0.36}, {1.5, 1.50, -2.40, -2.40}};
+   static PolygonDefinition filterForDisk2NegativeZRing2Panel2 = {{-0.38,   0.68,  0.68,  0.35}, {1.6, 1.55, -2.40, -2.40}};
+   static PolygonDefinition filterForDisk2PositiveZRing1Panel1 = {{-0.61,   0.64,  0.0,  -0.20}, {2.4, 2.20, -1.20, -1.10}};
+   static PolygonDefinition filterForDisk2PositiveZRing1Panel2 = {{-0.65,   0.65,  0.0,  -0.25}, {2.1, 2.20, -1.20, -1.20}};
+   static PolygonDefinition filterForDisk2PositiveZRing2Panel1 = {{-0.70,   0.40, -0.34, -0.70}, {1.8, 1.80, -2.10, -2.10}};
+   static PolygonDefinition filterForDisk2PositiveZRing2Panel2 = {{-0.65,   0.43, -0.38, -0.65}, {1.6, 1.80, -2.30, -2.30}};
+   static PolygonDefinition filterForDisk3NegativeZRing1Panel1 = {{-0.60,   0.65,  0.34, -0.30}, {2.3, 2.40,  0.60,  0.60}};
+   static PolygonDefinition filterForDisk3NegativeZRing1Panel2 = {{-0.68,   0.60,  0.38, -0.34}, {2.2, 2.10,  0.74,  0.85}};
+   static PolygonDefinition filterForDisk3NegativeZRing2Panel1 = {{-0.43,   0.65,  0.65,  0.33}, {1.9, 1.90, -2.00, -2.00}};
+   static PolygonDefinition filterForDisk3NegativeZRing2Panel2 = {{-0.43,   0.65,  0.65,  0.33}, {1.9, 1.90, -2.00, -2.00}};
+   static PolygonDefinition filterForDisk3PositiveZRing1Panel1 = {{-0.63,   0.67,  0.24, -0.33}, {2.4, 2.10,  0.87,  0.87}};
+   static PolygonDefinition filterForDisk3PositiveZRing1Panel2 = {{-0.61,   0.61,  0.30, -0.45}, {2.1, 2.20,  0.60,  0.60}};
+   static PolygonDefinition filterForDisk3PositiveZRing2Panel1 = {{-0.70,   0.50, -0.34, -0.70}, {2.2, 2.20, -2.30, -2.30}};
+   static PolygonDefinition filterForDisk3PositiveZRing2Panel2 = {{-0.70,   0.50, -0.34, -0.70}, {2.0, 2.00, -2.30, -2.30}};
+
    {
       // Disk 1, negative Z, ring 1, panel 1
       if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel1);
