@@ -6,7 +6,7 @@
 	"WBC_setting": "164++0ns",
 	"save_histograms_to_ntuple": true,
 	"ntuple_save_directory": ".",
-	"ntuple_name": "histograms_9_0_0.root",
+	"ntuple_name": "histograms_for_presentation.root",
 	"save_plots": false,
 	"plots_save_directory": "./results"
 }

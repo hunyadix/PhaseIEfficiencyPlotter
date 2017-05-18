@@ -7,7 +7,7 @@
 //  - (nothing else yet...)
 
 // Data structure
-#include "../../interface/DataStructures_v4.h"
+#include "../../interface/DataStructures_v5.h"
 
 // Utility
 #include "../../interface/TestsCommon.h"

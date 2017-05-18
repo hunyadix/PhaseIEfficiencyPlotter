@@ -3,8 +3,8 @@
 //========= by ROOT version6.08/07
    
    TH1D *delayVsEfficiencyBPix__1 = new TH1D("delayVsEfficiencyBPix__1","Delay vs efficiency on BPix",250,158,168);
-   delayVsEfficiencyBPix__1->SetBinContent(0,0.748736);
-   delayVsEfficiencyBPix__1->SetBinError(0,0.748736);
+   delayVsEfficiencyBPix__1->SetBinContent(0,0.960162);
+   delayVsEfficiencyBPix__1->SetBinError(0,0.960162);
    delayVsEfficiencyBPix__1->SetEntries(1);
    
    TPaveStats *ptstats = new TPaveStats(0.78,0.575,0.98,0.935,"brNDC");
@@ -18,7 +18,7 @@
    AText = ptstats->AddText("Entries = 1      ");
    AText = ptstats->AddText("Mean  =      0 #pm      0");
    AText = ptstats->AddText("Std Dev   =      0 #pm      0");
-   AText = ptstats->AddText("Underflow = 0.7487");
+   AText = ptstats->AddText("Underflow = 0.9602");
    AText = ptstats->AddText("Overflow  =      0");
    AText = ptstats->AddText("Integral =      0");
    ptstats->SetOptStat(1112211);

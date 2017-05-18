@@ -384,7 +384,16 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    //    std::cin.get();
    // }
    const int   panelOrientation = ((side - 1) << 2) + ((ring - 1) << 1) + panel - 1; // -Z, +Z, ring 1 (inner), ring 2 (outer), panel 1, panel 2
+   if(det == 1 && !(0 <= panelOrientation && panelOrientation < 8))
+   {
+      std::cout << error_prompt << "Error reading some of the files..." << std::endl;
+      std::cout << debug_prompt << "panelOrientation: " << std::endl;
+      std::cout << debug_prompt << "side: " << side << std::endl;
+      std::cout << debug_prompt << "ring: " << ring << std::endl;
+      std::cout << debug_prompt << "panel: " << panel << std::endl;
+   }
    const int   layersDisks = det == 0 ? layer : 4 + absDisk;
+   calculateCuts<Cosmics>();
    auto fillFullLayersDiskPlotsCollectionsAtDetectorPart = [&] (const LayersDiskPlotIndecies& index, const LayersDiskPlotIndecies& efficiencyIndex)
    {
       rechitOccupancyPhiVsZPlots[index]   -> Fill(glz, phi);
@@ -404,7 +413,6 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
       fillPairs(d0WithCutsPlots[index],               d0WithCutsPlots[efficiencyIndex],               trk.d0,      fillEfficiencyCondition, noD0Cut       );
       fillPairs(dzWithCutsPlots[index],               dzWithCutsPlots[efficiencyIndex],               trk.dz,      fillEfficiencyCondition, noDZCut       );
    };
-   calculateCuts<Cosmics>();
    vtxNtrkEfficiencyPreCutsPlots[0]   -> Fill(trk.fromVtxNtrk);
    ptEfficiencyPreCutsPlots[0]        -> Fill(trk.pt);
    striphitsEfficiencyPreCutsPlots[0] -> Fill(trk.strip);
@@ -991,7 +999,7 @@ bool EfficiencyPlotsModule::testForForwardFidicualCuts()
    const int           panelOrientation = ((side - 1) << 2) + ((ring - 1) << 1) + panel - 1; // -Z, +Z, ring 1, ring 2, panel 1, panel 2
    // Test these by plotting with TCutG
 
-   static PolygonDefinition filterForDisk1NegativeZRing1Panel1 = {{-0.70,   0.70, -0.16       }, {2.6, 2.40, -2.20       }};
+   static PolygonDefinition filterForDisk1NegativeZRing1Panel1 = {{-0.65,   0.65,  0.19       }, {2.4, 2.60, -2.00       }};
    static PolygonDefinition filterForDisk1NegativeZRing1Panel2 = {{-0.65,   0.60,  0.2        }, {2.5, 2.40, -2.00       }}; 
    static PolygonDefinition filterForDisk1NegativeZRing2Panel1 = {{-0.35,   0.65,  0.65,  0.30}, {1.4, 1.40, -2.40, -2.40}};
    static PolygonDefinition filterForDisk1NegativeZRing2Panel2 = {{-0.35,   0.65,  0.65,  0.35}, {1.3, 1.30, -2.50, -2.50}}; 
@@ -1016,6 +1024,7 @@ bool EfficiencyPlotsModule::testForForwardFidicualCuts()
    static PolygonDefinition filterForDisk3PositiveZRing2Panel1 = {{-0.70,   0.50, -0.34, -0.70}, {2.2, 2.20, -2.30, -2.30}};
    static PolygonDefinition filterForDisk3PositiveZRing2Panel2 = {{-0.70,   0.50, -0.34, -0.70}, {2.0, 2.00, -2.30, -2.30}};
 
+   if(disk == -1)
    {
       // Disk 1, negative Z, ring 1, panel 1
       if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel1);
@@ -1040,13 +1049,13 @@ bool EfficiencyPlotsModule::testForForwardFidicualCuts()
    if(disk == -3)
    {
       // Disk 3, negative Z, ring 1, panel 1 
-      if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing1Panel1);
+      if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing1Panel1);
       // Disk 3, negative Z, ring 1, panel 2 
-      if(panelOrientation == 1) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing1Panel2);
+      if(panelOrientation == 1) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing1Panel2);
       // Disk 3, negative Z, ring 2, panel 1 
-      if(panelOrientation == 2) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing2Panel1);
+      if(panelOrientation == 2) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing2Panel1);
       // Disk 3, negative Z, ring 2, panel 2 
-      if(panelOrientation == 3) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing2Panel2);
+      if(panelOrientation == 3) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing2Panel2);
    }
    if(disk ==  1)
    {
@@ -1062,13 +1071,13 @@ bool EfficiencyPlotsModule::testForForwardFidicualCuts()
    if(disk ==  2)
    {
       // Disk 2, positive Z, ring 1, panel 1 
-      if(panelOrientation == 4) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing1Panel1);
+      if(panelOrientation == 4) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing1Panel1);
       // Disk 2, positive Z, ring 1, panel 2 
-      if(panelOrientation == 5) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing1Panel2);
+      if(panelOrientation == 5) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing1Panel2);
       // Disk 2, positive Z, ring 2, panel 1 
-      if(panelOrientation == 6) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing2Panel1);
+      if(panelOrientation == 6) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing2Panel1);
       // Disk 2, positive Z, ring 2, panel 2 
-      if(panelOrientation == 7) return isPointInPolygon(lx, ly, filterForDisk3NegativeZRing2Panel2);
+      if(panelOrientation == 7) return isPointInPolygon(lx, ly, filterForDisk2PositiveZRing2Panel2);
    }
    if(disk ==  3)
    {
