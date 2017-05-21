@@ -70,6 +70,10 @@ const     float DELAY_PLOTS_UPPER_EDGE                           = 168;
 
 const bool CLUST_LOOP_REQUESTED = false;
 const bool TRAJ_LOOP_REQUESTED  = true;
+// constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Collisions;
+constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Cosmics;
+
+
 
 void                                        testSaveFolders(const JSON& config);
 TFile*                                      generateOutputNtuple(const JSON& config);
@@ -90,6 +94,8 @@ int main(int argc, char** argv) try
    TimerColored timer(timer_prompt);
    TFile* histogramsNtuple = generateOutputNtuple(config);
    (void)histogramsNtuple; // To disable the warning
+   // std::map<std::string, EfficiencyPlotsModule::Scenario> scenarioStringToObjectMap {{"collisions", EfficiencyPlotsModule::Collisions}, {"cosmics", EfficiencyPlotsModule::Cosmics}};
+   // EfficiencyPlotsModule::Scenario scenario = scenarioStringToObjectMap.at(config.at("scenario"));
    gROOT -> SetBatch(kFALSE);
    EventData       clusterEventField;
    Cluster         clusterField;
@@ -209,7 +215,7 @@ int main(int argc, char** argv) try
       for(Long64_t entryIndex = 0; entryIndex < trajTreeNumEntries; ++entryIndex)
       {
          trajTreeChain -> GetEntry(entryIndex);
-         if(filterForRunNumberPresent) if(trajEventField.run <  runNumberLowerBound || runNumberUpperBound <= trajEventField.run)
+         if(filterForRunNumberPresent) if(trajEventField.run < runNumberLowerBound || runNumberUpperBound <= trajEventField.run)
          {
             updateAndPrintProgress(entryIndex);
             continue;
@@ -224,8 +230,14 @@ int main(int argc, char** argv) try
             std::cout << std::endl << process_prompt << "adding plot collection for a new delay scenario. Delay: " << delayInNs << std::endl;
             plotterModuleIt = delayToPlotterModuleMap.emplace(std::make_pair(delayInNs, EfficiencyPlotsModule(clusterEventField, clusterField, trajEventField, trajField, delayInNs))).first;
          }
-         // printTrajFieldInfoTrajOnly(trajField);
-         plotterModuleIt -> second.fillTrajMeasHistograms();
+         // std::cout << trajTreeChain -> GetCurrentFile() -> GetName() << std::endl;
+         if(!(trajField.mod_on.panel == NOVAL_I || trajField.mod_on.panel == 1 || trajField.mod_on.panel == 2))
+         {
+            printTrajFieldInfo(trajField);
+            continue;
+         }
+         // std::cin.get();
+         plotterModuleIt -> second.fillTrajMeasHistograms<SCENARIO>();
          updateAndPrintProgress(entryIndex);
       }
       std::cout << std::endl;

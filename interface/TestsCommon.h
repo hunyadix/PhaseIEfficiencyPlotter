@@ -124,6 +124,10 @@ void printTrajFieldInfo(const TrajMeasurement& trajField)
 	std::cout << "module:       " << trajField.mod_on.module << "." << std::endl;
 	std::cout << "ladder:       " << trajField.mod_on.ladder << "." << std::endl;
 	std::cout << "det:          " << trajField.mod_on.det    << "." << std::endl;
+	std::cout << "disk:         " << trajField.mod_on.disk   << "." << std::endl;
+	std::cout << "blade:        " << trajField.mod_on.blade  << "." << std::endl;
+	std::cout << "panel:        " << trajField.mod_on.panel  << "." << std::endl;
+	std::cout << "ring:         " << trajField.mod_on.ring   << "." << std::endl;
 	std::cout << "*** Associated track field info ***" << std::endl;
 	std::cout << "pt:           " << trajField.trk.pt      << "." << std::endl;
 	std::cout << "eta:          " << trajField.trk.eta     << "." << std::endl;

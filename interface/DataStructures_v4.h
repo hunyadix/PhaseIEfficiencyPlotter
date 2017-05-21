@@ -1,5 +1,8 @@
-#ifndef DATASTRUCTURES_H
-#define DATASTRUCTURES_H
+#pragma once
+#pragma message("A deprecated version of DataStructures is loaded. This might cause unexpected behaviour.")
+
+This should not be compiled.
+
 /*
 	Creator:         Janos Karancsi, Adam Hunyadi, Viktor Veszpremi
 
@@ -629,5 +632,3 @@ class TrajMeasurement : public TrajMeasData
 			trk.init();
 		}
 };
-
-#endif

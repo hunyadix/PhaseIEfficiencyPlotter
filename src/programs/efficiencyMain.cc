@@ -7,7 +7,7 @@
 //  - (nothing else yet...)
 
 // Data structure
-#include "../../interface/DataStructures_v4.h"
+#include "../../interface/DataStructures_v5.h"
 
 // Utility
 #include "../../interface/TestsCommon.h"
@@ -70,6 +70,8 @@ const     std::string             EFFICIENCY_NUMERATOR_IDENTIFIER = "Numhits";
 const bool CLUST_LOOP_REQUESTED = false;
 const bool TRAJ_LOOP_REQUESTED  = true;
 
+constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Collisions;
+
 void                                        testSaveFolders(const JSON& config);
 TFile*                                      generateOutputNtuple(const JSON& config);
 std::vector<std::string>                    getFilesFromConfig(const JSON& config, const std::string& configKey, const std::string& innerKey);
@@ -88,6 +90,8 @@ int main(int argc, char** argv) try
    TimerColored timer(timer_prompt);
    TFile* histogramsNtuple = generateOutputNtuple(config);
    gROOT -> SetBatch(kFALSE);
+   // std::map<std::string, EfficiencyPlotsModule::Scenario> scenarioStringToObjectMap {{"collisions", EfficiencyPlotsModule::Collisions}, {"cosmics", EfficiencyPlotsModule::Cosmics}};
+   // EfficiencyPlotsModule::Scenario scenario = scenarioStringToObjectMap.at(config.at("scenario"));
    // EventData       eventField;
    EventData       clusterEventField;
    Cluster         clusterField;
@@ -207,7 +211,7 @@ int main(int argc, char** argv) try
             continue;
          }
          // printTrajFieldInfoTrajOnly(trajField);
-         efficiencyPlotsModule.fillTrajMeasHistograms();
+         efficiencyPlotsModule.fillTrajMeasHistograms<SCENARIO>();
          updateAndPrintProgress(entryIndex);
       }
       std::cout << std::endl;

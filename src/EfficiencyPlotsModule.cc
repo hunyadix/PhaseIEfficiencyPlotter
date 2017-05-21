@@ -20,6 +20,8 @@ constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_Y_CUT;
 EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {{}, {}};
 
 template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
+template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
+template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Cosmics>();
 
 EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg, const float& delayInNsArg): 
    clusterEventField_     (clusterEventFieldArg),
@@ -345,6 +347,7 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
    noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut              && badROCCut;
 }
 
+template <EfficiencyPlotsModule::Scenario scenario>
 void EfficiencyPlotsModule::fillTrajMeasHistograms()
 {
    // Shortcuts
@@ -391,9 +394,28 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
       std::cout << debug_prompt << "side: " << side << std::endl;
       std::cout << debug_prompt << "ring: " << ring << std::endl;
       std::cout << debug_prompt << "panel: " << panel << std::endl;
+      return;
    }
    const int   layersDisks = det == 0 ? layer : 4 + absDisk;
-   calculateCuts<Cosmics>();
+   calculateCuts<scenario>();
+   // std::cout << "evt:    " << trajEventField_.evt << std::endl;
+   // std::cout << "run:    " << trajEventField_.run << std::endl;
+   // std::cout << "det:    " << det                 << std::endl;
+   // std::cout << "side:   " << side                << std::endl;
+   // if(det == 0)
+   // {
+   //    std::cout << "module: " << module << std::endl;
+   //    std::cout << "layer:  " << layer  << std::endl;
+   //    std::cout << "sec:    " << sec    << std::endl;
+   //    std::cout << "ladder: " << ladder << std::endl;
+   // }
+   // if(det == 1)
+   // {
+   //    std::cout << "disk:             " << disk             << std::endl;
+   //    std::cout << "side:             " << side             << std::endl;
+   //    std::cout << "panel:            " << panel            << std::endl;
+   // }
+   // std::cin.get();
    auto fillFullLayersDiskPlotsCollectionsAtDetectorPart = [&] (const LayersDiskPlotIndecies& index, const LayersDiskPlotIndecies& efficiencyIndex)
    {
       rechitOccupancyPhiVsZPlots[index]   -> Fill(glz, phi);
@@ -1027,7 +1049,18 @@ bool EfficiencyPlotsModule::testForForwardFidicualCuts()
    if(disk == -1)
    {
       // Disk 1, negative Z, ring 1, panel 1
-      if(panelOrientation == 0) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel1);
+      if(panelOrientation == 0)
+      {
+         // std::cout << "panelOrientation: " << panelOrientation << std::endl;
+         // std::cout << "disk:             " << disk             << std::endl;
+         // std::cout << "side:             " << side             << std::endl;
+         // std::cout << "panel:            " << panel            << std::endl;
+         // std::cout << "lx:               " << lx               << std::endl;
+         // std::cout << "ly:               " << ly               << std::endl;
+         // std::cout << "passed:           " << isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel1) << std::endl;
+         // std::cin.get();
+         return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel1);
+      }
       // Disk 1, negative Z, ring 1, panel 2
       if(panelOrientation == 1) return isPointInPolygon(lx, ly, filterForDisk1NegativeZRing1Panel2);
       // Disk 1, negative Z, ring 2, panel 1

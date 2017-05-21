@@ -1,5 +1,4 @@
-#ifndef DATASTRUCTURES_H
-#define DATASTRUCTURES_H
+#pragma once
 /*
 	Creator:         Janos Karancsi, Adam Hunyadi, Viktor Veszpremi
 
@@ -603,5 +602,3 @@ class TrajMeasurement : public TrajMeasData
 			trk.init();
 		}
 };
-
-#endif

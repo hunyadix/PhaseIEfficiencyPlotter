@@ -1,7 +1,7 @@
 #pragma once
 
 // Data structure
-#include "../interface/DataStructures_v4.h"
+#include "../interface/DataStructures_v5.h"
 #include "../interface/TimerColored.h"
 #include "../interface/CommonActors.h"
 #include "../interface/WilsonScoreInterval.h"
@@ -264,6 +264,7 @@ class EfficiencyPlotsModule
       static void setBadRocList(BadROClist&& badROCs);
       void  defineHistograms();
       void  fillClusterHistograms();
+      template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void  fillTrajMeasHistograms();
       void  downscaleEfficiencyPlots();
       void  addExtraEfficiencyPlots();
@@ -304,3 +305,5 @@ class EfficiencyPlotsModule
 };
 
 extern template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
+extern template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
+extern template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Cosmics>();
