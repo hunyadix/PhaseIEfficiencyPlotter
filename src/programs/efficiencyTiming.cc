@@ -64,14 +64,14 @@ constexpr auto                    CONFIG_FILE_PATH                = "./config_ma
 const     std::string             EFFICIENCY_PLOT_IDENTIFIER      = "Efficiency";
 const     std::string             EFFICIENCY_NUMERATOR_IDENTIFIER = "Numhits";
 
-const     int   DELAY_PLOTS_NUM_BINS                             = 10 * 25;
-const     float DELAY_PLOTS_LOWER_EDGE                           = 158;
-const     float DELAY_PLOTS_UPPER_EDGE                           = 168;
+const     int   DELAY_PLOTS_NUM_BINS                             = 20 * 25;
+const     float DELAY_PLOTS_LOWER_EDGE                           = 153;
+const     float DELAY_PLOTS_UPPER_EDGE                           = 173;
 
 const bool CLUST_LOOP_REQUESTED = false;
 const bool TRAJ_LOOP_REQUESTED  = true;
-// constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Collisions;
-constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Cosmics;
+constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Collisions;
+// constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Cosmics;
 
 
 
@@ -185,6 +185,7 @@ int main(int argc, char** argv) try
    ////////////////////////////////
    if(TRAJ_LOOP_REQUESTED) try
    {
+      // constexpr std::array<int, 5> delayTest {{157, 160, 161, 163, 165}};
       TChain* trajTreeChain  = new TChain("trajTree", "List of the trajectory measurements.");
       readInFilesAndAddToChain(config, "input_files_list", "input_files", trajTreeChain);
       // Trajectory measurement tree
@@ -223,6 +224,7 @@ int main(int argc, char** argv) try
          static const int&  runNumber   = trajEventField.run;
          static const int&  lumisection = trajEventField.ls;
          const float delayInNs   = getDelayNs(runNumber, lumisection);
+         // const float delayInNs   = delayTest[rand() % 5] * 25;
          auto plotterModuleIt = delayToPlotterModuleMap.find(delayInNs);
          // If key does not exist yet: add key
          if(plotterModuleIt == delayToPlotterModuleMap.end())
@@ -338,8 +340,8 @@ int main(int argc, char** argv) try
             for(unsigned int numBin = 0; numBin < labelsWBC.size(); ++numBin)
             {
                delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] -> GetXaxis() -> ChangeLabel(numBin + 1, -1, 0.025, -1, -1, -1, labelsWBC[numBin].c_str());
-               std::cout << "Label in vector: " << labelsWBC[numBin] << std::endl;
-               std::cout << "Label on histogram: " << delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] -> GetXaxis() -> GetBinLabel(numBin + 1) << std::endl;
+               // std::cout << "Label in vector: " << labelsWBC[numBin] << std::endl;
+               // std::cout << "Label on histogram: " << delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] -> GetXaxis() -> GetBinLabel(numBin + 1) << std::endl;
             }
          }
       }
@@ -459,8 +461,8 @@ int main(int argc, char** argv) try
          gDirectory -> cd("../LayerDetailed");
          for(unsigned int plotIndex = 0; plotIndex < 64; ++plotIndex) EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyBNPZHSSIOLP[plotIndex], delayVsEfficiencyBNPZHSSIOLPHits[plotIndex]);
       }
-      std::cout << delayVsEfficiencyBpixFpix[0] -> GetXaxis() -> GetNdivisions() << std::endl;
-      delayVsEfficiencyBpixFpix[0] -> SaveAs("test.C");
+      // std::cout << delayVsEfficiencyBpixFpix[0] -> GetXaxis() -> GetNdivisions() << std::endl;
+      // delayVsEfficiencyBpixFpix[0] -> SaveAs("test.C");
    }
    std::cout << process_prompt << argv[0] << " terminated succesfully." << std::endl;
    return 0;
@@ -556,48 +558,6 @@ T checkGetElement(const JSON& definition, const std::string& propertyName)
       exit(-1);
    }
    return propertyIt.value();
-}
-
-TGraphAsymmErrors* getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram)
-{
-   const TAxis* xAxis = efficiencyHistogram.GetXaxis();
-   const TAxis* yAxis = efficiencyHistogram.GetYaxis();
-   const int numBins = xAxis -> GetNbins();
-   std::vector<Double_t> valuesX;
-   std::vector<Double_t> valuesY;
-   std::vector<Double_t> errorsXLow (numBins, 0.5 * xAxis -> GetBinWidth(xAxis -> GetFirst()));
-   std::vector<Double_t> errorsXHigh(numBins, 0.5 * xAxis -> GetBinWidth(xAxis -> GetFirst()));
-   std::vector<Double_t> errorsYLow;
-   std::vector<Double_t> errorsYHigh;
-   for(int bin = 0; bin < numBins; ++bin)
-   {
-      valuesX.push_back(xAxis -> GetBinCenter(bin + 1));
-      if(std::string(efficiencyHistogram.GetName()) == std::string("layersDisksEfficiency"))
-      {
-         std::cout << efficiencyHistogram.GetBinContent(bin + 1) << std::endl;
-      }
-      valuesY.push_back(efficiencyHistogram.GetBinContent(bin + 1));
-      double lowerBound, upperBound;
-      std::tie(lowerBound, upperBound) = WilsonScoreIntervalErrorCalculator(numHitsHistogram.GetBinContent(bin + 1), valuesY[bin], 1.0).getError();
-      errorsYLow .emplace_back(std::move(valuesY[bin] - lowerBound  ));
-      errorsYHigh.emplace_back(std::move(upperBound   - valuesY[bin]));
-   }
-   TGraphAsymmErrors* graph = new TGraphAsymmErrors(numBins, valuesX.data(), valuesY.data(), errorsXLow.data(), errorsXHigh.data(), errorsYLow.data(), errorsYHigh.data());
-   graph -> SetTitle(efficiencyHistogram.GetTitle());
-   graph -> GetXaxis() -> SetTitle (xAxis -> GetTitle());
-   graph -> GetYaxis() -> SetTitle (yAxis -> GetTitle());
-   graph -> GetXaxis() -> SetRangeUser (xAxis -> GetXmin(), xAxis -> GetXmax());
-   // graph -> GetYaxis() -> SetRangeUser (yAxis -> GetXmin(), yAxis -> GetXmax());
-   graph -> GetXaxis() -> SetNdivisions(xAxis -> GetNdivisions());
-   graph -> GetYaxis() -> SetNdivisions(yAxis -> GetNdivisions());
-   graph -> GetXaxis() -> SetLabelOffset(xAxis -> GetLabelOffset());
-   graph -> GetYaxis() -> SetLabelOffset(yAxis -> GetLabelOffset());
-   graph -> SetMarkerColor(4);
-   graph -> SetMarkerStyle(24);
-   graph -> SetLineWidth(1);
-   graph -> SetLineStyle(1);
-   return graph;
-   // const_cast<TH1D*>(&efficiencyHistogram) -> Draw("HIST");
 }
 
 float getDelayNs(int runNumber, int lumisectionNumber) try

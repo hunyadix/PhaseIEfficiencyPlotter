@@ -313,7 +313,8 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
    // Pt cut
    ptCut = TRACK_PT_CUT_N_MINUS_1_VAL < trk.pt;
    // Nstrip cut
-   nstripCut = TRACK_NSTRIP_CUT_N_MINUS_1_VAL < trk.strip;
+   // nstripCut = TRACK_NSTRIP_CUT_N_MINUS_1_VAL < trk.strip;
+   nstripCut = 1;
    // D0 cut
    d0Cut = 1;
    dzCut = 1;
@@ -795,24 +796,31 @@ TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH
    std::vector<Double_t> errorsXHigh(numBins, 0.5 * xAxis -> GetBinWidth(xAxis -> GetFirst()));
    std::vector<Double_t> errorsYLow;
    std::vector<Double_t> errorsYHigh;
+   int numZeroBins = 0;
    for(int bin = 0; bin < numBins; ++bin)
    {
-      // if(numHitsHistogram.GetBinContent(bin + 1) == 0) continue;
+      if(numHitsHistogram.GetBinContent(bin + 1) == 0)
+      {
+         numZeroBins++;
+         continue;
+      }
       valuesX.push_back(xAxis -> GetBinCenter(bin + 1));
-      // if(std::string(efficiencyHistogram.GetName()) == std::string("layersDisksEfficiency"))
-      // {
-      //    std::cout << efficiencyHistogram.GetBinContent(bin + 1) << std::endl;
-      // }
       valuesY.push_back(efficiencyHistogram.GetBinContent(bin + 1));
       double lowerBound, upperBound;
       std::tie(lowerBound, upperBound) = WilsonScoreIntervalErrorCalculator(numHitsHistogram.GetBinContent(bin + 1), valuesY[bin], 1.0).getError();
       errorsYLow .emplace_back(std::move(valuesY[bin] - lowerBound  ));
       errorsYHigh.emplace_back(std::move(upperBound   - valuesY[bin]));
    }
-   TGraphAsymmErrors* graph = new TGraphAsymmErrors(numBins, valuesX.data(), valuesY.data(), errorsXLow.data(), errorsXHigh.data(), errorsYLow.data(), errorsYHigh.data());
+   TGraphAsymmErrors* graph = new TGraphAsymmErrors(numBins - numZeroBins, valuesX.data(), valuesY.data(), errorsXLow.data(), errorsXHigh.data(), errorsYLow.data(), errorsYHigh.data());
    graph -> SetTitle(efficiencyHistogram.GetTitle());
    graph -> GetXaxis() -> SetTitle (xAxis -> GetTitle());
    graph -> GetYaxis() -> SetTitle (yAxis -> GetTitle());
+   graph -> GetXaxis() -> SetTitleSize(xAxis -> GetTitleSize());
+   graph -> GetYaxis() -> SetTitleSize(yAxis -> GetTitleSize());
+   graph -> GetXaxis() -> SetTitleOffset(xAxis -> GetTitleOffset());
+   graph -> GetYaxis() -> SetTitleOffset(yAxis -> GetTitleOffset());
+   graph -> GetXaxis() -> SetTitleFont(xAxis -> GetTitleFont());
+   graph -> GetYaxis() -> SetTitleFont(yAxis -> GetTitleFont());
    graph -> GetXaxis() -> SetRangeUser (xAxis -> GetXmin(), xAxis -> GetXmax());
    // graph -> GetYaxis() -> SetRangeUser (yAxis -> GetXmin(), yAxis -> GetXmax());
    graph -> GetXaxis() -> SetNdivisions(xAxis -> GetNdivisions());
@@ -823,6 +831,7 @@ TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH
    graph -> SetMarkerStyle(24);
    graph -> SetLineWidth(1);
    graph -> SetLineStyle(1);
+   graph -> SetMarkerSize(1.0);
    return graph;
    // const_cast<TH1D*>(&efficiencyHistogram) -> Draw("HIST");
 }
@@ -954,7 +963,7 @@ void EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram
 {
    TGraphAsymmErrors* graph = getEfficiencyGraphAsymmErrors(*efficiencyHistogram, *numHitsHistogram);
    graph -> SetName((efficiencyHistogram -> GetName() + std::string("AsGraph")).c_str());
-   graph -> Draw("AP");
+   graph -> Draw("ap");
    graph -> Write();
 }
 
