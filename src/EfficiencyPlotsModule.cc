@@ -522,19 +522,22 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    }
    incrementCounters();
    // For efficiency calculations
-   const int layersNegativePositive = (layer - 1) * 2 + (0 <= module);
-   const int disksInnerOuter =  (0 <= disk) * 4 + (std::abs(disk) - 1) * 2 + ring - 1;
-   const int eBNPZHSSIOLP = (0 <= module) * 32 + (0 <= ladder) * 16 + (sec - 1) * 2 + (2 < layer);
-   efficiencyBpixFpix[det].first++;
-   efficiencyLayersNegativePositive[layersNegativePositive].first++;
-   efficiencyDisksInnerOuter[disksInnerOuter].first++;
-   efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].first++; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-   if(fillEfficiencyCondition)
+   if(effCutAll)
    {
-      efficiencyLayersNegativePositive[layersNegativePositive].second++;
-      efficiencyBpixFpix[det].second++;
-      efficiencyDisksInnerOuter[disksInnerOuter].second++;
-      efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].second++;
+      const int layersNegativePositive = (layer - 1) * 2 + (0 <= module);
+      const int disksInnerOuter =  (0 <= disk) * 4 + (std::abs(disk) - 1) * 2 + ring - 1;
+      const int eBNPZHSSIOLP = (0 <= module) * 32 + (0 <= ladder) * 16 + (sec - 1) * 2 + (2 < layer);
+      efficiencyBpixFpix[det].first++;
+      efficiencyLayersNegativePositive[layersNegativePositive].first++;
+      efficiencyDisksInnerOuter[disksInnerOuter].first++;
+      efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].first++; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      if(fillEfficiencyCondition)
+      {
+         efficiencyLayersNegativePositive[layersNegativePositive].second++;
+         efficiencyBpixFpix[det].second++;
+         efficiencyDisksInnerOuter[disksInnerOuter].second++;
+         efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].second++;
+      }
    }
 }
 
@@ -785,7 +788,7 @@ std::array<std::pair<int, int>, 64>* EfficiencyPlotsModule::getEfficiencyBNPZHSS
 }
 
 
-TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram)
+TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram, const int& markerColor)
 {
    const TAxis* xAxis = efficiencyHistogram.GetXaxis();
    const TAxis* yAxis = efficiencyHistogram.GetYaxis();
@@ -827,11 +830,12 @@ TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH
    graph -> GetYaxis() -> SetNdivisions(yAxis -> GetNdivisions());
    graph -> GetXaxis() -> SetLabelOffset(xAxis -> GetLabelOffset());
    graph -> GetYaxis() -> SetLabelOffset(yAxis -> GetLabelOffset());
-   graph -> SetMarkerColor(4);
-   graph -> SetMarkerStyle(24);
+   graph -> SetMarkerColor(markerColor);
+   graph -> SetFillColor(markerColor);
+   graph -> SetMarkerStyle(20);
    graph -> SetLineWidth(1);
    graph -> SetLineStyle(1);
-   graph -> SetMarkerSize(1.0);
+   graph -> SetMarkerSize(0.8);
    return graph;
    // const_cast<TH1D*>(&efficiencyHistogram) -> Draw("HIST");
 }
@@ -959,9 +963,9 @@ void EfficiencyPlotsModule::draw1DPlot(TH1D* histogram)
    // }
 }
 
-void EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram)
+void EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram, const int& markerColor)
 {
-   TGraphAsymmErrors* graph = getEfficiencyGraphAsymmErrors(*efficiencyHistogram, *numHitsHistogram);
+   TGraphAsymmErrors* graph = getEfficiencyGraphAsymmErrors(*efficiencyHistogram, *numHitsHistogram, markerColor);
    graph -> SetName((efficiencyHistogram -> GetName() + std::string("AsGraph")).c_str());
    graph -> Draw("ap");
    graph -> Write();

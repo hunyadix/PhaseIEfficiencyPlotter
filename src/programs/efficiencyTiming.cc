@@ -185,7 +185,7 @@ int main(int argc, char** argv) try
    ////////////////////////////////
    if(TRAJ_LOOP_REQUESTED) try
    {
-      // constexpr std::array<int, 5> delayTest {{157, 160, 161, 163, 165}};
+      constexpr std::array<int, 5> delayTest {{157, 160, 161, 163, 165}};
       TChain* trajTreeChain  = new TChain("trajTree", "List of the trajectory measurements.");
       readInFilesAndAddToChain(config, "input_files_list", "input_files", trajTreeChain);
       // Trajectory measurement tree
@@ -223,8 +223,8 @@ int main(int argc, char** argv) try
          }
          static const int&  runNumber   = trajEventField.run;
          static const int&  lumisection = trajEventField.ls;
-         const float delayInNs   = getDelayNs(runNumber, lumisection);
-         // const float delayInNs   = delayTest[rand() % 5] * 25;
+         // const float delayInNs   = getDelayNs(runNumber, lumisection);
+         const float delayInNs   = delayTest[rand() % 5] * 25;
          auto plotterModuleIt = delayToPlotterModuleMap.find(delayInNs);
          // If key does not exist yet: add key
          if(plotterModuleIt == delayToPlotterModuleMap.end())
@@ -374,9 +374,9 @@ int main(int argc, char** argv) try
       {
          for(unsigned int halfShell = 1; halfShell <= 2; ++halfShell)
          {
-            for(unsigned int sec = 1; sec <= 8; ++sec)
+            for(unsigned int layerPair = 1; layerPair <= 2; ++layerPair)
             {
-               for(unsigned int layerPair = 1; layerPair <= 2; ++layerPair)
+               for(unsigned int sec = 1; sec <= 8; ++sec)
                {
                   static const std::vector<std::string> sideStrings  = {"Negative", "Positive"};
                   static const std::vector<std::string> layerPairStrings  = {"1 and 2", "3 and 4"};
@@ -386,18 +386,19 @@ int main(int argc, char** argv) try
                   std::string halfShellAsString  = sideStrings[halfShell - 1];
                   std::string layerPairAsString = layerPairStrings[layerPair - 1];
                   std::string layerPairAsShortString = layerPairStringsShort[layerPair - 1];
-                  delayVsEfficiencyBNPZHSSIOLP[(side - 1) * 32 + (halfShell - 1) * 16 + (sec - 1) * 2 + (layerPair - 1)] = new TH1D(
+                  int plotIndex = (side - 1) * 32 + (halfShell - 1) * 16 + (layerPair - 1) * 8 + (sec - 1);
+                  delayVsEfficiencyBNPZHSSIOLP[plotIndex] = new TH1D(
                      ("delayVsEfficiency" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Delay vs efficiency on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString).c_str(),
                      DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
-                  delayVsEfficiencyBNPZHSSIOLPHits[(side - 1) * 32 + (halfShell - 1) * 16 + (sec - 1) * 2 + (layerPair - 1)] = new TH1D(
+                  delayVsEfficiencyBNPZHSSIOLPHits[plotIndex] = new TH1D(
                      ("delayVsEfficiencyHits" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Number of eff. hits for delay scenarios on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString).c_str(),
                      DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
-                  delayVsEfficiencyBNPZHSSIOLP[(side - 1) * 32 + (halfShell - 1) * 16 + (sec - 1) * 2 + (layerPair - 1)] -> GetXaxis() -> SetNdivisions(510, kFALSE);
+                  delayVsEfficiencyBNPZHSSIOLP[plotIndex] -> GetXaxis() -> SetNdivisions(510, kFALSE);
                   for(unsigned int numBin = 0; numBin < labelsWBC.size(); ++numBin)
                   {
-                     delayVsEfficiencyBNPZHSSIOLP[(side - 1) * 32 + (halfShell - 1) * 16 + (sec - 1) * 2 + (layerPair - 1)] -> GetXaxis() -> ChangeLabel(numBin + 1, -1, 0.025, -1, -1, -1, labelsWBC[numBin].c_str());
+                     delayVsEfficiencyBNPZHSSIOLP[plotIndex] -> GetXaxis() -> ChangeLabel(numBin + 1, -1, 0.025, -1, -1, -1, labelsWBC[numBin].c_str());
                   }
                }
             }
@@ -453,13 +454,17 @@ int main(int argc, char** argv) try
          gDirectory -> mkdir("DisksInnerOuter");
          gDirectory -> mkdir("LayerDetailed");
          gDirectory -> cd("BpixFpix");
-         for(unsigned int plotIndex = 0; plotIndex < 2; ++plotIndex)  EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyBpixFpix[plotIndex], delayVsEfficiencyBpixFpixHits[plotIndex]);
+         for(unsigned int plotIndex = 0; plotIndex < 2; ++plotIndex)  EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyBpixFpix[plotIndex], delayVsEfficiencyBpixFpixHits[plotIndex], (2 + plotIndex * 2));
          gDirectory -> cd("../LayersNegativePositive");
-         for(unsigned int plotIndex = 0; plotIndex < 8; ++plotIndex)  EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyLayersNegativePositive[plotIndex], delayVsEfficiencyLayersNegativePositiveHits[plotIndex]);
+         for(unsigned int plotIndex = 0; plotIndex < 8; ++plotIndex)  EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyLayersNegativePositive[plotIndex], delayVsEfficiencyLayersNegativePositiveHits[plotIndex], (1 + plotIndex));
          gDirectory -> cd("../DisksInnerOuter");
-         for(unsigned int plotIndex = 0; plotIndex < 12; ++plotIndex) EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyDisksInnerOuter[plotIndex], delayVsEfficiencyDisksInnerOuterHits[plotIndex]);
+         for(unsigned int plotIndex = 0; plotIndex < 12; ++plotIndex) EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyDisksInnerOuter[plotIndex], delayVsEfficiencyDisksInnerOuterHits[plotIndex], (1 + plotIndex) % 8 == 0 ? 9 : (1 + plotIndex) % 8);
          gDirectory -> cd("../LayerDetailed");
-         for(unsigned int plotIndex = 0; plotIndex < 64; ++plotIndex) EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyBNPZHSSIOLP[plotIndex], delayVsEfficiencyBNPZHSSIOLPHits[plotIndex]);
+         for(unsigned int plotIndex = 0; plotIndex < 64; ++plotIndex) 
+         {
+            EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(delayVsEfficiencyBNPZHSSIOLP[plotIndex], delayVsEfficiencyBNPZHSSIOLPHits[plotIndex], 1 + plotIndex % 8);
+            std::cout << delayVsEfficiencyBNPZHSSIOLP[plotIndex] -> GetName() << std::endl;
+         }
       }
       // std::cout << delayVsEfficiencyBpixFpix[0] -> GetXaxis() -> GetNdivisions() << std::endl;
       // delayVsEfficiencyBpixFpix[0] -> SaveAs("test.C");

@@ -275,7 +275,7 @@ class EfficiencyPlotsModule
       static bool histogramExistsAndNotEmpty(TH1* histogram);
       static void draw1DPlot(TH1D* histogram);
       static void draw2DPlot(TH2D* histogram);
-      static void writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram);
+      static void writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram, const int& markerColor = 4);
       static void saveCanvasAsEps(TCanvas* canvas, const std::string& parentDirectoryName);
       float getAvarageEfficiency();
       void  printCheckHistogramPointers();
@@ -285,7 +285,7 @@ class EfficiencyPlotsModule
       std::array<std::pair<int, int>, 8>*  getEfficiencyLayersNegativePositive();
       std::array<std::pair<int, int>, 12>* getEfficiencyDisksInnerOuter();
       std::array<std::pair<int, int>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-      static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram);
+      static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram, const int& markerColor = 4);
    private:
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void calculateCuts();
