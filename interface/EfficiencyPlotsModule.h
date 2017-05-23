@@ -60,10 +60,18 @@ class EfficiencyPlotsModule
       const EventData&       trajEventField_;
       const TrajMeasurement& trajField_;
       const float            delayInNs_;
-      std::array<std::pair<int, int>, 2>  efficiencyBpixFpix               {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 8>  efficiencyLayersNegativePositive {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 12> efficiencyDisksInnerOuter        {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 64> efficiencyBNPZHSSIOLP            {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<int, int>, 2>  clusterSizeXBpixFpix               {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 8>  clusterSizeXLayersNegativePositive {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 12> clusterSizeXDisksInnerOuter        {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 64> clusterSizeXBNPZHSSIOLP            {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<int, int>, 2>  clusterSizeYBpixFpix               {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 8>  clusterSizeYLayersNegativePositive {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 12> clusterSizeYDisksInnerOuter        {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 64> clusterSizeYBNPZHSSIOLP            {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<int, int>, 2>  efficiencyBpixFpix                 {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 8>  efficiencyLayersNegativePositive   {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 12> efficiencyDisksInnerOuter          {{ std::make_pair(0, 0) }};
+      std::array<std::pair<int, int>, 64> efficiencyBNPZHSSIOLP              {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       // Cut values
       int nvtxCut     = 0;
       int zerobiasCut = 0;
@@ -266,6 +274,7 @@ class EfficiencyPlotsModule
       void  fillClusterHistograms();
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void  fillTrajMeasHistograms();
+      // void  downscaleClusterSizes();
       void  downscaleEfficiencyPlots();
       void  addExtraEfficiencyPlots();
       void  savePlots(const JSON& config, std::string mainDirectoryName);
@@ -281,6 +290,14 @@ class EfficiencyPlotsModule
       void  printCheckHistogramPointers();
       void  printCounters();
       void  printCutValues();
+      std::array<std::pair<int, int>, 2>*  getClusterSizeXBpixFpix();
+      std::array<std::pair<int, int>, 8>*  getClusterSizeXLayersNegativePositive();
+      std::array<std::pair<int, int>, 12>* getClusterSizeXDisksInnerOuter();
+      std::array<std::pair<int, int>, 64>* getClusterSizeXBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<int, int>, 2>*  getClusterSizeYBpixFpix();
+      std::array<std::pair<int, int>, 8>*  getClusterSizeYLayersNegativePositive();
+      std::array<std::pair<int, int>, 12>* getClusterSizeYDisksInnerOuter();
+      std::array<std::pair<int, int>, 64>* getClusterSizeYBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       std::array<std::pair<int, int>, 2>*  getEfficiencyBpixFpix();
       std::array<std::pair<int, int>, 8>*  getEfficiencyLayersNegativePositive();
       std::array<std::pair<int, int>, 12>* getEfficiencyDisksInnerOuter();

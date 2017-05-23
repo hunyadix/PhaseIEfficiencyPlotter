@@ -150,9 +150,17 @@ void EfficiencyPlotsModule::defineHistograms()
 
 void EfficiencyPlotsModule::fillClusterHistograms()
 {
+   static const int&       sizeX           = clusterField_.sizeX;
+   static const int&       sizeY           = clusterField_.sizeY;
    static const int&       det             = clusterField_.mod_on.det;
+   static const int&       module          = clusterField_.mod_on.module;
    static const int&       layer           = clusterField_.mod_on.layer;
+   static const int&       sec             = clusterField_.mod_on.sec;
+   static const int&       ladder          = clusterField_.mod_on.ladder;
+   static const int&       side            = clusterField_.mod_on.side;
    static const int&       disk            = clusterField_.mod_on.disk;
+   static const int&       panel           = clusterField_.mod_on.panel;
+   static const int&       ring            = clusterField_.mod_on.ring;
    static const float&     ladderCoord     = clusterField_.mod_on.ladder_coord;
    static const float&     moduleCoord     = clusterField_.mod_on.module_coord;
    static const float&     bladePanelCoord = clusterField_.mod_on.blade_panel_coord;
@@ -204,6 +212,27 @@ void EfficiencyPlotsModule::fillClusterHistograms()
       if(disk == 1)  fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk4);
       if(disk == 2)  fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk5);
       if(disk == 3)  fillFullLayersDiskPlotsCollectionsAtDetectorPart(Disk6);
+   }
+   const int layersNegativePositive = (layer - 1) * 2 + (0 <= module);
+   const int disksInnerOuter =  (0 <= disk) * 4 + (std::abs(disk) - 1) * 2 + ring - 1;
+   const int eBNPZHSSIOLP = (0 <= module) * 32 + (0 <= ladder) * 16 + (sec - 1) * 2 + (2 < layer);
+   clusterSizeXBpixFpix[det].first++;
+   clusterSizeXLayersNegativePositive[layersNegativePositive].first++;
+   clusterSizeXDisksInnerOuter[disksInnerOuter].first++;
+   clusterSizeXBNPZHSSIOLP[eBNPZHSSIOLP].first++; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+   clusterSizeYBpixFpix[det].first++;
+   clusterSizeYLayersNegativePositive[layersNegativePositive].first++;
+   clusterSizeYDisksInnerOuter[disksInnerOuter].first++;
+   clusterSizeYBNPZHSSIOLP[eBNPZHSSIOLP].first++; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+   {
+      clusterSizeXLayersNegativePositive[layersNegativePositive].second += sizeX;
+      clusterSizeXBpixFpix[det].second += sizeX;
+      clusterSizeXDisksInnerOuter[disksInnerOuter].second += sizeX;
+      clusterSizeXBNPZHSSIOLP[eBNPZHSSIOLP].second += sizeX;
+      clusterSizeYLayersNegativePositive[layersNegativePositive].second += sizeY;
+      clusterSizeYBpixFpix[det].second += sizeY;
+      clusterSizeYDisksInnerOuter[disksInnerOuter].second += sizeY;
+      clusterSizeYBNPZHSSIOLP[eBNPZHSSIOLP].second += sizeY;
    }
 }
 
@@ -306,6 +335,7 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
    nvtxCut = 1;
    // Zerobias cut
    zerobiasCut = trajEventField_.trig & ZEROBIAS_BITMASK >> ZEROBIAS_TRIGGER_BIT;
+   // zerobiasCut = true;
    // Federr cut
    federrCut = trajEventField_.federrs_size == 0;
    // Hp cut
@@ -328,7 +358,8 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
    }
    else if(det == 1)
    {
-      lxFidCut = testForForwardFidicualCuts();
+      // lxFidCut = testForForwardFidicualCuts();
+      lxFidCut = 1;
       lyFidCut = lxFidCut;
    }
    // Valmis cut
@@ -356,7 +387,7 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    static const int&       module          = trajField_.mod_on.module;
    static const int&       layer           = trajField_.mod_on.layer;
    static const int&       sec             = trajField_.mod_on.sec;
-   static const int&       ladder             = trajField_.mod_on.ladder;
+   static const int&       ladder          = trajField_.mod_on.ladder;
    static const int&       side            = trajField_.mod_on.side;
    static const int&       disk            = trajField_.mod_on.disk;
    static const int&       panel           = trajField_.mod_on.panel;
@@ -540,6 +571,8 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
       }
    }
 }
+
+// void EfficiencyPlotsModule::downscaleClusterSizes() {}
 
 void EfficiencyPlotsModule::downscaleEfficiencyPlots()
 {
@@ -767,7 +800,47 @@ void EfficiencyPlotsModule::printCutValues()
    std::cout << " --- End cut values --- " << std::endl;
 }
 
-std::array<std::pair<int, int>, 2>*  EfficiencyPlotsModule::getEfficiencyBpixFpix() // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+std::array<std::pair<int, int>, 2>*  EfficiencyPlotsModule::getClusterSizeXBpixFpix()
+{
+   return &clusterSizeXBpixFpix;
+}
+
+std::array<std::pair<int, int>, 8>*  EfficiencyPlotsModule::getClusterSizeXLayersNegativePositive()
+{
+   return &clusterSizeXLayersNegativePositive;
+}
+
+std::array<std::pair<int, int>, 12>* EfficiencyPlotsModule::getClusterSizeXDisksInnerOuter()
+{
+   return &clusterSizeXDisksInnerOuter;
+}
+
+std::array<std::pair<int, int>, 64>* EfficiencyPlotsModule::getClusterSizeXBNPZHSSIOLP() // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+{
+   return &clusterSizeXBNPZHSSIOLP;
+}
+
+std::array<std::pair<int, int>, 2>*  EfficiencyPlotsModule::getClusterSizeYBpixFpix()
+{
+   return &clusterSizeYBpixFpix;
+}
+
+std::array<std::pair<int, int>, 8>*  EfficiencyPlotsModule::getClusterSizeYLayersNegativePositive()
+{
+   return &clusterSizeYLayersNegativePositive;
+}
+
+std::array<std::pair<int, int>, 12>* EfficiencyPlotsModule::getClusterSizeYDisksInnerOuter()
+{
+   return &clusterSizeYDisksInnerOuter;
+}
+
+std::array<std::pair<int, int>, 64>* EfficiencyPlotsModule::getClusterSizeYBNPZHSSIOLP() // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+{
+   return &clusterSizeYBNPZHSSIOLP;
+}
+
+std::array<std::pair<int, int>, 2>*  EfficiencyPlotsModule::getEfficiencyBpixFpix()
 {
    return &efficiencyBpixFpix;
 }
@@ -782,7 +855,7 @@ std::array<std::pair<int, int>, 12>* EfficiencyPlotsModule::getEfficiencyDisksIn
    return &efficiencyDisksInnerOuter;
 }
 
-std::array<std::pair<int, int>, 64>* EfficiencyPlotsModule::getEfficiencyBNPZHSSIOLP()
+std::array<std::pair<int, int>, 64>* EfficiencyPlotsModule::getEfficiencyBNPZHSSIOLP() // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
 {
    return &efficiencyBNPZHSSIOLP;
 }
