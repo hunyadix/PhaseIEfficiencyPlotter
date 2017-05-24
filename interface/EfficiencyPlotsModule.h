@@ -4,6 +4,7 @@
 #include "../interface/DataStructures_v5.h"
 #include "../interface/TimerColored.h"
 #include "../interface/CommonActors.h"
+#include "../interface/HelperFunctionsCommon.h"
 #include "../interface/WilsonScoreInterval.h"
 
 #include <TROOT.h>
@@ -24,8 +25,17 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <boost/variant.hpp>
 #include <memory>
+
+#include <boost/variant.hpp>
+
+struct identity_t 
+{
+   template<class T>
+   T operator()(T&& t) const { return std::forward<T>(t); }
+   constexpr identity_t() {}
+};
+constexpr identity_t identity;
 
 #include "../interface/json.hpp"
 using JSON = nlohmann::json;
@@ -37,7 +47,7 @@ class EfficiencyPlotsModule
 {
    using LayersDiskPlotsCollection = std::array<TH1*, 46>;
    using EfficiencyPlotPair        = std::array<TH1*, 2>;
-   using BadROClist                = std::vector<std::pair<int, int>>;
+   using BadROClist                = std::set<std::tuple<int, int, int>>;
    private:
       static constexpr int                  ZEROBIAS_TRIGGER_BIT               = 0;
       static constexpr int                  ZEROBIAS_BITMASK                   = 1 << ZEROBIAS_TRIGGER_BIT;
@@ -51,7 +61,7 @@ class EfficiencyPlotsModule
       static constexpr float                TRACK_DZ_CUT_BARREL_N_MINUS_1_VAL  = 0.1f;
       static constexpr float                TRACK_DZ_CUT_FORWARD_N_MINUS_1_VAL = 0.5f;
       static constexpr float                MEAS_HITSEP_CUT_N_MINUS_1_VAL      = 0.01f;
-      static constexpr float                HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL   = 0.10f;
+      static constexpr float                HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL   = 0.01f;
       static constexpr float                BARREL_MODULE_EDGE_X_CUT           = 0.6f;
       static constexpr float                BARREL_MODULE_EDGE_Y_CUT           = 3.0f;
       static BadROClist                     badROClist;

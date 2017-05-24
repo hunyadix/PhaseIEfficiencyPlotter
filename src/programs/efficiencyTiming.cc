@@ -57,7 +57,7 @@
 #include "../../interface/json.hpp"
 using JSON = nlohmann::json;
 
-// #define RANDOM_DELAYS
+#define RANDOM_DELAYS
 
 constexpr float HALF_PI = 0.5 * 3.141592653589793238462;
 
@@ -72,8 +72,8 @@ const     float DELAY_PLOTS_UPPER_EDGE                           = 173;
 
 const bool CLUST_LOOP_REQUESTED = false;
 const bool TRAJ_LOOP_REQUESTED  = true;
-// constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Collisions;
-constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Cosmics;
+constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Collisions;
+// constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Cosmics;
 
 void                                        testSaveFolders(const JSON& config);
 TFile*                                      generateOutputNtuple(const JSON& config);
@@ -362,7 +362,7 @@ int main(int argc, char** argv) try
             ("delayVsEfficiencyHits" + detAsString).c_str(),
             ("Number of eff. hits for delay scenarios on " + detAsString + ";delay;hits").c_str(), 
             DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
-         delayVsEfficiencyBpixFpix[det] -> GetXaxis() -> SetNdivisions(510, kFALSE);
+         delayVsEfficiencyBpixFpix[det] -> GetXaxis() -> SetNdivisions(500 + DELAY_PLOTS_NUM_BINS, kFALSE);
          for(unsigned int numBin = 0; numBin < labelsWBC.size(); ++numBin)
          {
             delayVsEfficiencyBpixFpix[det] -> GetXaxis() -> ChangeLabel(numBin + 1, -1, 0.025, -1, -1, -1, labelsWBC[numBin].c_str());
@@ -402,7 +402,7 @@ int main(int argc, char** argv) try
                ("delayVsEfficiencyLayerHits" + layerAsString + sideAsString).c_str(),
                ("Number of eff. hits for delay scenarios on layer " + layerAsString + ", " + sideAsString + " side;delay;hits").c_str(),
                DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
-            delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] -> GetXaxis() -> SetNdivisions(510, kFALSE);
+            delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] -> GetXaxis() -> SetNdivisions(500 + DELAY_PLOTS_NUM_BINS, kFALSE);
             for(unsigned int numBin = 0; numBin < labelsWBC.size(); ++numBin)
             {
                delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] -> GetXaxis() -> ChangeLabel(numBin + 1, -1, 0.025, -1, -1, -1, labelsWBC[numBin].c_str());
@@ -451,7 +451,7 @@ int main(int argc, char** argv) try
                ("delayVsEfficiencyDiskHits" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Number of eff. hits for delay scenarios on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;hits" ).c_str(),
                DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
-            delayVsEfficiencyDisksInnerOuter[histogramIndex] -> GetXaxis() -> SetNdivisions(510, kFALSE);
+            delayVsEfficiencyDisksInnerOuter[histogramIndex] -> GetXaxis() -> SetNdivisions(500 + DELAY_PLOTS_NUM_BINS, kFALSE);
             for(unsigned int numBin = 0; numBin < labelsWBC.size(); ++numBin)
             {
                delayVsEfficiencyDisksInnerOuter[histogramIndex] -> GetXaxis() -> ChangeLabel(numBin + 1, -1, 0.025, -1, -1, -1, labelsWBC[numBin].c_str());
@@ -502,7 +502,7 @@ int main(int argc, char** argv) try
                      ("delayVsEfficiencyHits" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Number of eff. hits for delay scenarios on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;hits").c_str(),
                      DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
-                  delayVsEfficiencyBNPZHSSIOLP[plotIndex] -> GetXaxis() -> SetNdivisions(510, kFALSE);
+                  delayVsEfficiencyBNPZHSSIOLP[plotIndex] -> GetXaxis() -> SetNdivisions(500 + DELAY_PLOTS_NUM_BINS, kFALSE);
                   for(unsigned int numBin = 0; numBin < labelsWBC.size(); ++numBin)
                   {
                      delayVsEfficiencyBNPZHSSIOLP[plotIndex] -> GetXaxis() -> ChangeLabel(numBin + 1, -1, 0.025, -1, -1, -1, labelsWBC[numBin].c_str());
@@ -732,26 +732,26 @@ float getDelayNs(int runNumber, int lumisectionNumber) try
    static const std::map<int, std::map<int, float>> delayList =
    {
       // FPix
-      { 291872, {{ -1, 162.0f * 25 + 12 }}},
-      { 292283, {{ -1, 164.0f * 25 + 18 }}},
-      { 292364, {{ -1, 164.0f * 25 + 6 }}},
-      { 292365, {{ -1, 164.0f * 25 + 6 }}},
-      { 292366, {{ -1, 164.0f * 25 + 6 }}},
-      { 292367, {{ -1, 164.0f * 25 + 6 }}},
-      { 292592, {{ -1, 162.0f * 25 + 6 }}},
-      { 292593, {{ -1, 163.0f * 25 + 6 }}},
-      { 292594, {{ -1, 163.0f * 25 + 6 }}},
+      { 291872, {{ -1, 162.0f * 25 - 12 }}},
+      { 292283, {{ -1, 164.0f * 25 - 18 }}},
+      { 292364, {{ -1, 164.0f * 25 - 6 }}},
+      { 292365, {{ -1, 164.0f * 25 - 6 }}},
+      { 292366, {{ -1, 164.0f * 25 - 6 }}},
+      { 292367, {{ -1, 164.0f * 25 - 6 }}},
+      { 292592, {{ -1, 162.0f * 25 - 6 }}},
+      { 292593, {{ -1, 163.0f * 25 - 6 }}},
+      { 292594, {{ -1, 163.0f * 25 - 6 }}},
       // //BPix
-      { 292079, {{ -1, 163.0f * 25 + 18 }}},
-      { 292080, {{ -1, 163.0f * 25 + 18 }}},
-      { 292283, {{ -1, 165.0f * 25 + 18 }}},
-      { 292364, {{ -1, 164.0f * 25 + 6 }}},
-      { 292365, {{ -1, 164.0f * 25 + 6 }}},
-      { 292366, {{ -1, 164.0f * 25 + 6 }}},
-      { 292367, {{ -1, 164.0f * 25 + 6 }}},
-      { 292592, {{ -1, 162.0f * 25 + 6 }}},
-      { 292593, {{ -1, 163.0f * 25 + 6 }}},
-      { 292594, {{ -1, 163.0f * 25 + 6 }}}
+      { 292079, {{ -1, 163.0f * 25 - 18 }}},
+      { 292080, {{ -1, 163.0f * 25 - 18 }}},
+      { 292283, {{ -1, 165.0f * 25 - 18 }}},
+      { 292364, {{ -1, 164.0f * 25 - 6 }}},
+      { 292365, {{ -1, 164.0f * 25 - 6 }}},
+      { 292366, {{ -1, 164.0f * 25 - 6 }}},
+      { 292367, {{ -1, 164.0f * 25 - 6 }}},
+      { 292592, {{ -1, 162.0f * 25 - 6 }}},
+      { 292593, {{ -1, 163.0f * 25 - 6 }}},
+      { 292594, {{ -1, 163.0f * 25 - 6 }}}
    };
    const std::map<int, float>& runLsToDelayMap = delayList.at(runNumber);
    const auto& universalLumisectionIt = runLsToDelayMap.find(-1);
@@ -763,3 +763,8 @@ catch(const std::out_of_range& e)
    return NOVAL_F;
 }
 
+std::pair<int, int> delayInNsToRelativeWBCandPhaseDelay(float delayInNs)
+{
+   int valueAsInt = (delayInNs + 0.5f);
+   return std::make_pair(valueAsInt / 25, valueAsInt % 25);
+}

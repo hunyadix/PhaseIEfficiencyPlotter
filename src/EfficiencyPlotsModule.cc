@@ -157,9 +157,7 @@ void EfficiencyPlotsModule::fillClusterHistograms()
    static const int&       layer           = clusterField_.mod_on.layer;
    static const int&       sec             = clusterField_.mod_on.sec;
    static const int&       ladder          = clusterField_.mod_on.ladder;
-   static const int&       side            = clusterField_.mod_on.side;
    static const int&       disk            = clusterField_.mod_on.disk;
-   static const int&       panel           = clusterField_.mod_on.panel;
    static const int&       ring            = clusterField_.mod_on.ring;
    static const float&     ladderCoord     = clusterField_.mod_on.ladder_coord;
    static const float&     moduleCoord     = clusterField_.mod_on.module_coord;
@@ -243,11 +241,24 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Colli
    static const int&       det             = trajField_.mod_on.det;
    static const int&       layer           = trajField_.mod_on.layer;  
    static const int&       disk            = trajField_.mod_on.disk;
-   static const int&       module          = trajField_.mod_on.module;
-   static const int&       ladder          = trajField_.mod_on.ladder;
+   static const float&     ladderCoord     = trajField_.mod_on.ladder_coord;
+   static const float&     moduleCoord     = trajField_.mod_on.module_coord;
+   static const float&     bladePanelCoord = trajField_.mod_on.blade_panel_coord;
+   static const float&     diskRingCoord   = trajField_.mod_on.disk_ring_coord;
    static const float&     lx              = trajField_.lx;
    static const float&     ly              = trajField_.ly;
    static const float&     d_tr            = trajField_.d_tr;
+   static const std::vector<TH2D*>  binMaps = 
+   { 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[AllDisks]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer1]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer2]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer3]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer4]) 
+   };
+   const int layerMapKey = det ? 0 : layer;
+   const float* binXKey  = det ? &diskRingCoord   : &moduleCoord;
+   const float* binYKey  = det ? &bladePanelCoord : &ladderCoord;
    nvtxCut = VERTEX_NUMTRACK_CUT_N_MINUS_1_VAL < trk.fromVtxNtrk;
    // Zerobias cut
    zerobiasCut = trajEventField_.trig & ZEROBIAS_BITMASK >> ZEROBIAS_TRIGGER_BIT;
@@ -310,8 +321,8 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Colli
    valmisCut = trajField_.validhit || trajField_.missing;
    // Hitsep cut
    hitsepCut = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
-   std::pair<int, int> moduleLadder = std::make_pair(module, ladder);
-   badROCCut = std::find(badROClist.begin(), badROClist.end(), moduleLadder) == badROClist.end();
+   // std::tuple<int, int, int> rocLocation                           = std::make_tuple(det, layerMapKey, binMaps[layerMapKey] -> FindFixBin(*binXKey, *binYKey));
+   // badROCCut = std::find(badROClist.begin(), badROClist.end(), rocLocation) == badROClist.end();
    effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
@@ -327,11 +338,25 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
 {
    static const TrackData& trk             = trajField_.trk;
    static const int&       det             = trajField_.mod_on.det;
-   static const int&       module          = trajField_.mod_on.module;
-   static const int&       ladder          = trajField_.mod_on.ladder;
+   static const int&       layer           = trajField_.mod_on.layer;
+   static const float&     ladderCoord     = trajField_.mod_on.ladder_coord;
+   static const float&     moduleCoord     = trajField_.mod_on.module_coord;
+   static const float&     bladePanelCoord = trajField_.mod_on.blade_panel_coord;
+   static const float&     diskRingCoord   = trajField_.mod_on.disk_ring_coord;
    static const float&     lx              = trajField_.lx;
    static const float&     ly              = trajField_.ly;
    static const float&     d_tr            = trajField_.d_tr;
+   static const std::vector<TH2D*>  binMaps = 
+   { 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[AllDisks]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer1]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer2]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer3]), 
+      dynamic_cast<TH2D*>(rechitOccupancyROCPlots[Layer4]) 
+   };
+   const int layerMapKey = det ? 0 : layer;
+   const float* binXKey  = det ? &diskRingCoord   : &moduleCoord;
+   const float* binYKey  = det ? &bladePanelCoord : &ladderCoord;
    nvtxCut = 1;
    // Zerobias cut
    zerobiasCut = trajEventField_.trig & ZEROBIAS_BITMASK >> ZEROBIAS_TRIGGER_BIT;
@@ -365,9 +390,9 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
    // Valmis cut
    valmisCut = trajField_.validhit || trajField_.missing;
    // Hitsep cut
-   hitsepCut = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
-   std::pair<int, int> moduleLadder = std::make_pair(module, ladder);
-   badROCCut = std::find(badROClist.begin(), badROClist.end(), moduleLadder) == badROClist.end();
+   hitsepCut                             = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
+   // std::tuple<int, int, int> rocLocation = std::make_tuple(det, layerMapKey, binMaps[layerMapKey] -> FindFixBin(*binXKey, *binYKey));
+   // badROCCut                             = std::find(badROClist.begin(), badROClist.end(), rocLocation) == badROClist.end();
    effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
@@ -470,12 +495,12 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    vtxNtrkEfficiencyPreCutsPlots[0]   -> Fill(trk.fromVtxNtrk);
    ptEfficiencyPreCutsPlots[0]        -> Fill(trk.pt);
    striphitsEfficiencyPreCutsPlots[0] -> Fill(trk.strip);
-   fillPairs(layersDisksEfficiencyPlots[0],       layersDisksEfficiencyPlots[1],       layersDisks,     fillEfficiencyCondition,  effCutAll  );
+   fillPairs(layersDisksEfficiencyPlots[0],       layersDisksEfficiencyPlots[1],       layersDisks,     fillEfficiencyCondition, effCutAll  );
    fillPairs(vtxNtrkEfficiencyWithCutsPlots[0],   vtxNtrkEfficiencyWithCutsPlots[1],   trk.fromVtxNtrk, fillEfficiencyCondition, noVtxCut   );
    fillPairs(ptEfficiencyWithCutsPlots[0],        ptEfficiencyWithCutsPlots[1],        trk.pt,          fillEfficiencyCondition, noPtCut    );
    fillPairs(striphitsEfficiencyWithCutsPlots[0], striphitsEfficiencyWithCutsPlots[1], trk.strip,       fillEfficiencyCondition, noNStripCut);
-   fillPairs(clustDistWithCutsPlots[0],           clustDistWithCutsPlots[1],           d_cl,            !missing,                 effCutAll  );
-   fillPairs(hitDistWithCutsPlots[0],             hitDistWithCutsPlots[1],             d_tr,            fillEfficiencyCondition,  noHitsepCut);
+   fillPairs(clustDistWithCutsPlots[0],           clustDistWithCutsPlots[1],           d_cl,            !missing,                effCutAll  );
+   fillPairs(hitDistWithCutsPlots[0],             hitDistWithCutsPlots[1],             d_tr,            fillEfficiencyCondition, noHitsepCut);
    fillFullLayersDiskPlotsCollectionsAtDetectorPart(LayersAndDisks, LayersAndDisksEfficiency);
    if(det == 0)
    {
@@ -607,6 +632,20 @@ void EfficiencyPlotsModule::downscaleEfficiencyPlots()
 
 void EfficiencyPlotsModule::addExtraEfficiencyPlots()
 {
+   auto sumWeightSumCalculation = [] (const TH2D* histogram, const TH2D* weights)
+   {
+      double sum = 0;
+      double weightsSum = 0;
+      unsigned int numBins = histogram -> GetSize();
+      for(unsigned int binIndex = 0; binIndex < numBins; ++binIndex)
+      {
+         sum        += (*histogram)[binIndex] * (*weights)[binIndex];
+         weightsSum += (*weights)[binIndex];
+      }
+      return std::make_tuple(sum, weightsSum);
+   };
+   double sum = 0;
+   double weightSum = 0;
    // ROC efficiency distribution
    for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
    {
@@ -618,8 +657,46 @@ void EfficiencyPlotsModule::addExtraEfficiencyPlots()
       {
          if((*detectorPartROCHits)[rocBin] == 0) continue;
          rocEfficiencyDistributionPlots[plotIndex] -> Fill((*detectorPartROCEfficiencies)[rocBin]);
+         double currentSum, currentWeightSum;
+         std::tie(currentSum, currentWeightSum) = sumWeightSumCalculation(detectorPartROCEfficiencies, detectorPartROCHits);
+         sum += currentSum;
+         weightSum += currentWeightSum;
       }
-      std::cout << "rocEfficiencyDistributionPlots.size(): " << rocEfficiencyDistributionPlots[plotIndex] -> GetEntries() << std::endl;
+      // std::cout << "rocEfficiencyDistributionPlots.size(): " << rocEfficiencyDistributionPlots[plotIndex] -> GetEntries() << std::endl;
+   }
+   double mean = sum / weightSum;
+   std::cout << sum << " " << weightSum << " " << sum / weightSum << std::endl;
+   // std::vector<std::tuple<TH2D*, TH2D*>> existingHistogramPairs;
+   // for(int i: range(23)) if(efficiencyROCPlots[i]) existingHistogramPairs.push_back(std::make_tuple(dynamic_cast<TH2D*>(efficiencyROCPlots[i]), dynamic_cast<TH2D*>(efficiencyROCPlots[i + 23])));
+   // for(const auto plotPair: existingHistogramPairs)
+   // {
+   //    const TH2D* detectorPartROCHits         = std::get<0>(plotPair);
+   //    const TH2D* detectorPartROCEfficiencies = std::get<1>(plotPair);
+   // }
+   std::cout << "badROC list: " << std::endl;
+   for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
+   {
+      const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
+      const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
+      if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+      unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
+      int layer = NOVAL_I;
+      if(plotIndex == AllDisks) layer = 0;
+      if(plotIndex == Layer1)   layer = 1;
+      if(plotIndex == Layer2)   layer = 2;
+      if(plotIndex == Layer3)   layer = 3;
+      if(plotIndex == Layer4)   layer = 4;
+      for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
+      {
+         if((*detectorPartROCHits)[rocBin] == 0) continue;
+         float efficiency = rocEfficiencyDistributionPlots[plotIndex] -> GetBinContent((*detectorPartROCEfficiencies)[rocBin]);
+
+         if(efficiency < mean - 0.1)
+         {
+             std::cout << "{ " << (layer == 0) << ", " << layer << ", " << rocBin << " }" << std::endl;
+         }
+
+      }
    }
 }
 

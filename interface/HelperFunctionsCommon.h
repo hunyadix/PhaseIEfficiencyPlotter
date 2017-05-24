@@ -1,5 +1,4 @@
-#ifndef HELPER_FUNCTIONS_COMMON_H
-#define HELPER_FUNCTIONS_COMMON_H
+#pragma once
 
 #include <fstream>
 #include <vector>
@@ -122,12 +121,12 @@ std::pair<R, R> deref_minmax_element(Iter first, Iter last)
     return std::pair<R, R>{*iters.first, *iters.second};
 }
 
-std::string fileToString(const std::string& filename) 
+template <typename String>
+std::string fileToString(const String& filename) 
 {
+	static_assert(std::is_convertible<String, std::string>::value, "fileToString() called with non-string object.");
 	std::ifstream file(filename);
 	std::string result = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	file.close(); 
 	return result;
 }
-
-#endif
