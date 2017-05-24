@@ -321,8 +321,8 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Colli
    valmisCut = trajField_.validhit || trajField_.missing;
    // Hitsep cut
    hitsepCut = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
-   // std::tuple<int, int, int> rocLocation                           = std::make_tuple(det, layerMapKey, binMaps[layerMapKey] -> FindFixBin(*binXKey, *binYKey));
-   // badROCCut = std::find(badROClist.begin(), badROClist.end(), rocLocation) == badROClist.end();
+   std::tuple<int, int, int> rocLocation                           = std::make_tuple(det, layerMapKey, binMaps[layerMapKey] -> FindFixBin(*binXKey, *binYKey));
+   badROCCut = std::find(badROClist.begin(), badROClist.end(), rocLocation) == badROClist.end();
    effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
@@ -391,8 +391,8 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
    valmisCut = trajField_.validhit || trajField_.missing;
    // Hitsep cut
    hitsepCut                             = MEAS_HITSEP_CUT_N_MINUS_1_VAL < d_tr;
-   // std::tuple<int, int, int> rocLocation = std::make_tuple(det, layerMapKey, binMaps[layerMapKey] -> FindFixBin(*binXKey, *binYKey));
-   // badROCCut                             = std::find(badROClist.begin(), badROClist.end(), rocLocation) == badROClist.end();
+   std::tuple<int, int, int> rocLocation = std::make_tuple(det, layerMapKey, binMaps[layerMapKey] -> FindFixBin(*binXKey, *binYKey));
+   badROCCut                             = std::find(badROClist.begin(), badROClist.end(), rocLocation) == badROClist.end();
    effCutAll      = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    noVtxCut       =            zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
    // noHpCut        = nvtxCut && zerobiasCut && federrCut          && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut && hitsepCut && badROCCut;
@@ -632,18 +632,6 @@ void EfficiencyPlotsModule::downscaleEfficiencyPlots()
 
 void EfficiencyPlotsModule::addExtraEfficiencyPlots()
 {
-   auto sumWeightSumCalculation = [] (const TH2D* histogram, const TH2D* weights)
-   {
-      double sum = 0;
-      double weightsSum = 0;
-      unsigned int numBins = histogram -> GetSize();
-      for(unsigned int binIndex = 0; binIndex < numBins; ++binIndex)
-      {
-         sum        += (*histogram)[binIndex] * (*weights)[binIndex];
-         weightsSum += (*weights)[binIndex];
-      }
-      return std::make_tuple(sum, weightsSum);
-   };
    double sum = 0;
    double weightSum = 0;
    // ROC efficiency distribution
@@ -657,22 +645,26 @@ void EfficiencyPlotsModule::addExtraEfficiencyPlots()
       {
          if((*detectorPartROCHits)[rocBin] == 0) continue;
          rocEfficiencyDistributionPlots[plotIndex] -> Fill((*detectorPartROCEfficiencies)[rocBin]);
-         double currentSum, currentWeightSum;
-         std::tie(currentSum, currentWeightSum) = sumWeightSumCalculation(detectorPartROCEfficiencies, detectorPartROCHits);
-         sum += currentSum;
-         weightSum += currentWeightSum;
+         sum       += (*detectorPartROCEfficiencies)[rocBin] * (*detectorPartROCHits)[rocBin];
+         weightSum += (*detectorPartROCHits)[rocBin];
       }
-      // std::cout << "rocEfficiencyDistributionPlots.size(): " << rocEfficiencyDistributionPlots[plotIndex] -> GetEntries() << std::endl;
    }
    double mean = sum / weightSum;
+   double errorSquaredSum = 0;
    std::cout << sum << " " << weightSum << " " << sum / weightSum << std::endl;
-   // std::vector<std::tuple<TH2D*, TH2D*>> existingHistogramPairs;
-   // for(int i: range(23)) if(efficiencyROCPlots[i]) existingHistogramPairs.push_back(std::make_tuple(dynamic_cast<TH2D*>(efficiencyROCPlots[i]), dynamic_cast<TH2D*>(efficiencyROCPlots[i + 23])));
-   // for(const auto plotPair: existingHistogramPairs)
-   // {
-   //    const TH2D* detectorPartROCHits         = std::get<0>(plotPair);
-   //    const TH2D* detectorPartROCEfficiencies = std::get<1>(plotPair);
-   // }
+   for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
+   {
+      const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
+      const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
+      if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+      unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
+      for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
+      {
+         errorSquaredSum += std::pow(mean - (*detectorPartROCEfficiencies)[rocBin], 2) * (*detectorPartROCHits)[rocBin];
+      }
+   }
+   double statError = std::sqrt(errorSquaredSum / (weightSum - 1));
+   std::cout << "mean: " << mean << ", statError: " << statError << std::endl;
    std::cout << "badROC list: " << std::endl;
    for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
    {
@@ -689,9 +681,9 @@ void EfficiencyPlotsModule::addExtraEfficiencyPlots()
       for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
       {
          if((*detectorPartROCHits)[rocBin] == 0) continue;
-         float efficiency = rocEfficiencyDistributionPlots[plotIndex] -> GetBinContent((*detectorPartROCEfficiencies)[rocBin]);
-
-         if(efficiency < mean - 0.1)
+         float efficiency = (*detectorPartROCEfficiencies)[rocBin];
+         // std::cout << efficiency << std::endl;   
+         if((efficiency < mean - 0.1 && efficiency < mean - statError * 2) || efficiency < 0.15)
          {
              std::cout << "{ " << (layer == 0) << ", " << layer << ", " << rocBin << " }" << std::endl;
          }
