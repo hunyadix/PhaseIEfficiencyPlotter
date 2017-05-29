@@ -44,7 +44,8 @@
 // #include <TRandom3.h>
 
 // C++ libraries
-#include <boost/filesystem.hpp>
+// #include <boost/filesystem.hpp>
+#include <experimental/filesystem>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -88,7 +89,7 @@ int main(int argc, char** argv) try
    std::cout << "Done." << std::endl;
    testSaveFolders(config);
    TimerColored timer(timer_prompt);
-   TFile* histogramsNtuple = generateOutputNtuple(config);
+   [[maybe_unused]] TFile* histogramsNtuple = generateOutputNtuple(config);
    gROOT -> SetBatch(kFALSE);
    // std::map<std::string, EfficiencyPlotsModule::Scenario> scenarioStringToObjectMap {{"collisions", EfficiencyPlotsModule::Collisions}, {"cosmics", EfficiencyPlotsModule::Cosmics}};
    // EfficiencyPlotsModule::Scenario scenario = scenarioStringToObjectMap.at(config.at("scenario"));
@@ -283,16 +284,16 @@ void testSaveFolders(const JSON& config)
    {
       try 
       {
-         boost::filesystem::path        filePath   = directoryName; 
-         boost::filesystem::file_status fileStatus = boost::filesystem::status(filePath);
-         if(!boost::filesystem::is_directory(fileStatus))
+         std::experimental::filesystem::path        filePath   = directoryName; 
+         std::experimental::filesystem::file_status fileStatus = std::experimental::filesystem::status(filePath);
+         if(!std::experimental::filesystem::is_directory(fileStatus))
          {
             std::cerr << "Error: Missing directory: " << directoryName << std::endl;
             std::cout << "Do you want to automatically create this missing directory: " << directoryName << "? (y/n): ";
             char answer = std::cin.get();
             if(answer == 'y')
             {
-               boost::filesystem::create_directory(filePath);
+               std::experimental::filesystem::create_directory(filePath);
                std::cout << "Directory created succesfully." << std::endl;
             }
             else
@@ -301,7 +302,7 @@ void testSaveFolders(const JSON& config)
             }
          }
       }
-      catch(boost::filesystem::filesystem_error &e)
+      catch(std::experimental::filesystem::filesystem_error &e)
       {
          std::cerr << e.what() << std::endl;
       }

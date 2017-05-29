@@ -285,9 +285,10 @@ class EfficiencyPlotsModule
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void  fillTrajMeasHistograms();
       // void  downscaleClusterSizes();
-      void  downscaleEfficiencyPlots();
-      void  addExtraEfficiencyPlots();
-      void  savePlots(const JSON& config, std::string mainDirectoryName);
+      void        downscaleEfficiencyPlots();
+      void        addExtraEfficiencyPlots();
+      static void printCombinedBadROCList(std::map<float, EfficiencyPlotsModule>& delayToPlotterModuleMap);
+      void        savePlots(const JSON& config, std::string mainDirectoryName);
       template <typename T> 
       static void saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
       static void saveHistogramInSubdirectory(TH1* histogram, std::string parentDirectoryName, const std::string& subdirectoryName, const JSON& config);

@@ -2,6 +2,10 @@
 
 #include "../interface/common_functions_jkarancs.h"
 
+#define S(x) #x
+#define S_(x) S(x)
+#define S__LINE__ S_(__LINE__)
+
 constexpr int                  EfficiencyPlotsModule::ZEROBIAS_TRIGGER_BIT;
 constexpr int                  EfficiencyPlotsModule::ZEROBIAS_BITMASK;
 constexpr int                  EfficiencyPlotsModule::VERTEX_NUMTRACK_CUT_N_MINUS_1_VAL;
@@ -405,7 +409,7 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
 }
 
 template <EfficiencyPlotsModule::Scenario scenario>
-void EfficiencyPlotsModule::fillTrajMeasHistograms()
+void EfficiencyPlotsModule::fillTrajMeasHistograms() try
 {
    // Shortcuts
    static const int&       det             = trajField_.mod_on.det;
@@ -436,6 +440,7 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    const int   clust_near              = (0 < d_cl) && (d_cl < HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL);
    const int   fillEfficiencyCondition = !missing || clust_near;
    const int   absDisk          = std::abs(disk);
+   const int   panelOrientation = [&] { if(det == 1) return ((side - 1) << 2) + ((ring - 1) << 1) + panel - 1; return NOVAL_I; }();;
    // if(det)
    // {
    //    std::cout << "ring: " << ring << std::endl;
@@ -443,8 +448,11 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    //    std::cout << "std::abs(ring % 2): " << std::abs(ring % 2) << std::endl;
    //    std::cin.get();
    // }
-   const int   panelOrientation = ((side - 1) << 2) + ((ring - 1) << 1) + panel - 1; // -Z, +Z, ring 1 (inner), ring 2 (outer), panel 1, panel 2
-   if(det == 1 && !(0 <= panelOrientation && panelOrientation < 8))
+   if(det != 0 && det != 1) 
+   {
+      std::cout << "Invalid detector part ID in dataset: " << det << ". Execution is continued with the next data point." << std::endl;
+   }
+   if(det == 1  && !(0 <= panelOrientation && panelOrientation < 8))
    {
       std::cout << error_prompt << "Error reading some of the files..." << std::endl;
       std::cout << debug_prompt << "panelOrientation: " << std::endl;
@@ -580,21 +588,41 @@ void EfficiencyPlotsModule::fillTrajMeasHistograms()
    // For efficiency calculations
    if(effCutAll)
    {
-      const int layersNegativePositive = (layer - 1) * 2 + (0 <= module);
-      const int disksInnerOuter =  (0 <= disk) * 4 + (std::abs(disk) - 1) * 2 + ring - 1;
-      const int eBNPZHSSIOLP = (0 <= module) * 32 + (0 <= ladder) * 16 + (sec - 1) * 2 + (2 < layer);
+      const int layersNegativePositive = [&] { if(det == 0) return (layer - 1) * 2 + (0 <= module); return NOVAL_I; }();
+      const int disksInnerOuter        = [&] { if(det == 1) return (0 <= disk) * 4 + (std::abs(disk) - 1) * 2 + ring - 1;; return NOVAL_I; }();
+      const int eBNPZHSSIOLP           = [&] { if(det == 0) return (0 <= module) * 32 + (0 <= ladder) * 16 + (sec - 1) * 2 + (2 < layer); return NOVAL_I; }();
       efficiencyBpixFpix[det].first++;
-      efficiencyLayersNegativePositive[layersNegativePositive].first++;
-      efficiencyDisksInnerOuter[disksInnerOuter].first++;
-      efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].first++; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      if(det == 0)
+      {
+         if(8 <= layersNegativePositive || layersNegativePositive < 0) throw std::runtime_error("error at " __FILE__ ":" S__LINE__);
+         efficiencyLayersNegativePositive[layersNegativePositive].first++;
+         
+         if(64 <= eBNPZHSSIOLP || eBNPZHSSIOLP < 0) throw std::runtime_error("error at " __FILE__ ":" S__LINE__);
+         efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].first++; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      }
+      if(det == 1)
+      {
+         if(12 <= disksInnerOuter || disksInnerOuter < 0) throw std::runtime_error("error at " __FILE__ ":" S__LINE__);
+         efficiencyDisksInnerOuter[disksInnerOuter].first++;
+      }
       if(fillEfficiencyCondition)
       {
-         efficiencyLayersNegativePositive[layersNegativePositive].second++;
          efficiencyBpixFpix[det].second++;
-         efficiencyDisksInnerOuter[disksInnerOuter].second++;
-         efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].second++;
+         if(det == 0)
+         {
+            efficiencyLayersNegativePositive[layersNegativePositive].second++;
+            efficiencyBNPZHSSIOLP[eBNPZHSSIOLP].second++;
+         }
+         if(det == 1)
+         {
+            efficiencyDisksInnerOuter[disksInnerOuter].second++;
+         }
       }
    }
+}
+catch(std::exception& e)
+{
+   std::cout << e.what() << std::endl;
 }
 
 // void EfficiencyPlotsModule::downscaleClusterSizes() {}
@@ -630,10 +658,91 @@ void EfficiencyPlotsModule::downscaleEfficiencyPlots()
    };
 }
 
-void EfficiencyPlotsModule::addExtraEfficiencyPlots()
+void EfficiencyPlotsModule::printCombinedBadROCList(std::map<float, EfficiencyPlotsModule>& delayToPlotterModuleMap)
 {
    double sum = 0;
    double weightSum = 0;
+   for(const auto& delayScenarioPair: delayToPlotterModuleMap)
+   {
+      const EfficiencyPlotsModule& efficiencyPlotsModule = delayScenarioPair.second;
+      for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
+      {
+         const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyPlotsModule.efficiencyROCPlots[plotIndex]);
+         const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyPlotsModule.efficiencyROCPlots[plotIndex + 23]); 
+         if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+         unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
+         for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
+         {
+            if((*detectorPartROCHits)[rocBin] == 0) continue;
+            sum       += (*detectorPartROCEfficiencies)[rocBin] * (*detectorPartROCHits)[rocBin];
+            weightSum += (*detectorPartROCHits)[rocBin];
+         }
+      }
+   }
+   // ROC efficiency distribution
+   double mean = sum / weightSum;
+   double errorSquaredSum = 0;
+   std::cout << sum << " " << weightSum << " " << sum / weightSum << std::endl;
+   for(const auto& delayScenarioPair: delayToPlotterModuleMap)
+   {
+      const EfficiencyPlotsModule& efficiencyPlotsModule = delayScenarioPair.second;
+      for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
+      {
+         const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyPlotsModule.efficiencyROCPlots[plotIndex]);
+         const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyPlotsModule.efficiencyROCPlots[plotIndex + 23]); 
+         if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+         unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
+         for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
+         {
+            errorSquaredSum += std::pow(mean - (*detectorPartROCEfficiencies)[rocBin], 2) * (*detectorPartROCHits)[rocBin];
+         }
+      }
+   }
+   double statError = std::sqrt(errorSquaredSum / (weightSum - 1));
+   std::cout << "mean: " << mean << ", statError: " << statError << std::endl;
+   std::cout << "combined badROC list: " << std::endl;
+   for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
+   {
+      TH2D* framePlot = dynamic_cast<TH2D*>(delayToPlotterModuleMap.begin() -> second.efficiencyROCPlots[plotIndex]);
+      if(!framePlot) continue;
+      int layer = NOVAL_I;
+      if(plotIndex == AllDisks) layer = 0;
+      if(plotIndex == Layer1)   layer = 1;
+      if(plotIndex == Layer2)   layer = 2;
+      if(plotIndex == Layer3)   layer = 3;
+      if(plotIndex == Layer4)   layer = 4;
+      unsigned int numRocs = framePlot -> GetSize();
+      for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
+      {
+         std::vector<double> rocEfficiecnyAvg;
+         for(const auto& delayScenarioPair: delayToPlotterModuleMap)
+         {
+            const EfficiencyPlotsModule& efficiencyPlotsModule = delayScenarioPair.second;
+            const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyPlotsModule.efficiencyROCPlots[plotIndex]);
+            const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyPlotsModule.efficiencyROCPlots[plotIndex + 23]); 
+            if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+            if((*detectorPartROCHits)[rocBin] == 0) continue;
+            std::vector<double> rocEfficiencyMeasurements(static_cast<int>((*detectorPartROCHits)[rocBin] + 0.5), (*detectorPartROCEfficiencies)[rocBin]);
+            std::move(rocEfficiencyMeasurements.begin(), rocEfficiencyMeasurements.end(), std::back_inserter(rocEfficiecnyAvg));
+         }
+         if(rocEfficiecnyAvg.size() == 0) continue;
+         // std::copy(rocEfficiecnyAvg.begin(), rocEfficiecnyAvg.end(), std::ostream_iterator<double>(std::cout, ", "));
+         float efficiency = static_cast<double>(std::accumulate(rocEfficiecnyAvg.begin(), rocEfficiecnyAvg.end(), 0.0)) / rocEfficiecnyAvg.size();
+         // std::cout << efficiency << std::endl;   
+         // std::cout << "efficiency: " << efficiency << std::endl;
+         if((efficiency < mean - 0.1 && efficiency < mean - statError * 2) || efficiency < 0.15)
+         {
+             std::cout << "{ " << (layer == 0) << ", " << layer << ", " << rocBin << " }" << std::endl;
+         }
+
+      }
+   }
+}
+
+void EfficiencyPlotsModule::addExtraEfficiencyPlots()
+{
+   // double sum = 0;
+   // double weightSum = 0;
    // ROC efficiency distribution
    for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
    {
@@ -645,51 +754,51 @@ void EfficiencyPlotsModule::addExtraEfficiencyPlots()
       {
          if((*detectorPartROCHits)[rocBin] == 0) continue;
          rocEfficiencyDistributionPlots[plotIndex] -> Fill((*detectorPartROCEfficiencies)[rocBin]);
-         sum       += (*detectorPartROCEfficiencies)[rocBin] * (*detectorPartROCHits)[rocBin];
-         weightSum += (*detectorPartROCHits)[rocBin];
+         // sum       += (*detectorPartROCEfficiencies)[rocBin] * (*detectorPartROCHits)[rocBin];
+         // weightSum += (*detectorPartROCHits)[rocBin];
       }
    }
-   double mean = sum / weightSum;
-   double errorSquaredSum = 0;
-   std::cout << sum << " " << weightSum << " " << sum / weightSum << std::endl;
-   for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
-   {
-      const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
-      const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
-      if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
-      unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
-      for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
-      {
-         errorSquaredSum += std::pow(mean - (*detectorPartROCEfficiencies)[rocBin], 2) * (*detectorPartROCHits)[rocBin];
-      }
-   }
-   double statError = std::sqrt(errorSquaredSum / (weightSum - 1));
-   std::cout << "mean: " << mean << ", statError: " << statError << std::endl;
-   std::cout << "badROC list: " << std::endl;
-   for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
-   {
-      const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
-      const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
-      if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
-      unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
-      int layer = NOVAL_I;
-      if(plotIndex == AllDisks) layer = 0;
-      if(plotIndex == Layer1)   layer = 1;
-      if(plotIndex == Layer2)   layer = 2;
-      if(plotIndex == Layer3)   layer = 3;
-      if(plotIndex == Layer4)   layer = 4;
-      for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
-      {
-         if((*detectorPartROCHits)[rocBin] == 0) continue;
-         float efficiency = (*detectorPartROCEfficiencies)[rocBin];
-         // std::cout << efficiency << std::endl;   
-         if((efficiency < mean - 0.1 && efficiency < mean - statError * 2) || efficiency < 0.15)
-         {
-             std::cout << "{ " << (layer == 0) << ", " << layer << ", " << rocBin << " }" << std::endl;
-         }
+   // double mean = sum / weightSum;
+   // double errorSquaredSum = 0;
+   // std::cout << sum << " " << weightSum << " " << sum / weightSum << std::endl;
+   // for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
+   // {
+   //    const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
+   //    const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
+   //    if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+   //    unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
+   //    for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
+   //    {
+   //       errorSquaredSum += std::pow(mean - (*detectorPartROCEfficiencies)[rocBin], 2) * (*detectorPartROCHits)[rocBin];
+   //    }
+   // }
+   // double statError = std::sqrt(errorSquaredSum / (weightSum - 1));
+   // std::cout << "mean: " << mean << ", statError: " << statError << std::endl;
+   // std::cout << "badROC list: " << std::endl;
+   // for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
+   // {
+   //    const TH2D* detectorPartROCHits         = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex]);
+   //    const TH2D* detectorPartROCEfficiencies = dynamic_cast<TH2D*>(efficiencyROCPlots[plotIndex + 23]); 
+   //    if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
+   //    int layer = NOVAL_I;
+   //    if(plotIndex == AllDisks) layer = 0;
+   //    if(plotIndex == Layer1)   layer = 1;
+   //    if(plotIndex == Layer2)   layer = 2;
+   //    if(plotIndex == Layer3)   layer = 3;
+   //    if(plotIndex == Layer4)   layer = 4;
+   //    unsigned int numRocs = detectorPartROCEfficiencies -> GetSize();
+   //    for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
+   //    {
+   //       if((*detectorPartROCHits)[rocBin] == 0) continue;
+   //       float efficiency = (*detectorPartROCEfficiencies)[rocBin];
+   //       // std::cout << efficiency << std::endl;   
+   //       if((efficiency < mean - 0.1 && efficiency < mean - statError * 2) || efficiency < 0.15)
+   //       {
+   //           std::cout << "{ " << (layer == 0) << ", " << layer << ", " << rocBin << " }" << std::endl;
+   //       }
 
-      }
-   }
+   //    }
+   // }
 }
 
 void EfficiencyPlotsModule::savePlots(const JSON& config, std::string mainDirectoryName)

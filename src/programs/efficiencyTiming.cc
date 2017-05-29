@@ -44,7 +44,7 @@
 // #include <TRandom3.h>
 
 // C++ libraries
-#include <boost/filesystem.hpp>
+#include <experimental/filesystem>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -57,7 +57,7 @@
 #include "../../interface/json.hpp"
 using JSON = nlohmann::json;
 
-#define RANDOM_DELAYS
+// #define RANDOM_DELAYS
 
 constexpr float HALF_PI = 0.5 * 3.141592653589793238462;
 
@@ -92,7 +92,7 @@ int main(int argc, char** argv) try
    std::cout << "Done." << std::endl;
    testSaveFolders(config);
    TimerColored timer(timer_prompt);
-   TFile* histogramsNtuple = generateOutputNtuple(config);
+   [[maybe_unused]] TFile* histogramsNtuple = generateOutputNtuple(config);
    (void)histogramsNtuple; // To disable the warning
    // std::map<std::string, EfficiencyPlotsModule::Scenario> scenarioStringToObjectMap {{"collisions", EfficiencyPlotsModule::Collisions}, {"cosmics", EfficiencyPlotsModule::Cosmics}};
    // EfficiencyPlotsModule::Scenario scenario = scenarioStringToObjectMap.at(config.at("scenario"));
@@ -198,8 +198,8 @@ int main(int argc, char** argv) try
       TChain* trajTreeChain  = new TChain("trajTree", "List of the trajectory measurements.");
       readInFilesAndAddToChain(config, "input_files_list", "input_files", trajTreeChain);
       // Trajectory measurement tree
+      trajTreeChain -> SetBranchStatus ("mod",       0);
       trajTreeChain -> SetBranchAddress("event",     &trajEventField);
-      // trajTreeChain -> SetBranchAddress("mod",       &(trajField.mod));
       trajTreeChain -> SetBranchAddress("mod_on",    &(trajField.mod_on));
       trajTreeChain -> SetBranchAddress("clust",     &(trajField.clu));
       trajTreeChain -> SetBranchAddress("track",     &(trajField.trk));
@@ -225,6 +225,8 @@ int main(int argc, char** argv) try
       for(Long64_t entryIndex = 0; entryIndex < trajTreeNumEntries; ++entryIndex)
       {
          trajTreeChain -> GetEntry(entryIndex);
+         int panelBefore = trajField.mod_on.panel;
+         int diskBefore  = trajField.mod_on.disk;
          if(filterForRunNumberPresent) if(trajEventField.run < runNumberLowerBound || runNumberUpperBound <= trajEventField.run)
          {
             updateAndPrintProgress(entryIndex);
@@ -248,6 +250,8 @@ int main(int argc, char** argv) try
          if(!(trajField.mod_on.panel == NOVAL_I || trajField.mod_on.panel == 1 || trajField.mod_on.panel == 2))
          {
             printTrajFieldInfo(trajField);
+            std::cout << "disk before : " << diskBefore  << std::endl;
+            std::cout << "panel before: " << panelBefore << std::endl;
             continue;
          }
          // std::cin.get();
@@ -276,6 +280,7 @@ int main(int argc, char** argv) try
          delayPlotterModulePair.second.addExtraEfficiencyPlots();
          std::cout << "Average efficiency for delay " << std::setprecision(1) << delayPlotterModulePair.first << ": " << std::setprecision(6) << delayPlotterModulePair.second.getAvarageEfficiency() << std::endl;
       }
+      EfficiencyPlotsModule::printCombinedBadROCList(delayToPlotterModuleMap);
    }
    ////////////////
    // Save plots //
@@ -645,16 +650,16 @@ void testSaveFolders(const JSON& config)
    {
       try 
       {
-         boost::filesystem::path        filePath   = directoryName; 
-         boost::filesystem::file_status fileStatus = boost::filesystem::status(filePath);
-         if(!boost::filesystem::is_directory(fileStatus))
+         std::experimental::filesystem::path        filePath   = directoryName; 
+         std::experimental::filesystem::file_status fileStatus = std::experimental::filesystem::status(filePath);
+         if(!std::experimental::filesystem::is_directory(fileStatus))
          {
             std::cerr << "Error: Missing directory: " << directoryName << std::endl;
             std::cout << "Do you want to automatically create this missing directory: " << directoryName << "? (y/n): ";
             char answer = std::cin.get();
             if(answer == 'y')
             {
-               boost::filesystem::create_directory(filePath);
+               std::experimental::filesystem::create_directory(filePath);
                std::cout << "Directory created succesfully." << std::endl;
             }
             else
@@ -663,7 +668,7 @@ void testSaveFolders(const JSON& config)
             }
          }
       }
-      catch(boost::filesystem::filesystem_error &e)
+      catch(std::experimental::filesystem::filesystem_error &e)
       {
          std::cerr << e.what() << std::endl;
       }
@@ -731,27 +736,49 @@ float getDelayNs(int runNumber, int lumisectionNumber) try
    if(runNumber == NOVAL_F || runNumber == 1) return NOVAL_F;
    static const std::map<int, std::map<int, float>> delayList =
    {
+      { 294928, {{-1, 162 * 25  - 6}}},
+      { 294929, {{-1, 163 * 25  - 6}}},
+      { 294931, {{-1, 164 * 25  - 6}}},
+      { 294932, {{-1, 162 * 25  - 18}}},
+      { 294933, {{-1, 163 * 25  - 18}}},
+      { 294934, {{-1, 164 * 25  - 18}}},
+      { 294935, {{-1, 165 * 25  - 18}}},
+      { 294936, {{-1, 164 * 25  - 0}}},
+      { 294937, {{-1, 162 * 25  - 0}}},
+      { 294939, {{-1, 164 * 25  - 12}}},
+      { 294940, {{-1, 163 * 25  - 12}}},
+      { 294947, {{-1, 163 * 25  - 0}}},
+      { 294949, {{-1, 162 * 25  - 3}}},
+      { 294950, {{-1, 163 * 25  - 21}}},
+      { 294951, {{-1, 163 * 25  - 15}}},
+      { 294952, {{-1, 163 * 25  - 9}}},
+      { 294953, {{-1, 163 * 25  - 3}}},
+      { 294954, {{-1, 164 * 25  - 21}}},
+      { 294955, {{-1, 164 * 25  - 15}}},
+      { 294956, {{-1, 164 * 25  - 3}}},
+      { 294957, {{-1, 163 * 25  - 0}}},
+      { 294960, {{-1, 163 * 25  - 6}}}
       // FPix
-      { 291872, {{ -1, 162.0f * 25 - 12 }}},
-      { 292283, {{ -1, 164.0f * 25 - 18 }}},
-      { 292364, {{ -1, 164.0f * 25 - 6 }}},
-      { 292365, {{ -1, 164.0f * 25 - 6 }}},
-      { 292366, {{ -1, 164.0f * 25 - 6 }}},
-      { 292367, {{ -1, 164.0f * 25 - 6 }}},
-      { 292592, {{ -1, 162.0f * 25 - 6 }}},
-      { 292593, {{ -1, 163.0f * 25 - 6 }}},
-      { 292594, {{ -1, 163.0f * 25 - 6 }}},
-      // //BPix
-      { 292079, {{ -1, 163.0f * 25 - 18 }}},
-      { 292080, {{ -1, 163.0f * 25 - 18 }}},
-      { 292283, {{ -1, 165.0f * 25 - 18 }}},
-      { 292364, {{ -1, 164.0f * 25 - 6 }}},
-      { 292365, {{ -1, 164.0f * 25 - 6 }}},
-      { 292366, {{ -1, 164.0f * 25 - 6 }}},
-      { 292367, {{ -1, 164.0f * 25 - 6 }}},
-      { 292592, {{ -1, 162.0f * 25 - 6 }}},
-      { 292593, {{ -1, 163.0f * 25 - 6 }}},
-      { 292594, {{ -1, 163.0f * 25 - 6 }}}
+      // { 291872, {{ -1, 162.0f * 25 - 12 }}},
+      // { 292283, {{ -1, 164.0f * 25 - 18 }}},
+      // { 292364, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292365, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292366, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292367, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292592, {{ -1, 162.0f * 25 - 6 }}},
+      // { 292593, {{ -1, 163.0f * 25 - 6 }}},
+      // { 292594, {{ -1, 163.0f * 25 - 6 }}},
+      // // //BPix
+      // { 292079, {{ -1, 163.0f * 25 - 18 }}},
+      // { 292080, {{ -1, 163.0f * 25 - 18 }}},
+      // { 292283, {{ -1, 165.0f * 25 - 18 }}},
+      // { 292364, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292365, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292366, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292367, {{ -1, 164.0f * 25 - 6 }}},
+      // { 292592, {{ -1, 162.0f * 25 - 6 }}},
+      // { 292593, {{ -1, 163.0f * 25 - 6 }}},
+      // { 292594, {{ -1, 163.0f * 25 - 6 }}}
    };
    const std::map<int, float>& runLsToDelayMap = delayList.at(runNumber);
    const auto& universalLumisectionIt = runLsToDelayMap.find(-1);
