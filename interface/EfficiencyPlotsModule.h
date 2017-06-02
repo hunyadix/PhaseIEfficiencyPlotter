@@ -47,7 +47,7 @@ class EfficiencyPlotsModule
 {
    using LayersDiskPlotsCollection = std::array<TH1*, 46>;
    using EfficiencyPlotPair        = std::array<TH1*, 2>;
-   using BadROClist                = std::set<std::tuple<int, int, int>>;
+   using BadROClist                = std::set<std::tuple<int, int>>;
    private:
       static constexpr int                  ZEROBIAS_TRIGGER_BIT               = 0;
       static constexpr int                  ZEROBIAS_BITMASK                   = 1 << ZEROBIAS_TRIGGER_BIT;
@@ -70,18 +70,26 @@ class EfficiencyPlotsModule
       const EventData&       trajEventField_;
       const TrajMeasurement& trajField_;
       const float            delayInNs_;
-      std::array<std::pair<int, int>, 2>  clusterSizeXBpixFpix               {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 8>  clusterSizeXLayersNegativePositive {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 12> clusterSizeXDisksInnerOuter        {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 64> clusterSizeXBNPZHSSIOLP            {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-      std::array<std::pair<int, int>, 2>  clusterSizeYBpixFpix               {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 8>  clusterSizeYLayersNegativePositive {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 12> clusterSizeYDisksInnerOuter        {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 64> clusterSizeYBNPZHSSIOLP            {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-      std::array<std::pair<int, int>, 2>  efficiencyBpixFpix                 {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 8>  efficiencyLayersNegativePositive   {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 12> efficiencyDisksInnerOuter          {{ std::make_pair(0, 0) }};
-      std::array<std::pair<int, int>, 64> efficiencyBNPZHSSIOLP              {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>  clusterSizeXBpixFpix                    {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 8>  clusterSizeXLayersNegativePositive      {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 12> clusterSizeXDisksInnerOuter             {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 64> clusterSizeXBNPZHSSIOLP                 {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>  clusterSizeYBpixFpix                    {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 8>  clusterSizeYLayersNegativePositive      {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 12> clusterSizeYDisksInnerOuter             {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 64> clusterSizeYBNPZHSSIOLP                 {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>  clusterSizePixelsBpixFpix               {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 8>  clusterSizePixelsLayersNegativePositive {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 12> clusterSizePixelsDisksInnerOuter        {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 64> clusterSizePixelsBNPZHSSIOLP            {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>  clusterChargeBpixFpix                   {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 8>  clusterChargeLayersNegativePositive     {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 12> clusterChargeDisksInnerOuter            {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 64> clusterChargeBNPZHSSIOLP                {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>  efficiencyBpixFpix                      {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 8>  efficiencyLayersNegativePositive        {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 12> efficiencyDisksInnerOuter               {{ std::make_pair(0, 0) }};
+      std::array<std::pair<Long64_t, Long64_t>, 64> efficiencyBNPZHSSIOLP                   {{ std::make_pair(0, 0) }}; // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       // Cut values
       int nvtxCut     = 0;
       int zerobiasCut = 0;
@@ -295,25 +303,33 @@ class EfficiencyPlotsModule
       static bool histogramExistsAndNotEmpty(TH1* histogram);
       static void draw1DPlot(TH1D* histogram);
       static void draw2DPlot(TH2D* histogram);
-      static void writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram, const int& markerColor = 4);
+      static void writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram, const int& markerColor = 4, const int& markerStlye = 20);
       static void saveCanvasAsEps(TCanvas* canvas, const std::string& parentDirectoryName);
       float getAvarageEfficiency();
       void  printCheckHistogramPointers();
       void  printCounters();
       void  printCutValues();
-      std::array<std::pair<int, int>, 2>*  getClusterSizeXBpixFpix();
-      std::array<std::pair<int, int>, 8>*  getClusterSizeXLayersNegativePositive();
-      std::array<std::pair<int, int>, 12>* getClusterSizeXDisksInnerOuter();
-      std::array<std::pair<int, int>, 64>* getClusterSizeXBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-      std::array<std::pair<int, int>, 2>*  getClusterSizeYBpixFpix();
-      std::array<std::pair<int, int>, 8>*  getClusterSizeYLayersNegativePositive();
-      std::array<std::pair<int, int>, 12>* getClusterSizeYDisksInnerOuter();
-      std::array<std::pair<int, int>, 64>* getClusterSizeYBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-      std::array<std::pair<int, int>, 2>*  getEfficiencyBpixFpix();
-      std::array<std::pair<int, int>, 8>*  getEfficiencyLayersNegativePositive();
-      std::array<std::pair<int, int>, 12>* getEfficiencyDisksInnerOuter();
-      std::array<std::pair<int, int>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-      static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram, const int& markerColor = 4);
+      std::array<std::pair<Long64_t, Long64_t>, 2>*  getClusterSizeXBpixFpix();
+      std::array<std::pair<Long64_t, Long64_t>, 8>*  getClusterSizeXLayersNegativePositive();
+      std::array<std::pair<Long64_t, Long64_t>, 12>* getClusterSizeXDisksInnerOuter();
+      std::array<std::pair<Long64_t, Long64_t>, 64>* getClusterSizeXBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>*  getClusterSizeYBpixFpix();
+      std::array<std::pair<Long64_t, Long64_t>, 8>*  getClusterSizeYLayersNegativePositive();
+      std::array<std::pair<Long64_t, Long64_t>, 12>* getClusterSizeYDisksInnerOuter();
+      std::array<std::pair<Long64_t, Long64_t>, 64>* getClusterSizeYBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>*  getClusterSizePixelsBpixFpix();
+      std::array<std::pair<Long64_t, Long64_t>, 8>*  getClusterSizePixelsLayersNegativePositive();
+      std::array<std::pair<Long64_t, Long64_t>, 12>* getClusterSizePixelsDisksInnerOuter();
+      std::array<std::pair<Long64_t, Long64_t>, 64>* getClusterSizePixelsBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>*  getClusterChargeBpixFpix();
+      std::array<std::pair<Long64_t, Long64_t>, 8>*  getClusterChargeLayersNegativePositive();
+      std::array<std::pair<Long64_t, Long64_t>, 12>* getClusterChargeDisksInnerOuter();
+      std::array<std::pair<Long64_t, Long64_t>, 64>* getClusterChargeBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      std::array<std::pair<Long64_t, Long64_t>, 2>*  getEfficiencyBpixFpix();
+      std::array<std::pair<Long64_t, Long64_t>, 8>*  getEfficiencyLayersNegativePositive();
+      std::array<std::pair<Long64_t, Long64_t>, 12>* getEfficiencyDisksInnerOuter();
+      std::array<std::pair<Long64_t, Long64_t>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
+      static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram, const int& markerColor = 4, const int& markerStyle = 20);
    private:
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void calculateCuts();

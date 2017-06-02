@@ -1,7 +1,7 @@
 include Makefile.arch
 SrcSuf = cc
 
-CXX       = ${HOME}usr/bin/g++ -static -g
+CXX       = ${HOME}//usr/bin/g++
 CXXFLAGS  = -std=c++1y -O3 -Wall -fPIC -pthread -m64 -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/include -fdiagnostics-color=always
 LIBS      =  -L/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl -rdynamic 
 LIBS     += -lboost_system -lstdc++fs
