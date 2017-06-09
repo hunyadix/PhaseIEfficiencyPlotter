@@ -19,6 +19,7 @@
 #include <TH1F.h>
 #include <TH2D.h>
 #include <TGraphAsymmErrors.h>
+#include <TString.h>
 
 #include <iostream>
 #include <iomanip>
@@ -115,22 +116,22 @@ class EfficiencyPlotsModule
       int noFidicualsCut = 0;
       int noHitsepCut    = 0;
       // Counters
-      int entry_counter_       = 0;
-      int nvtxCut_counter_     = 0;
-      int zerobiasCut_counter_ = 0;
-      int federrCut_counter_   = 0;
-      int hpCut_counter_       = 0;
-      int ptCut_counter_       = 0;
-      int nstripCut_counter_   = 0;
-      int d0Cut_counter_       = 0;
-      int dzCut_counter_       = 0;
-      int pixhitCut_counter_   = 0;
-      int lxFidCut_counter_    = 0;
-      int lyFidCut_counter_    = 0;
-      int valmisCut_counter_   = 0;
-      int hitsepCut_counter_   = 0;
-      int badROCCut_counter_   = 0;
-      int effCutAll_counter_   = 0;
+      Long64_t entry_counter_       = 0;
+      Long64_t nvtxCut_counter_     = 0;
+      Long64_t zerobiasCut_counter_ = 0;
+      Long64_t federrCut_counter_   = 0;
+      Long64_t hpCut_counter_       = 0;
+      Long64_t ptCut_counter_       = 0;
+      Long64_t nstripCut_counter_   = 0;
+      Long64_t d0Cut_counter_       = 0;
+      Long64_t dzCut_counter_       = 0;
+      Long64_t pixhitCut_counter_   = 0;
+      Long64_t lxFidCut_counter_    = 0;
+      Long64_t lyFidCut_counter_    = 0;
+      Long64_t valmisCut_counter_   = 0;
+      Long64_t hitsepCut_counter_   = 0;
+      Long64_t badROCCut_counter_   = 0;
+      Long64_t effCutAll_counter_   = 0;
       // Histogram helpers
       enum LayersDiskPlotIndecies
       {
@@ -309,6 +310,7 @@ class EfficiencyPlotsModule
       void  printCheckHistogramPointers();
       void  printCounters();
       void  printCutValues();
+      float getDelayValueNs();
       std::array<std::pair<Long64_t, Long64_t>, 2>*  getClusterSizeXBpixFpix();
       std::array<std::pair<Long64_t, Long64_t>, 8>*  getClusterSizeXLayersNegativePositive();
       std::array<std::pair<Long64_t, Long64_t>, 12>* getClusterSizeXDisksInnerOuter();
@@ -330,6 +332,8 @@ class EfficiencyPlotsModule
       std::array<std::pair<Long64_t, Long64_t>, 12>* getEfficiencyDisksInnerOuter();
       std::array<std::pair<Long64_t, Long64_t>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram, const int& markerColor = 4, const int& markerStyle = 20);
+      static void                           createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
+      static std::vector<std::vector<TH1*>> createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs);
    private:
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void calculateCuts();
