@@ -45,6 +45,7 @@
 
 // C++ libraries
 #include <experimental/filesystem>
+#include <future>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -57,7 +58,7 @@
 #include "../../interface/json.hpp"
 using JSON = nlohmann::json;
 
-#define RANDOM_DELAYS
+// #define RANDOM_DELAYS
 
 constexpr float HALF_PI = 0.5 * 3.141592653589793238462;
 
@@ -66,9 +67,9 @@ constexpr auto                    CONFIG_FILE_PATH                = "./config_ma
 const     std::string             EFFICIENCY_PLOT_IDENTIFIER      = "Efficiency";
 const     std::string             EFFICIENCY_NUMERATOR_IDENTIFIER = "Numhits";
 
-const     int   DELAY_PLOTS_NUM_BINS                             = 20 * 25;
-const     float DELAY_PLOTS_LOWER_EDGE                           = 153;
-const     float DELAY_PLOTS_UPPER_EDGE                           = 173;
+const     int   DELAY_PLOTS_NUM_BINS                             = 80; // WBC setting 164 is 0.
+const     float DELAY_PLOTS_LOWER_EDGE                           = -10;
+const     float DELAY_PLOTS_UPPER_EDGE                           = 30;
 
 const bool CLUST_LOOP_REQUESTED = false;
 const bool TRAJ_LOOP_REQUESTED  = true;
@@ -130,7 +131,7 @@ int main(int argc, char** argv) try
    if(CLUST_LOOP_REQUESTED) try
    {
 #ifdef RANDOM_DELAYS
-      constexpr std::array<int, 5> delayTest {{157, 160, 161, 163, 165}};
+      constexpr std::array<int, 5> delayTest {{-5, 7, 12, 13, 16}};
 #endif
       TChain* clustTreeChain = new TChain("clustTree", "List of the clusters.");
       readInFilesAndAddToChain(config, "input_files_list", "input_files", clustTreeChain);
@@ -193,7 +194,7 @@ int main(int argc, char** argv) try
    if(TRAJ_LOOP_REQUESTED) try
    {
 #ifdef RANDOM_DELAYS
-      constexpr std::array<int, 5> delayTest {{157, 160, 161, 163, 165}};
+      constexpr std::array<int, 5> delayTest {{-5, 7, 12, 13, 16}};
 #endif
       TChain* trajTreeChain  = new TChain("trajTree", "List of the trajectory measurements.");
       readInFilesAndAddToChain(config, "input_files_list", "input_files", trajTreeChain);
@@ -288,11 +289,13 @@ int main(int argc, char** argv) try
    }
    // Print bad ROC list
    {
-      EfficiencyPlotsModule::printCombinedBadROCList(delayToPlotterModuleMap);
+      EfficiencyPlotsModule::printCombinedBadROCList(delayToPlotterModuleMap, config.at("save_bad_ROC_list_output"));
    }
-   // Save plots unique to each of the delay scenarios
    try
    {
+      // ------------------------------------------------------------------------------------------
+      // Save plots unique to each of the delay scenarios
+
       std::cout << process_prompt << "Saving plots unique for each of the plotter modules... " << std::flush;
       std::string msg("");
       for(size_t moduleIndex: range(modules.size()))
@@ -303,19 +306,45 @@ int main(int argc, char** argv) try
          std::cout << std::string(msg.size(), '\b');
       }
       std::cout << std::string(msg.size(), ' ') << std::string(msg.size(), '\b') << "Done." << std::endl;
-   }
-   catch(const std::exception& e)
-   {
-      std::cout << error_prompt << "While saving histograms: " << e.what() << " exception occured." << std::endl;
-      exit(-1);
-   }
-   // Save efficiency vs delay plots on detector part level
-   {
-      EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(modules, config, DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
-   }
-   // Save efficiency vs delay plots for each of the ROCs
-   try
-   {
+
+      // ------------------------------------------------------------------------------------------
+      // Save efficiency vs delay plots on detector part level
+
+      // Plots created here:
+      //    - Delay vs cluster X size
+      //    - Delay vs cluster Y size
+      //    - Delay vs cluster total size
+      //    - Delay vs cluster charge4
+      // 
+      // Detector part classification types:
+      //    - Barrel or forward pixel
+      //    - On barrel: layer and side (sign of Z coordinate)
+      //    - On forward? disk and ring (inner or outer)
+      //    - On barrel: side (sign of Z), half shell (sign of X), sector, [layer 1-2] or [layer 3-4]
+      // 
+
+      std::future<void> delayVsClusterPropertySaveProcess = std::async(EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots, modules, config, DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE); 
+      // std::future<void> delayVsClusterPropertySaveProcess = std::async(EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots, modules, config, 0, 0.0f, 0.0f);
+      std::cout << process_prompt << "Creating delay vs cluster property plots." << std::flush;
+      std::chrono::milliseconds milliseconds_100(100);
+      while(delayVsClusterPropertySaveProcess.wait_for(milliseconds_100) == std::future_status::timeout)
+      {
+         std::cout << '.' << std::flush;
+      }
+      delayVsClusterPropertySaveProcess.get(); // should do nothing, throws exception if the thread failss
+      std::cout << "Done." << std::endl;      
+
+      // ------------------------------------------------------------------------------------------
+      // Save efficiency vs delay plots for each of the ROCs
+
+      // Static function used to create efficiency vs delay plots for each of the ROC-s.
+      // Takes a list of pointers to module objects, returns a vector of dynamically allocated 
+      // TH1D histograms. The first vector index is the layer (0 for the forward region) the ROC is 
+      // located on, the second is the bin number of the ROC on the histograms.
+      // 
+      // - Requires the "efficiencyROCPlots" to be filled before. (throws an std::runtime_error otherwise)
+      // - Discards histograms where delayInNs_ is NOVAL_F (aka. -9999.0)
+
       std::cout << process_prompt << "Saving ROC plots... " << std::flush;
       std::vector<std::vector<TH1*>> delayVsEfficiencyOnROCs = EfficiencyPlotsModule::createEfficiencyVsDelayROCPlots(modules);
       histogramsNtuple -> cd();
@@ -332,6 +361,11 @@ int main(int argc, char** argv) try
          }
       }
       std::cout << "Done." << std::endl;
+
+      // ------------------------------------------------------------------------------------------
+      // Save efficiency vs delay plots for each of the modules
+
+       
    }
    catch(const std::exception& e)
    {
@@ -438,28 +472,43 @@ float getDelayNs(int runNumber, int lumisectionNumber) try
    if(runNumber == NOVAL_F || runNumber == 1) return NOVAL_F;
    static const std::map<int, std::map<int, float>> delayList =
    {
-      { 294928, {{-1, 162 * 25  - 6}}},
-      { 294929, {{-1, 163 * 25  - 6}}},
-      { 294931, {{-1, 164 * 25  - 6}}},
-      { 294932, {{-1, 162 * 25  - 18}}},
-      { 294933, {{-1, 163 * 25  - 18}}},
-      { 294934, {{-1, 164 * 25  - 18}}},
-      { 294935, {{-1, 165 * 25  - 18}}},
-      { 294936, {{-1, 164 * 25  - 0}}},
-      { 294937, {{-1, 162 * 25  - 0}}},
-      { 294939, {{-1, 164 * 25  - 12}}},
-      { 294940, {{-1, 163 * 25  - 12}}},
-      { 294947, {{-1, 163 * 25  - 0}}},
-      { 294949, {{-1, 162 * 25  - 3}}},
-      { 294950, {{-1, 163 * 25  - 21}}},
-      { 294951, {{-1, 163 * 25  - 15}}},
-      { 294952, {{-1, 163 * 25  - 9}}},
-      { 294953, {{-1, 163 * 25  - 3}}},
-      { 294954, {{-1, 164 * 25  - 21}}},
-      { 294955, {{-1, 164 * 25  - 15}}},
-      { 294956, {{-1, 164 * 25  - 3}}},
-      { 294957, {{-1, 163 * 25  - 0}}},
-      { 294960, {{-1, 163 * 25  - 6}}}
+      // (164 - WBC) * 25 + Globaldelay
+      { 296665, {{ -1, 0 * 25 + 18 }}},
+      { 296666, {{ -1, 0 * 25 + 14 }}},
+      { 296668, {{ -1, 0 * 25 + 11 }}},
+      { 296669, {{ -1, 0 * 25 + 9  }}},
+      { 296674, {{ -1, 0 * 25 + 7.5}}},
+      { 296664, {{ -1, 0 * 25 + 6  }}},
+      { 296675, {{ -1, 0 * 25 + 4.5}}},
+      { 296676, {{ -1, 0 * 25 + 1.5}}},
+      { 296678, {{ -1, 0 * 25 + 0  }}},
+      { 296679, {{ -1, 1 * 25 - 22 }}},
+      { 296680, {{ -1, 1 * 25 - 18 }}}
+
+
+      // { 294928, {{-1, 162 * 25  - 6}}},
+      // { 294929, {{-1, 163 * 25  - 6}}},
+      // { 294931, {{-1, 164 * 25  - 6}}},
+      // { 294932, {{-1, 162 * 25  - 18}}},
+      // { 294933, {{-1, 163 * 25  - 18}}},
+      // { 294934, {{-1, 164 * 25  - 18}}},
+      // { 294935, {{-1, 165 * 25  - 18}}},
+      // { 294936, {{-1, 164 * 25  - 0}}},
+      // { 294937, {{-1, 162 * 25  - 0}}},
+      // { 294939, {{-1, 164 * 25  - 12}}},
+      // { 294940, {{-1, 163 * 25  - 12}}},
+      // { 294947, {{-1, 163 * 25  - 0}}},
+      // { 294949, {{-1, 162 * 25  - 3}}},
+      // { 294950, {{-1, 163 * 25  - 21}}},
+      // { 294951, {{-1, 163 * 25  - 15}}},
+      // { 294952, {{-1, 163 * 25  - 9}}},
+      // { 294953, {{-1, 163 * 25  - 3}}},
+      // { 294954, {{-1, 164 * 25  - 21}}},
+      // { 294955, {{-1, 164 * 25  - 15}}},
+      // { 294956, {{-1, 164 * 25  - 3}}},
+      // { 294957, {{-1, 163 * 25  - 0}}},
+      // { 294960, {{-1, 163 * 25  - 6}}}
+
       // FPix
       // { 291872, {{ -1, 162.0f * 25 - 12 }}},
       // { 292283, {{ -1, 164.0f * 25 - 18 }}},

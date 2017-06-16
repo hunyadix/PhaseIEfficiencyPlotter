@@ -21,535 +21,7 @@ constexpr float                EfficiencyPlotsModule::MEAS_HITSEP_CUT_N_MINUS_1_
 constexpr float                EfficiencyPlotsModule::HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_X_CUT;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_Y_CUT;
-EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = 
-{
-   { 0, 2354 },
-   { 0, 2355 },
-   { 0, 2356 },
-   { 0, 2357 },
-   { 0, 2358 },
-   { 0, 2534 },
-   { 0, 8324 },
-   { 0, 8325 },
-   { 0, 8326 },
-   { 0, 8327 },
-   { 0, 8328 },
-   { 0, 8329 },
-   { 0, 8633 },
-   { 0, 8634 },
-   { 0, 8635 },
-   { 0, 8636 },
-   { 0, 8637 },
-   { 0, 9300 },
-   { 0, 9301 },
-   { 0, 9302 },
-   { 0, 9303 },
-   { 0, 9304 },
-   { 0, 9305 },
-   { 0, 10963 },
-   { 0, 10964 },
-   { 0, 10965 },
-   { 0, 10966 },
-   { 0, 10967 },
-   { 0, 11410 },
-   { 0, 11411 },
-   { 0, 11412 },
-   { 0, 12418 },
-   { 0, 12419 },
-   { 0, 12420 },
-   { 0, 12421 },
-   { 0, 12422 },
-   { 0, 12423 },
-   { 0, 14790 },
-   { 0, 14846 },
-   { 0, 14847 },
-   { 0, 14848 },
-   { 0, 15802 },
-   { 0, 15818 },
-   { 0, 15834 },
-   { 1, 104 },
-   { 1, 106 },
-   { 1, 176 },
-   { 1, 180 },
-   { 1, 194 },
-   { 1, 195 },
-   { 1, 227 },
-   { 1, 251 },
-   { 1, 278 },
-   { 1, 337 },
-   { 1, 338 },
-   { 1, 339 },
-   { 1, 340 },
-   { 1, 400 },
-   { 1, 442 },
-   { 1, 461 },
-   { 1, 462 },
-   { 1, 463 },
-   { 1, 464 },
-   { 1, 653 },
-   { 1, 654 },
-   { 1, 655 },
-   { 1, 656 },
-   { 1, 676 },
-   { 1, 727 },
-   { 1, 728 },
-   { 1, 729 },
-   { 1, 730 },
-   { 1, 782 },
-   { 1, 858 },
-   { 1, 867 },
-   { 1, 876 },
-   { 1, 1111 },
-   { 1, 1112 },
-   { 1, 1113 },
-   { 1, 1114 },
-   { 1, 1152 },
-   { 1, 1154 },
-   { 1, 1155 },
-   { 1, 1156 },
-   { 1, 1157 },
-   { 1, 1158 },
-   { 1, 1180 },
-   { 1, 1253 },
-   { 1, 1254 },
-   { 1, 1255 },
-   { 1, 1256 },
-   { 1, 1283 },
-   { 1, 1284 },
-   { 1, 1285 },
-   { 1, 1286 },
-   { 1, 1299 },
-   { 1, 1300 },
-   { 1, 1301 },
-   { 1, 1302 },
-   { 1, 1373 },
-   { 1, 1374 },
-   { 1, 1375 },
-   { 1, 1376 },
-   { 1, 1378 },
-   { 1, 1408 },
-   { 1, 1482 },
-   { 1, 1524 },
-   { 1, 1558 },
-   { 1, 1595 },
-   { 1, 1596 },
-   { 1, 1597 },
-   { 1, 1615 },
-   { 1, 1616 },
-   { 1, 1617 },
-   { 1, 1618 },
-   { 1, 1625 },
-   { 1, 1632 },
-   { 1, 1669 },
-   { 1, 1671 },
-   { 1, 1676 },
-   { 1, 1729 },
-   { 1, 1732 },
-   { 1, 1743 },
-   { 1, 1744 },
-   { 1, 1746 },
-   { 1, 1747 },
-   { 1, 1797 },
-   { 1, 1798 },
-   { 1, 1799 },
-   { 1, 1800 },
-   { 1, 1804 },
-   { 1, 1806 },
-   { 1, 1808 },
-   { 1, 1817 },
-   { 1, 1818 },
-   { 1, 1819 },
-   { 1, 1820 },
-   { 1, 1824 },
-   { 1, 1826 },
-   { 1, 1891 },
-   { 1, 1894 },
-   { 1, 1955 },
-   { 2, 166 },
-   { 2, 167 },
-   { 2, 168 },
-   { 2, 169 },
-   { 2, 170 },
-   { 2, 171 },
-   { 2, 172 },
-   { 2, 831 },
-   { 2, 832 },
-   { 2, 833 },
-   { 2, 834 },
-   { 2, 835 },
-   { 2, 836 },
-   { 2, 837 },
-   { 2, 838 },
-   { 2, 1431 },
-   { 2, 1432 },
-   { 2, 1433 },
-   { 2, 1434 },
-   { 2, 1435 },
-   { 2, 1436 },
-   { 2, 1437 },
-   { 2, 1438 },
-   { 2, 1505 },
-   { 2, 1506 },
-   { 2, 1507 },
-   { 2, 1508 },
-   { 2, 1509 },
-   { 2, 1510 },
-   { 2, 1511 },
-   { 2, 1512 },
-   { 2, 1875 },
-   { 2, 1876 },
-   { 2, 1877 },
-   { 2, 1878 },
-   { 2, 1879 },
-   { 2, 1880 },
-   { 2, 1881 },
-   { 2, 1882 },
-   { 2, 1949 },
-   { 2, 1950 },
-   { 2, 1951 },
-   { 2, 1952 },
-   { 2, 1953 },
-   { 2, 1954 },
-   { 2, 1955 },
-   { 2, 1956 },
-   { 2, 2039 },
-   { 2, 2040 },
-   { 2, 2041 },
-   { 2, 2042 },
-   { 2, 2043 },
-   { 2, 2044 },
-   { 2, 2045 },
-   { 2, 2046 },
-   { 2, 2113 },
-   { 2, 2114 },
-   { 2, 2115 },
-   { 2, 2116 },
-   { 2, 2117 },
-   { 2, 2118 },
-   { 2, 2119 },
-   { 2, 2120 },
-   { 2, 2673 },
-   { 2, 2674 },
-   { 2, 2675 },
-   { 2, 2676 },
-   { 2, 2677 },
-   { 2, 2678 },
-   { 2, 2679 },
-   { 2, 2680 },
-   { 2, 2837 },
-   { 2, 2838 },
-   { 2, 2839 },
-   { 2, 2840 },
-   { 2, 2841 },
-   { 2, 2842 },
-   { 2, 2843 },
-   { 2, 2844 },
-   { 2, 3009 },
-   { 2, 3010 },
-   { 2, 3011 },
-   { 2, 3012 },
-   { 2, 3013 },
-   { 2, 3014 },
-   { 2, 3015 },
-   { 2, 3016 },
-   { 2, 3461 },
-   { 2, 3462 },
-   { 2, 3463 },
-   { 2, 3464 },
-   { 2, 3465 },
-   { 2, 3466 },
-   { 2, 3467 },
-   { 2, 3468 },
-   { 2, 3469 },
-   { 2, 3470 },
-   { 2, 3471 },
-   { 2, 3472 },
-   { 2, 3473 },
-   { 2, 3474 },
-   { 2, 3475 },
-   { 2, 3476 },
-   { 2, 3519 },
-   { 2, 3520 },
-   { 2, 3521 },
-   { 2, 3522 },
-   { 2, 3523 },
-   { 2, 3524 },
-   { 2, 3525 },
-   { 2, 3526 },
-   { 2, 3527 },
-   { 2, 3528 },
-   { 2, 3529 },
-   { 2, 3530 },
-   { 2, 3531 },
-   { 2, 3532 },
-   { 2, 3533 },
-   { 2, 3534 },
-   { 2, 4259 },
-   { 2, 4260 },
-   { 2, 4261 },
-   { 2, 4262 },
-   { 2, 4263 },
-   { 2, 4264 },
-   { 2, 4265 },
-   { 2, 4266 },
-   { 2, 4267 },
-   { 2, 4268 },
-   { 2, 4269 },
-   { 2, 4270 },
-   { 2, 4271 },
-   { 2, 4272 },
-   { 2, 4273 },
-   { 2, 4274 },
-   { 3, 595 },
-   { 3, 596 },
-   { 3, 597 },
-   { 3, 598 },
-   { 3, 599 },
-   { 3, 600 },
-   { 3, 4711 },
-   { 3, 4712 },
-   { 3, 4713 },
-   { 3, 4714 },
-   { 3, 4715 },
-   { 3, 4716 },
-   { 3, 4717 },
-   { 3, 4718 },
-   { 3, 4785 },
-   { 3, 4786 },
-   { 3, 4787 },
-   { 3, 4788 },
-   { 3, 4789 },
-   { 3, 4790 },
-   { 3, 4791 },
-   { 3, 4792 },
-   { 3, 6011 },
-   { 3, 6012 },
-   { 3, 6013 },
-   { 3, 6014 },
-   { 3, 6015 },
-   { 3, 6016 },
-   { 3, 6017 },
-   { 3, 6018 },
-   { 3, 6085 },
-   { 3, 6086 },
-   { 3, 6087 },
-   { 3, 6088 },
-   { 3, 6089 },
-   { 3, 6090 },
-   { 3, 6091 },
-   { 3, 6092 },
-   { 3, 6207 },
-   { 3, 6208 },
-   { 3, 6209 },
-   { 3, 6210 },
-   { 3, 6211 },
-   { 3, 6212 },
-   { 3, 6213 },
-   { 3, 6214 },
-   { 4, 123 },
-   { 4, 124 },
-   { 4, 125 },
-   { 4, 126 },
-   { 4, 127 },
-   { 4, 128 },
-   { 4, 129 },
-   { 4, 130 },
-   { 4, 197 },
-   { 4, 198 },
-   { 4, 199 },
-   { 4, 200 },
-   { 4, 201 },
-   { 4, 202 },
-   { 4, 203 },
-   { 4, 204 },
-   { 4, 2133 },
-   { 4, 2269 },
-   { 4, 2270 },
-   { 4, 2271 },
-   { 4, 2272 },
-   { 4, 2273 },
-   { 4, 2274 },
-   { 4, 2275 },
-   { 4, 2276 },
-   { 4, 2681 },
-   { 4, 2682 },
-   { 4, 2683 },
-   { 4, 2684 },
-   { 4, 2685 },
-   { 4, 2686 },
-   { 4, 2687 },
-   { 4, 2688 },
-   { 4, 3080 },
-   { 4, 3081 },
-   { 4, 3082 },
-   { 4, 3085 },
-   { 4, 3089 },
-   { 4, 3093 },
-   { 4, 3094 },
-   { 4, 3099 },
-   { 4, 3105 },
-   { 4, 3151 },
-   { 4, 3162 },
-   { 4, 3164 },
-   { 4, 3168 },
-   { 4, 3172 },
-   { 4, 3233 },
-   { 4, 3235 },
-   { 4, 3236 },
-   { 4, 3238 },
-   { 4, 3239 },
-   { 4, 3240 },
-   { 4, 3241 },
-   { 4, 3248 },
-   { 4, 3310 },
-   { 4, 3313 },
-   { 4, 3314 },
-   { 4, 3316 },
-   { 4, 3317 },
-   { 4, 3318 },
-   { 4, 3319 },
-   { 4, 3320 },
-   { 4, 3321 },
-   { 4, 3323 },
-   { 4, 3325 },
-   { 4, 3326 },
-   { 4, 3328 },
-   { 4, 3371 },
-   { 4, 3372 },
-   { 4, 3373 },
-   { 4, 3375 },
-   { 4, 3380 },
-   { 4, 3383 },
-   { 4, 3387 },
-   { 4, 3390 },
-   { 4, 3391 },
-   { 4, 3392 },
-   { 4, 3396 },
-   { 4, 3400 },
-   { 4, 3402 },
-   { 4, 3446 },
-   { 4, 3449 },
-   { 4, 3450 },
-   { 4, 3453 },
-   { 4, 3457 },
-   { 4, 3458 },
-   { 4, 3459 },
-   { 4, 3463 },
-   { 4, 3465 },
-   { 4, 3466 },
-   { 4, 3472 },
-   { 4, 3474 },
-   { 4, 3475 },
-   { 4, 3519 },
-   { 4, 3521 },
-   { 4, 3522 },
-   { 4, 3525 },
-   { 4, 3526 },
-   { 4, 3527 },
-   { 4, 3528 },
-   { 4, 3529 },
-   { 4, 3530 },
-   { 4, 3535 },
-   { 4, 3536 },
-   { 4, 3537 },
-   { 4, 3538 },
-   { 4, 3540 },
-   { 4, 3542 },
-   { 4, 3545 },
-   { 4, 3593 },
-   { 4, 3595 },
-   { 4, 3596 },
-   { 4, 3597 },
-   { 4, 3605 },
-   { 4, 3609 },
-   { 4, 3611 },
-   { 4, 3612 },
-   { 4, 3613 },
-   { 4, 3615 },
-   { 4, 3616 },
-   { 4, 3619 },
-   { 4, 5197 },
-   { 4, 5198 },
-   { 4, 5199 },
-   { 4, 5200 },
-   { 4, 5201 },
-   { 4, 5202 },
-   { 4, 5203 },
-   { 4, 5204 },
-   { 4, 5385 },
-   { 4, 5386 },
-   { 4, 5387 },
-   { 4, 5388 },
-   { 4, 5389 },
-   { 4, 5390 },
-   { 4, 5391 },
-   { 4, 5392 },
-   { 4, 5404 },
-   { 4, 5405 },
-   { 4, 5406 },
-   { 4, 5407 },
-   { 4, 5408 },
-   { 4, 5409 },
-   { 4, 5410 },
-   { 4, 5700 },
-   { 4, 5701 },
-   { 4, 5702 },
-   { 4, 5703 },
-   { 4, 5704 },
-   { 4, 5705 },
-   { 4, 5706 },
-   { 4, 6307 },
-   { 4, 6308 },
-   { 4, 6309 },
-   { 4, 6310 },
-   { 4, 6311 },
-   { 4, 6312 },
-   { 4, 6313 },
-   { 4, 6314 },
-   { 4, 6381 },
-   { 4, 6382 },
-   { 4, 6383 },
-   { 4, 6384 },
-   { 4, 6385 },
-   { 4, 6386 },
-   { 4, 6387 },
-   { 4, 6388 },
-   { 4, 6421 },
-   { 4, 6422 },
-   { 4, 6423 },
-   { 4, 6424 },
-   { 4, 6425 },
-   { 4, 6426 },
-   { 4, 6427 },
-   { 4, 6428 },
-   { 4, 7005 },
-   { 4, 7006 },
-   { 4, 7007 },
-   { 4, 7008 },
-   { 4, 7009 },
-   { 4, 7010 },
-   { 4, 7011 },
-   { 4, 7012 },
-   { 4, 7631 },
-   { 4, 7632 },
-   { 4, 7633 },
-   { 4, 7634 },
-   { 4, 7706 },
-   { 4, 7707 },
-   { 4, 7870 },
-   { 4, 7872 },
-   { 4, 8387 },
-   { 4, 8388 },
-   { 4, 8389 },
-   { 4, 8390 },
-   { 4, 8391 },
-   { 4, 8392 },
-   { 4, 8393 },
-   { 4, 8394 },
-   { 4, 9599 },
-   { 4, 9602 }
-};
-
+EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {};
 
 template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
 template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
@@ -1266,8 +738,13 @@ void EfficiencyPlotsModule::downscaleEfficiencyPlots()
    };
 }
 
-void EfficiencyPlotsModule::printCombinedBadROCList(std::map<float, EfficiencyPlotsModule>& delayToPlotterModuleMap)
+void EfficiencyPlotsModule::printCombinedBadROCList(std::map<float, EfficiencyPlotsModule>& delayToPlotterModuleMap, const std::string& badROCFileName)
 {
+   std::ofstream badROCFile;
+   if(badROCFileName != "")
+   {
+      badROCFile.open(badROCFileName, std::ios::out);
+   }
    double sum = 0;
    double weightSum = 0;
    for(const auto& delayScenarioPair: delayToPlotterModuleMap)
@@ -1308,7 +785,7 @@ void EfficiencyPlotsModule::printCombinedBadROCList(std::map<float, EfficiencyPl
    }
    double statError = std::sqrt(errorSquaredSum / (weightSum - 1));
    std::cout << "mean: " << mean << ", statError: " << statError << std::endl;
-   std::cout << "combined badROC list: " << std::endl;
+   // std::cout << "combined badROC list: " << std::endl;
    for(LayersDiskPlotIndecies plotIndex = static_cast<LayersDiskPlotIndecies>(0); plotIndex < 23; plotIndex = static_cast<LayersDiskPlotIndecies>(plotIndex + 1))
    {
       TH2D* framePlot = dynamic_cast<TH2D*>(delayToPlotterModuleMap.begin() -> second.efficiencyROCPlots[plotIndex]);
@@ -1340,7 +817,14 @@ void EfficiencyPlotsModule::printCombinedBadROCList(std::map<float, EfficiencyPl
          // std::cout << "efficiency: " << efficiency << std::endl;
          if((efficiency < mean - 0.1 && efficiency < mean - statError * 2) || efficiency < 0.15)
          {
-             std::cout << "{ " << layer << ", " << rocBin << " }" << std::endl;
+            if(badROCFile.good())
+            {
+               badROCFile << "{ " << layer << ", " << rocBin << " }" << std::endl;
+            }
+            else
+            {
+               std::cout << "{ " << layer << ", " << rocBin << " }" << std::endl;
+            }
          }
 
       }
@@ -1612,7 +1096,7 @@ std::array<std::pair<Long64_t, Long64_t>, 8>*  EfficiencyPlotsModule::getEfficie
 std::array<std::pair<Long64_t, Long64_t>, 12>* EfficiencyPlotsModule::getEfficiencyDisksInnerOuter()               { return &efficiencyDisksInnerOuter;               }
 std::array<std::pair<Long64_t, Long64_t>, 64>* EfficiencyPlotsModule::getEfficiencyBNPZHSSIOLP()                   { return &efficiencyBNPZHSSIOLP;                   }
 
-TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram, const int& markerColor, const int& markerStyle)
+TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH1& efficiencyHistogram, const TH1& numHitsHistogram, const int& markerColor, const int& markerStyle)
 {
    const TAxis* xAxis = efficiencyHistogram.GetXaxis();
    const TAxis* yAxis = efficiencyHistogram.GetYaxis();
@@ -1664,103 +1148,111 @@ TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH
    // const_cast<TH1D*>(&efficiencyHistogram) -> Draw("HIST");
 }
 
+// ------------------------------------------------------------------------------------------------
+// Efficiency vs delay - default plots
+
+// Plots created here:
+//    - Delay vs cluster X size
+//    - Delay vs cluster Y size
+//    - Delay vs cluster total size
+//    - Delay vs cluster charge4
+// 
+// Detector part classification types:
+//    - Barrel or forward pixel
+//    - On barrel: layer and side (sign of Z coordinate)
+//    - On forward? disk and ring (inner or outer)
+//    - On barrel: side (sign of Z), half shell (sign of X), sector, [layer 1-2] or [layer 3-4]
+// 
+
 void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& delayPlotsNumBins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge)
 {
-      std::vector<std::string> labelsWBC;
-      for(int wbcSetting = delayPlotsLowerEdge; wbcSetting < delayPlotsUpperEdge; wbcSetting++)
-      {
-         for(int nanosec = 0; nanosec < 25; nanosec += 5)
-         {
-            labelsWBC.push_back("WBC" + std::to_string(wbcSetting) + ":++" + std::to_string(nanosec) + "ns");
-         }
-      }
-      std::vector<TH1D*> delayVsClusterSizeXBpixFpix                  ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeXBpixFpixHits              ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeXLayersNegativePositive    ( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeXLayersNegativePositiveHits( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeXDisksInnerOuter           (12, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeXDisksInnerOuterHits       (12, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeXBNPZHSSIOLP               (64, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeXBNPZHSSIOLPHits           (64, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYBpixFpix                  ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYBpixFpixHits              ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYLayersNegativePositive    ( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYLayersNegativePositiveHits( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYDisksInnerOuter           (12, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYDisksInnerOuterHits       (12, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYBNPZHSSIOLP               (64, nullptr);
-      std::vector<TH1D*> delayVsClusterSizeYBNPZHSSIOLPHits           (64, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXBpixFpix                  ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXBpixFpixHits              ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXLayersNegativePositive    ( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXLayersNegativePositiveHits( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXDisksInnerOuter           (12, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXDisksInnerOuterHits       (12, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXBNPZHSSIOLP               (64, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeXBNPZHSSIOLPHits           (64, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYBpixFpix                  ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYBpixFpixHits              ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYLayersNegativePositive    ( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYLayersNegativePositiveHits( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYDisksInnerOuter           (12, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYDisksInnerOuterHits       (12, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYBNPZHSSIOLP               (64, nullptr);
+      std::vector<TH1F*> delayVsClusterSizeYBNPZHSSIOLPHits           (64, nullptr);
 
-      std::vector<TH1D*> delayVsClusterSizePixelsBpixFpix                   ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterSizePixelsBpixFpixHits               ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterSizePixelsLayersNegativePositive     ( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterSizePixelsLayersNegativePositiveHits ( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterSizePixelsDisksInnerOuter            (12, nullptr);
-      std::vector<TH1D*> delayVsClusterSizePixelsDisksInnerOuterHits        (12, nullptr);
-      std::vector<TH1D*> delayVsClusterSizePixelsBNPZHSSIOLP                (64, nullptr);
-      std::vector<TH1D*> delayVsClusterSizePixelsBNPZHSSIOLPHits            (64, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeBpixFpix                       ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeBpixFpixHits                   ( 2, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeLayersNegativePositive         ( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeLayersNegativePositiveHits     ( 8, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeDisksInnerOuter                (12, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeDisksInnerOuterHits            (12, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeBNPZHSSIOLP                    (64, nullptr);
-      std::vector<TH1D*> delayVsClusterChargeBNPZHSSIOLPHits                (64, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsBpixFpix                   ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsBpixFpixHits               ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsLayersNegativePositive     ( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsLayersNegativePositiveHits ( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsDisksInnerOuter            (12, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsDisksInnerOuterHits        (12, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsBNPZHSSIOLP                (64, nullptr);
+      std::vector<TH1F*> delayVsClusterSizePixelsBNPZHSSIOLPHits            (64, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeBpixFpix                       ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeBpixFpixHits                   ( 2, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeLayersNegativePositive         ( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeLayersNegativePositiveHits     ( 8, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeDisksInnerOuter                (12, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeDisksInnerOuterHits            (12, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeBNPZHSSIOLP                    (64, nullptr);
+      std::vector<TH1F*> delayVsClusterChargeBNPZHSSIOLPHits                (64, nullptr);
 
-      std::vector<TH1D*> delayVsEfficiencyBpixFpix                    ( 2, nullptr);
-      std::vector<TH1D*> delayVsEfficiencyBpixFpixHits                ( 2, nullptr);
-      std::vector<TH1D*> delayVsEfficiencyLayersNegativePositive      ( 8, nullptr);
-      std::vector<TH1D*> delayVsEfficiencyLayersNegativePositiveHits  ( 8, nullptr);
-      std::vector<TH1D*> delayVsEfficiencyDisksInnerOuter             (12, nullptr);
-      std::vector<TH1D*> delayVsEfficiencyDisksInnerOuterHits         (12, nullptr);
-      std::vector<TH1D*> delayVsEfficiencyBNPZHSSIOLP                 (64, nullptr);
-      std::vector<TH1D*> delayVsEfficiencyBNPZHSSIOLPHits             (64, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyBpixFpix                    ( 2, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyBpixFpixHits                ( 2, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyLayersNegativePositive      ( 8, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyLayersNegativePositiveHits  ( 8, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyDisksInnerOuter             (12, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyDisksInnerOuterHits         (12, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyBNPZHSSIOLP                 (64, nullptr);
+      std::vector<TH1F*> delayVsEfficiencyBNPZHSSIOLPHits             (64, nullptr);
       for(unsigned int det = 0; det <= 1; ++det)
       {
          static const std::vector<std::string> detStrings  = {"BPix", "FPix"};
          std::string detAsString = detStrings[det];         // Cluster Size X
-         delayVsClusterSizeXBpixFpix[det] = new TH1D(
+         delayVsClusterSizeXBpixFpix[det] = new TH1F(
             ("delayVsClusterSizeX" + detAsString).c_str(),
             ("Delay vs cluster X size on " + detAsString + ";delay;cluster X size (pix)").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-         delayVsClusterSizeXBpixFpixHits[det] = new TH1D(
+         delayVsClusterSizeXBpixFpixHits[det] = new TH1F(
             ("delayVsClusterSizeXHits" + detAsString).c_str(),
             ("Number of clusters for delay scenarios on " + detAsString + ";delay;clusters").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
          // Cluster Size Y
-         delayVsClusterSizeYBpixFpix[det] = new TH1D(
+         delayVsClusterSizeYBpixFpix[det] = new TH1F(
             ("delayVsClusterSizeY" + detAsString).c_str(),
             ("Delay vs cluster Y size on " + detAsString + ";delay;cluster Y size (pix)").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-         delayVsClusterSizeYBpixFpixHits[det] = new TH1D(
+         delayVsClusterSizeYBpixFpixHits[det] = new TH1F(
             ("delayVsClusterSizeYHits" + detAsString).c_str(),
             ("Number of clusters for delay scenarios on " + detAsString + ";delay;clusters").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
          // Cluster Total Size
-         delayVsClusterSizePixelsBpixFpix[det] = new TH1D(
+         delayVsClusterSizePixelsBpixFpix[det] = new TH1F(
             ("delayVsClusterSizePixels" + detAsString).c_str(),
             ("Delay vs cluster size on " + detAsString + ";delay;cluster size (pix)").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-         delayVsClusterSizePixelsBpixFpixHits[det] = new TH1D(
+         delayVsClusterSizePixelsBpixFpixHits[det] = new TH1F(
             ("delayVsClusterSizePixelsHits" + detAsString).c_str(),
             ("Number of clusters for delay scenarios on " + detAsString + ";delay;clusters").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
          // Cluster Charge 
-         delayVsClusterChargeBpixFpix[det] = new TH1D(
+         delayVsClusterChargeBpixFpix[det] = new TH1F(
             ("delayVsClusterCharge" + detAsString).c_str(),
             ("Delay vs charge on " + detAsString + ";delay;charge (ke)").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-         delayVsClusterChargeBpixFpixHits[det] = new TH1D(
+         delayVsClusterChargeBpixFpixHits[det] = new TH1F(
             ("delayVsClusterChargeHits" + detAsString).c_str(),
             ("Number of clusters for delay scenarios on " + detAsString + ";delay;clusters").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
          // Efficiency
-         delayVsEfficiencyBpixFpix[det] = new TH1D(
+         delayVsEfficiencyBpixFpix[det] = new TH1F(
             ("delayVsEfficiency" + detAsString).c_str(),
             ("Delay vs efficiency on " + detAsString + ";delay;efficiency").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-         delayVsEfficiencyBpixFpixHits[det] = new TH1D(
+         delayVsEfficiencyBpixFpixHits[det] = new TH1F(
             ("delayVsEfficiencyHits" + detAsString).c_str(),
             ("Number of eff. hits for delay scenarios on " + detAsString + ";delay;hits").c_str(), 
             delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
@@ -1774,47 +1266,47 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
             std::string layerAsString = std::to_string(layer);
             std::string sideAsString  = sideStrings[side - 1];
             // Cluster Size X
-            delayVsClusterSizeXLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterSizeXLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterSizeXLayer" + layerAsString + sideAsString).c_str(),
                ("Delay vs cluster X size on layer " + layerAsString + ", " + sideAsString + " side;delay;cluster X size (pix)").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterSizeXLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterSizeXLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterSizeXLayerHits" + layerAsString + sideAsString).c_str(),
                ("Number of clusters for delay scenarios on layer " + layerAsString + ", " + sideAsString + " side;delay;clusters").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Cluster Size Y
-            delayVsClusterSizeYLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterSizeYLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterSizeYLayer" + layerAsString + sideAsString).c_str(),
                ("Delay vs cluster Y size on layer " + layerAsString + ", " + sideAsString + " side;delay;cluster Y size (pix)").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterSizeYLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterSizeYLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterSizeYLayerHits" + layerAsString + sideAsString).c_str(),
                ("Number of clusters for delay scenarios on layer " + layerAsString + ", " + sideAsString + " side;delay;clusters").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Cluster Total Size
-            delayVsClusterSizePixelsLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterSizePixelsLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterSizePixelsLayer" + layerAsString + sideAsString).c_str(),
                ("Delay vs cluster size on layer " + layerAsString + ", " + sideAsString + " side;delay;cluster size (pix)").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterSizePixelsLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterSizePixelsLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterSizePixelsLayerHits" + layerAsString + sideAsString).c_str(),
                ("Number of clusters for delay scenarios on layer " + layerAsString + ", " + sideAsString + " side;delay;clusters").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Charge
-            delayVsClusterChargeLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterChargeLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterChargeLayer" + layerAsString + sideAsString).c_str(),
                ("Delay vs cluster charge on layer " + layerAsString + ", " + sideAsString + " side;delay;cluster charge (ke)").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterChargeLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsClusterChargeLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsClusterChargeLayerHits" + layerAsString + sideAsString).c_str(),
                ("Number of clusters for delay scenarios on layer " + layerAsString + ", " + sideAsString + " side;delay;clusters").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Efficiency
-            delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsEfficiencyLayersNegativePositive[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsEfficiencyLayer" + layerAsString + sideAsString).c_str(),
                ("Delay vs efficiency on layer " + layerAsString + ", " + sideAsString + " side;delay;efficiency").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsEfficiencyLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1D(
+            delayVsEfficiencyLayersNegativePositiveHits[(layer - 1) * 2 + side - 1] = new TH1F(
                ("delayVsEfficiencyLayerHits" + layerAsString + sideAsString).c_str(),
                ("Number of eff. hits for delay scenarios on layer " + layerAsString + ", " + sideAsString + " side;delay;hits").c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
@@ -1832,47 +1324,47 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
             std::string ringAsString = ringStrings[ring - 1];
             int histogramIndex = (0 <= disk) * 6 + (std::abs(disk) - 1) * 2 + ring - 1;
             // Cluster Size X
-            delayVsClusterSizeXDisksInnerOuter[histogramIndex] = new TH1D(
+            delayVsClusterSizeXDisksInnerOuter[histogramIndex] = new TH1F(
                ("delayVsClusterSizeXDisk" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Delay vs cluster X size on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;cluster X size (pix)" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterSizeXDisksInnerOuterHits[histogramIndex] = new TH1D(
+            delayVsClusterSizeXDisksInnerOuterHits[histogramIndex] = new TH1F(
                ("delayVsClusterSizeXDiskHits" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Number of clusters for delay scenarios on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;clusters" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Cluster Size Y
-            delayVsClusterSizeYDisksInnerOuter[histogramIndex] = new TH1D(
+            delayVsClusterSizeYDisksInnerOuter[histogramIndex] = new TH1F(
                ("delayVsClusterSizeYDisk" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Delay vs cluster Y size on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;cluster Y size (pix)" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterSizeYDisksInnerOuterHits[histogramIndex] = new TH1D(
+            delayVsClusterSizeYDisksInnerOuterHits[histogramIndex] = new TH1F(
                ("delayVsClusterSizeYDiskHits" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Number of clusters for delay scenarios on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;clusters" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Cluster Total Size
-            delayVsClusterSizePixelsDisksInnerOuter[histogramIndex] = new TH1D(
+            delayVsClusterSizePixelsDisksInnerOuter[histogramIndex] = new TH1F(
                ("delayVsClusterSizePixelsDisk" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Delay vs cluster size on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;cluster size (pix)" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterSizePixelsDisksInnerOuterHits[histogramIndex] = new TH1D(
+            delayVsClusterSizePixelsDisksInnerOuterHits[histogramIndex] = new TH1F(
                ("delayVsClusterSizePixelsDiskHits" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Number of clusters for delay scenarios on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;clusters" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Charge
-            delayVsClusterChargeDisksInnerOuter[histogramIndex] = new TH1D(
+            delayVsClusterChargeDisksInnerOuter[histogramIndex] = new TH1F(
                ("delayVsClusterChargeDisk" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Delay vs cluster charge on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;cluster charge (ke)" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsClusterChargeDisksInnerOuterHits[histogramIndex] = new TH1D(
+            delayVsClusterChargeDisksInnerOuterHits[histogramIndex] = new TH1F(
                ("delayVsClusterChargeDiskHits" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Number of clusters for delay scenarios on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;clusters" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
             // Efficiency
-            delayVsEfficiencyDisksInnerOuter[histogramIndex] = new TH1D(
+            delayVsEfficiencyDisksInnerOuter[histogramIndex] = new TH1F(
                ("delayVsEfficiencyDisk" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Delay vs efficiency on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;efficiency" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-            delayVsEfficiencyDisksInnerOuterHits[histogramIndex] = new TH1D(
+            delayVsEfficiencyDisksInnerOuterHits[histogramIndex] = new TH1F(
                ("delayVsEfficiencyDiskHits" + diskAsString + sideAsString + "Side" + ringAsString + "Ring").c_str(),
                ("Number of eff. hits for delay scenarios on disk " + diskAsString + ", " + sideAsString + " Z, " + ringAsString + " Ring;delay;hits" ).c_str(),
                delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
@@ -1896,47 +1388,47 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
                   std::string layerPairAsShortString = layerPairStringsShort[layerPair - 1];
                   int plotIndex = (side - 1) * 32 + (halfShell - 1) * 16 + (layerPair - 1) * 8 + (sec - 1);
                   // Cluster Size X
-                  delayVsClusterSizeXBNPZHSSIOLP[plotIndex] = new TH1D(
+                  delayVsClusterSizeXBNPZHSSIOLP[plotIndex] = new TH1F(
                      ("delayVsClusterSizeX" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Delay vs cluster X size on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;cluster X size (pix)").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-                  delayVsClusterSizeXBNPZHSSIOLPHits[plotIndex] = new TH1D(
+                  delayVsClusterSizeXBNPZHSSIOLPHits[plotIndex] = new TH1F(
                      ("delayVsClusterSizeXHits" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Number of clusters for delay scenarios on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;clusters").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
                   // Cluster Size Y
-                  delayVsClusterSizeYBNPZHSSIOLP[plotIndex] = new TH1D(
+                  delayVsClusterSizeYBNPZHSSIOLP[plotIndex] = new TH1F(
                      ("delayVsClusterSizeY" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Delay vs cluster Y size on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;cluster Y size (pix)").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-                  delayVsClusterSizeYBNPZHSSIOLPHits[plotIndex] = new TH1D(
+                  delayVsClusterSizeYBNPZHSSIOLPHits[plotIndex] = new TH1F(
                      ("delayVsClusterSizeYHits" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Number of clusters for delay scenarios on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;clusters").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
                   // Cluster Total Size
-                  delayVsClusterSizePixelsBNPZHSSIOLP[plotIndex] = new TH1D(
+                  delayVsClusterSizePixelsBNPZHSSIOLP[plotIndex] = new TH1F(
                      ("delayVsClusterSizePixels" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Delay vs cluster size on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;cluster size (pix)").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-                  delayVsClusterSizePixelsBNPZHSSIOLPHits[plotIndex] = new TH1D(
+                  delayVsClusterSizePixelsBNPZHSSIOLPHits[plotIndex] = new TH1F(
                      ("delayVsClusterSizePixelsHits" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Number of clusters for delay scenarios on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;clusters").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
                   // Charge
-                  delayVsClusterChargeBNPZHSSIOLP[plotIndex] = new TH1D(
+                  delayVsClusterChargeBNPZHSSIOLP[plotIndex] = new TH1F(
                      ("delayVsClusterCharge" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Delay vs cluster charge on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;cluster charge (ke)").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-                  delayVsClusterChargeBNPZHSSIOLPHits[plotIndex] = new TH1D(
+                  delayVsClusterChargeBNPZHSSIOLPHits[plotIndex] = new TH1F(
                      ("delayVsClusterChargeHits" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Number of clusters for delay scenarios on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;clusters").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
                   // Efficiency
-                  delayVsEfficiencyBNPZHSSIOLP[plotIndex] = new TH1D(
+                  delayVsEfficiencyBNPZHSSIOLP[plotIndex] = new TH1F(
                      ("delayVsEfficiency" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Delay vs efficiency on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;efficiency").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
-                  delayVsEfficiencyBNPZHSSIOLPHits[plotIndex] = new TH1D(
+                  delayVsEfficiencyBNPZHSSIOLPHits[plotIndex] = new TH1F(
                      ("delayVsEfficiencyHits" + sideAsString + "Z" + halfShellAsString + "XShell" + "Sector" + secAsString + "Layers" + layerPairAsShortString).c_str(),
                      ("Number of eff. hits for delay scenarios on " + sideAsString + " Z, " + halfShellAsString + "X half-shell, sector " + secAsString + ", layers " + layerPairAsString + "delay;hits").c_str(),
                      delayPlotsNumBins, delayPlotsLowerEdge, delayPlotsUpperEdge);
@@ -1976,74 +1468,74 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
          for(unsigned int plotIndex = 0; plotIndex < 2; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeXBpixFpix[plotIndex]     -> Fill(delay / 25, (*clusterSizeXBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizeXBpixFpix)[plotIndex].first));
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeXBpixFpixHits[plotIndex] -> Fill(delay / 25, (*clusterSizeXBpixFpix)[plotIndex].first);
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeXBpixFpix[plotIndex]     -> Fill(delay, (*clusterSizeXBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizeXBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeXBpixFpixHits[plotIndex] -> Fill(delay, (*clusterSizeXBpixFpix)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeYBpixFpix[plotIndex]     -> Fill(delay / 25, (*clusterSizeYBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizeYBpixFpix)[plotIndex].first));
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeYBpixFpixHits[plotIndex] -> Fill(delay / 25, (*clusterSizeYBpixFpix)[plotIndex].first);
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeYBpixFpix[plotIndex]     -> Fill(delay, (*clusterSizeYBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizeYBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeYBpixFpixHits[plotIndex] -> Fill(delay, (*clusterSizeYBpixFpix)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizePixelsBpixFpix[plotIndex]     -> Fill(delay / 25, (*clusterSizePixelsBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizePixelsBpixFpix)[plotIndex].first));
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizePixelsBpixFpixHits[plotIndex] -> Fill(delay / 25, (*clusterSizePixelsBpixFpix)[plotIndex].first);
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizePixelsBpixFpix[plotIndex]     -> Fill(delay, (*clusterSizePixelsBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizePixelsBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizePixelsBpixFpixHits[plotIndex] -> Fill(delay, (*clusterSizePixelsBpixFpix)[plotIndex].first);
             // Cluster Charge
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterChargeBpixFpix[plotIndex]     -> Fill(delay / 25, (*clusterChargeBpixFpix)[plotIndex].second / static_cast<double>((*clusterChargeBpixFpix)[plotIndex].first));
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterChargeBpixFpixHits[plotIndex] -> Fill(delay / 25, (*clusterChargeBpixFpix)[plotIndex].first);
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterChargeBpixFpix[plotIndex]     -> Fill(delay, (*clusterChargeBpixFpix)[plotIndex].second / static_cast<double>((*clusterChargeBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterChargeBpixFpixHits[plotIndex] -> Fill(delay, (*clusterChargeBpixFpix)[plotIndex].first);
             // Efficiency
-            if((*efficiencyBpixFpix)[plotIndex]  .first != 0) delayVsEfficiencyBpixFpix[plotIndex]       -> Fill(delay / 25, (*efficiencyBpixFpix)[plotIndex].second / static_cast<double>((*efficiencyBpixFpix)[plotIndex].first));
-            if((*efficiencyBpixFpix)[plotIndex]  .first != 0) delayVsEfficiencyBpixFpixHits[plotIndex]   -> Fill(delay / 25, (*efficiencyBpixFpix)[plotIndex].first);
+            if((*efficiencyBpixFpix)[plotIndex]  .first != 0) delayVsEfficiencyBpixFpix[plotIndex]       -> Fill(delay, (*efficiencyBpixFpix)[plotIndex].second / static_cast<double>((*efficiencyBpixFpix)[plotIndex].first));
+            if((*efficiencyBpixFpix)[plotIndex]  .first != 0) delayVsEfficiencyBpixFpixHits[plotIndex]   -> Fill(delay, (*efficiencyBpixFpix)[plotIndex].first);
          }
          for(unsigned int plotIndex = 0; plotIndex < 8; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeXLayersNegativePositive[plotIndex]     -> Fill(delay / 25, (*clusterSizeXLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizeXLayersNegativePositive)[plotIndex].first));
-            if((*clusterSizeXLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeXLayersNegativePositiveHits[plotIndex] -> Fill(delay / 25, (*clusterSizeXLayersNegativePositive)[plotIndex].first);
+            if((*clusterSizeXLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeXLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterSizeXLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizeXLayersNegativePositive)[plotIndex].first));
+            if((*clusterSizeXLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeXLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterSizeXLayersNegativePositive)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeYLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeYLayersNegativePositive[plotIndex]     -> Fill(delay / 25, (*clusterSizeYLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizeYLayersNegativePositive)[plotIndex].first));
-            if((*clusterSizeYLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeYLayersNegativePositiveHits[plotIndex] -> Fill(delay / 25, (*clusterSizeYLayersNegativePositive)[plotIndex].first);
+            if((*clusterSizeYLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeYLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterSizeYLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizeYLayersNegativePositive)[plotIndex].first));
+            if((*clusterSizeYLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeYLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterSizeYLayersNegativePositive)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizePixelsLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizePixelsLayersNegativePositive[plotIndex]     -> Fill(delay / 25, (*clusterSizePixelsLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizePixelsLayersNegativePositive)[plotIndex].first));
-            if((*clusterSizePixelsLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizePixelsLayersNegativePositiveHits[plotIndex] -> Fill(delay / 25, (*clusterSizePixelsLayersNegativePositive)[plotIndex].first);
+            if((*clusterSizePixelsLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizePixelsLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterSizePixelsLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizePixelsLayersNegativePositive)[plotIndex].first));
+            if((*clusterSizePixelsLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizePixelsLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterSizePixelsLayersNegativePositive)[plotIndex].first);
             // Cluster Charge
-            if((*clusterChargeLayersNegativePositive)[plotIndex].first != 0) delayVsClusterChargeLayersNegativePositive[plotIndex]     -> Fill(delay / 25, (*clusterChargeLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterChargeLayersNegativePositive)[plotIndex].first));
-            if((*clusterChargeLayersNegativePositive)[plotIndex].first != 0) delayVsClusterChargeLayersNegativePositiveHits[plotIndex] -> Fill(delay / 25, (*clusterChargeLayersNegativePositive)[plotIndex].first);
+            if((*clusterChargeLayersNegativePositive)[plotIndex].first != 0) delayVsClusterChargeLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterChargeLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterChargeLayersNegativePositive)[plotIndex].first));
+            if((*clusterChargeLayersNegativePositive)[plotIndex].first != 0) delayVsClusterChargeLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterChargeLayersNegativePositive)[plotIndex].first);
             // Efficiency
-            if((*efficiencyLayersNegativePositive)[plotIndex].first != 0) delayVsEfficiencyLayersNegativePositive[plotIndex]     -> Fill(delay / 25, (*efficiencyLayersNegativePositive)[plotIndex].second / static_cast<double>((*efficiencyLayersNegativePositive)[plotIndex].first));
-            if((*efficiencyLayersNegativePositive)[plotIndex].first != 0) delayVsEfficiencyLayersNegativePositiveHits[plotIndex] -> Fill(delay / 25, (*efficiencyLayersNegativePositive)[plotIndex].first);
+            if((*efficiencyLayersNegativePositive)[plotIndex].first != 0) delayVsEfficiencyLayersNegativePositive[plotIndex]     -> Fill(delay, (*efficiencyLayersNegativePositive)[plotIndex].second / static_cast<double>((*efficiencyLayersNegativePositive)[plotIndex].first));
+            if((*efficiencyLayersNegativePositive)[plotIndex].first != 0) delayVsEfficiencyLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*efficiencyLayersNegativePositive)[plotIndex].first);
          }
          for(unsigned int plotIndex = 0; plotIndex < 12; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeXDisksInnerOuter[plotIndex]      -> Fill(delay / 25, (*clusterSizeXDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizeXDisksInnerOuter)[plotIndex].first));
-            if((*clusterSizeXDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeXDisksInnerOuterHits[plotIndex]  -> Fill(delay / 25, (*clusterSizeXDisksInnerOuter)[plotIndex].first);
+            if((*clusterSizeXDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeXDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterSizeXDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizeXDisksInnerOuter)[plotIndex].first));
+            if((*clusterSizeXDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeXDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterSizeXDisksInnerOuter)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeYDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeYDisksInnerOuter[plotIndex]      -> Fill(delay / 25, (*clusterSizeYDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizeYDisksInnerOuter)[plotIndex].first));
-            if((*clusterSizeYDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeYDisksInnerOuterHits[plotIndex]  -> Fill(delay / 25, (*clusterSizeYDisksInnerOuter)[plotIndex].first);
+            if((*clusterSizeYDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeYDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterSizeYDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizeYDisksInnerOuter)[plotIndex].first));
+            if((*clusterSizeYDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeYDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterSizeYDisksInnerOuter)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizePixelsDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizePixelsDisksInnerOuter[plotIndex]      -> Fill(delay / 25, (*clusterSizePixelsDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizePixelsDisksInnerOuter)[plotIndex].first));
-            if((*clusterSizePixelsDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizePixelsDisksInnerOuterHits[plotIndex]  -> Fill(delay / 25, (*clusterSizePixelsDisksInnerOuter)[plotIndex].first);
+            if((*clusterSizePixelsDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizePixelsDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterSizePixelsDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizePixelsDisksInnerOuter)[plotIndex].first));
+            if((*clusterSizePixelsDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizePixelsDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterSizePixelsDisksInnerOuter)[plotIndex].first);
             // Cluster Charge
-            if((*clusterChargeDisksInnerOuter)[plotIndex].first != 0) delayVsClusterChargeDisksInnerOuter[plotIndex]      -> Fill(delay / 25, (*clusterChargeDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterChargeDisksInnerOuter)[plotIndex].first));
-            if((*clusterChargeDisksInnerOuter)[plotIndex].first != 0) delayVsClusterChargeDisksInnerOuterHits[plotIndex]  -> Fill(delay / 25, (*clusterChargeDisksInnerOuter)[plotIndex].first);
+            if((*clusterChargeDisksInnerOuter)[plotIndex].first != 0) delayVsClusterChargeDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterChargeDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterChargeDisksInnerOuter)[plotIndex].first));
+            if((*clusterChargeDisksInnerOuter)[plotIndex].first != 0) delayVsClusterChargeDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterChargeDisksInnerOuter)[plotIndex].first);
             // Efficiency
-            if((*efficiencyDisksInnerOuter)[plotIndex].first != 0) delayVsEfficiencyDisksInnerOuter[plotIndex]      -> Fill(delay / 25, (*efficiencyDisksInnerOuter)[plotIndex].second / static_cast<double>((*efficiencyDisksInnerOuter)[plotIndex].first));
-            if((*efficiencyDisksInnerOuter)[plotIndex].first != 0) delayVsEfficiencyDisksInnerOuterHits[plotIndex]  -> Fill(delay / 25, (*efficiencyDisksInnerOuter)[plotIndex].first);
+            if((*efficiencyDisksInnerOuter)[plotIndex].first != 0) delayVsEfficiencyDisksInnerOuter[plotIndex]      -> Fill(delay, (*efficiencyDisksInnerOuter)[plotIndex].second / static_cast<double>((*efficiencyDisksInnerOuter)[plotIndex].first));
+            if((*efficiencyDisksInnerOuter)[plotIndex].first != 0) delayVsEfficiencyDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*efficiencyDisksInnerOuter)[plotIndex].first);
          }
          for(unsigned int plotIndex = 0; plotIndex < 64; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeXBNPZHSSIOLP[plotIndex]     -> Fill(delay / 25, (*clusterSizeXBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizeXBNPZHSSIOLP)[plotIndex].first));
-            if((*clusterSizeXBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeXBNPZHSSIOLPHits[plotIndex] -> Fill(delay / 25, (*clusterSizeXBNPZHSSIOLP)[plotIndex].first);
+            if((*clusterSizeXBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeXBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterSizeXBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizeXBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterSizeXBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeXBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterSizeXBNPZHSSIOLP)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeYBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeYBNPZHSSIOLP[plotIndex]     -> Fill(delay / 25, (*clusterSizeYBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizeYBNPZHSSIOLP)[plotIndex].first));
-            if((*clusterSizeYBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeYBNPZHSSIOLPHits[plotIndex] -> Fill(delay / 25, (*clusterSizeYBNPZHSSIOLP)[plotIndex].first);
+            if((*clusterSizeYBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeYBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterSizeYBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizeYBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterSizeYBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeYBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterSizeYBNPZHSSIOLP)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizePixelsBNPZHSSIOLP[plotIndex]     -> Fill(delay / 25, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first));
-            if((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizePixelsBNPZHSSIOLPHits[plotIndex] -> Fill(delay / 25, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first);
+            if((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizePixelsBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizePixelsBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first);
             // Cluster Charge
-            if((*clusterChargeBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterChargeBNPZHSSIOLP[plotIndex]     -> Fill(delay / 25, (*clusterChargeBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterChargeBNPZHSSIOLP)[plotIndex].first));
-            if((*clusterChargeBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterChargeBNPZHSSIOLPHits[plotIndex] -> Fill(delay / 25, (*clusterChargeBNPZHSSIOLP)[plotIndex].first);
+            if((*clusterChargeBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterChargeBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterChargeBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterChargeBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterChargeBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterChargeBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterChargeBNPZHSSIOLP)[plotIndex].first);
             // Efficiency
-            if((*efficiencyBNPZHSSIOLP)[plotIndex].first != 0) delayVsEfficiencyBNPZHSSIOLP[plotIndex]     -> Fill(delay / 25, (*efficiencyBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*efficiencyBNPZHSSIOLP)[plotIndex].first));
-            if((*efficiencyBNPZHSSIOLP)[plotIndex].first != 0) delayVsEfficiencyBNPZHSSIOLPHits[plotIndex] -> Fill(delay / 25, (*efficiencyBNPZHSSIOLP)[plotIndex].first);
+            if((*efficiencyBNPZHSSIOLP)[plotIndex].first != 0) delayVsEfficiencyBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*efficiencyBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*efficiencyBNPZHSSIOLP)[plotIndex].first));
+            if((*efficiencyBNPZHSSIOLP)[plotIndex].first != 0) delayVsEfficiencyBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*efficiencyBNPZHSSIOLP)[plotIndex].first);
          }
       }
       gStyle -> SetPalette(kVisibleSpectrum);
@@ -2131,6 +1623,7 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
 
 
 // ------------------------------------------------------------------------------------------------
+// Efficiency vs delay - ROC level plots
 
 // Static function used to create efficiency vs delay plots for each of the ROC-s.
 // Takes a list of pointers to module objects, returns a vector of dynamically allocated 
@@ -2146,12 +1639,13 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
    auto moduleEfficiencyROCPlotsFilled = [] (const EfficiencyPlotsModule* module)
    {
       if(module == nullptr) throw std::runtime_error("Trying to deference a nullptr in the module list. This is not supported.");
-      return std::any_of(module -> efficiencyROCPlots.begin(), module -> efficiencyROCPlots.end(), [](TH1 *histogram) {
+      return std::any_of(module -> efficiencyROCPlots.begin(), module -> efficiencyROCPlots.end(), [](TH1 *histogram) 
+      {
          if(!histogram)
          {
             return false;
          }
-         return 0 < histogram->GetEntries();
+         return 0 < histogram -> GetEntries();
       });
    };
    // Filtering out unknown delays
@@ -2185,9 +1679,9 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
       rocEfficiency.reserve(numBins);
       for(size_t index = 0; index < numBins; ++index)
       {
-         std::string histogramName  = "delayVsEfficiencyOnROCs" + modulesWithKnownDelay.front() -> plotNameSuffices[plotIndex] + "ROC" + std::to_string(index + 1);
+         std::string histogramName  = "delayVsEfficiencyOnROCs" + modulesWithKnownDelay.front() -> plotNameSuffices[plotIndex - 23] + "ROC" + std::to_string(index + 1);
          std::string histogramTitle = "Efficiency on " + modulesWithKnownDelay.front() -> plotTitleSuffices[plotIndex] + " ROC " + std::to_string(index + 1);
-         rocEfficiency.emplace_back(new TH1D(histogramName.c_str(), histogramTitle.c_str(), delayBins, minDelay, maxDelay));
+         rocEfficiency.emplace_back(new TH1F(histogramName.c_str(), histogramTitle.c_str(), delayBins, minDelay, maxDelay));
       }
       rocEfficiency.shrink_to_fit();
       rocEfficiencyHits.emplace_back(rocEfficiency);
@@ -2198,20 +1692,20 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
       for(const auto& plotIndex: plotIndexList) efficiencyHistograms.push_back(module -> efficiencyROCPlots[plotIndex]);
       for(size_t index: range(efficiencyHistograms.size()))
       {
-         Long64_t numBins = dynamic_cast<TH2D*>(efficiencyHistograms[index]) -> GetSize();
+         TH2D* histogramAtIndex  = dynamic_cast<TH2D*>(efficiencyHistograms[index]);
+         Long64_t numBins = histogramAtIndex -> GetSize();
          // Add the content of the bins of the given efficiencyROCPlot to 
          // the corresponding delay bin of the ROC's histogram
          for(Long64_t binIndex = 0; binIndex < numBins; ++binIndex)
          {
-            // std::cout << "Filling at: " << module -> delayInNs_ << std::endl;
-            // std::cout << "Filling with a weight of: " << dynamic_cast<TH2D*>(efficiencyHistograms[index]) -> GetAt(binIndex) << std::endl;
-            rocEfficiencyHits[index][binIndex] -> Fill(module -> delayInNs_, dynamic_cast<TH2D*>(efficiencyHistograms[index]) -> GetAt(binIndex));
+            double fillVal = histogramAtIndex -> GetAt(binIndex);
+            if(1.0 < fillVal) { std::cerr << error_prompt << __PRETTY_FUNCTION__ << ": efficiency value greater than 1.00 found." << std::endl; }
+            rocEfficiencyHits[index][binIndex] -> Fill(module -> delayInNs_, fillVal);
          }
       }
    }
    return rocEfficiencyHits;
 }
-
 
 void EfficiencyPlotsModule::downscaleCollectionIfNotEmpty(EfficiencyPlotPair& plotPair)
 {
@@ -2336,7 +1830,7 @@ void EfficiencyPlotsModule::draw1DPlot(TH1D* histogram)
    // }
 }
 
-void EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram, const int& markerColor, const int& markerStyle)
+void EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(TH1* efficiencyHistogram, TH1* numHitsHistogram, const int& markerColor, const int& markerStyle)
 {
    TGraphAsymmErrors* graph = getEfficiencyGraphAsymmErrors(*efficiencyHistogram, *numHitsHistogram, markerColor);
    graph -> SetName((efficiencyHistogram -> GetName() + std::string("AsGraph")).c_str());

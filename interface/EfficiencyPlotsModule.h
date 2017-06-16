@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <map>
@@ -296,7 +297,7 @@ class EfficiencyPlotsModule
       // void  downscaleClusterSizes();
       void        downscaleEfficiencyPlots();
       void        addExtraEfficiencyPlots();
-      static void printCombinedBadROCList(std::map<float, EfficiencyPlotsModule>& delayToPlotterModuleMap);
+      static void printCombinedBadROCList(std::map<float, EfficiencyPlotsModule>& delayToPlotterModuleMap, const std::string& badROCFileName);
       void        savePlots(const JSON& config, std::string mainDirectoryName);
       template <typename T> 
       static void saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
@@ -304,7 +305,7 @@ class EfficiencyPlotsModule
       static bool histogramExistsAndNotEmpty(TH1* histogram);
       static void draw1DPlot(TH1D* histogram);
       static void draw2DPlot(TH2D* histogram);
-      static void writeEfficiencyPlotAsGraph(TH1D* efficiencyHistogram, TH1D* numHitsHistogram, const int& markerColor = 4, const int& markerStlye = 20);
+      static void writeEfficiencyPlotAsGraph(TH1* efficiencyHistogram, TH1* numHitsHistogram, const int& markerColor = 4, const int& markerStlye = 20);
       static void saveCanvasAsEps(TCanvas* canvas, const std::string& parentDirectoryName);
       float getAvarageEfficiency();
       void  printCheckHistogramPointers();
@@ -331,7 +332,7 @@ class EfficiencyPlotsModule
       std::array<std::pair<Long64_t, Long64_t>, 8>*  getEfficiencyLayersNegativePositive();
       std::array<std::pair<Long64_t, Long64_t>, 12>* getEfficiencyDisksInnerOuter();
       std::array<std::pair<Long64_t, Long64_t>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
-      static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram, const int& markerColor = 4, const int& markerStyle = 20);
+      static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1& efficiencyHistogram, const TH1& numHitsHistogram, const int& markerColor = 4, const int& markerStyle = 20);
       static void                           createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
       static std::vector<std::vector<TH1*>> createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs);
    private:

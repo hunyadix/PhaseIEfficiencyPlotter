@@ -2,12 +2,11 @@ include Makefile.arch
 SrcSuf = cc
 
 CXX       = ${HOME}//usr/bin/g++
-CXXFLAGS  = -std=c++1y -O3 -Wall -fPIC -pthread -m64 -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/include -fdiagnostics-color=always
+CXXFLAGS  = -std=c++14 -O3 -Wall -fPIC -pthread -m64 -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/include -fdiagnostics-color=always
 LIBS      =  -L/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl -rdynamic 
 LIBS     += -lboost_system -lstdc++fs
 
 # CXXFLAGS += -std=c++1z -fdiagnostics-color=always
-
 
 # Utility
 
@@ -57,17 +56,11 @@ EFFICIENCY_TIMING_A = ./bin/efficiencyTiming$(ExeSuf)
 OBJS     += $(EFFICIENCY_TIMING_O)
 PROGRAMS += $(EFFICIENCY_TIMING_A)
 
-# EFFICIENCY_MULTIHITMEAS_S = ./src/programs/efficiency_multiHitMeas.$(SrcSuf)
-# EFFICIENCY_MULTIHITMEAS_O = ./obj/efficiency_multiHitMeas.$(ObjSuf)
-# EFFICIENCY_MULTIHITMEAS_A = ./bin/efficiency_multiHitMeas$(ExeSuf)
-# OBJS     += $(EFFICIENCY_MULTIHITMEAS_O)
-# PROGRAMS += $(EFFICIENCY_MULTIHITMEAS_A)
-
-# MERGE_SIMHIT_PLOTS_S = ./src/programs/mergeSimhitPlots.$(SrcSuf)
-# MERGE_SIMHIT_PLOTS_O = ./obj/mergeSimhitPlots.$(ObjSuf)
-# MERGE_SIMHIT_PLOTS_A = ./bin/mergeSimhitPlots$(ExeSuf)
-# OBJS     += $(MERGE_SIMHIT_PLOTS_O)
-# PROGRAMS += $(MERGE_SIMHIT_PLOTS_A)
+ROC_EFFICIENCY_FITTER_S = ./src/programs/rocEfficiencyFitter.$(SrcSuf)
+ROC_EFFICIENCY_FITTER_O = ./obj/rocEfficiencyFitter.$(ObjSuf)
+ROC_EFFICIENCY_FITTER_A = ./bin/rocEfficiencyFitter$(ExeSuf)
+OBJS     += $(ROC_EFFICIENCY_FITTER_O)
+PROGRAMS += $(ROC_EFFICIENCY_FITTER_A)
 
 all: $(PROGRAMS)
 
@@ -81,6 +74,13 @@ $(EFFICIENCY_MAIN_A): $(EFFICIENCY_MAIN_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) 
 	@echo "...$@ is ready to use."
 
 $(EFFICIENCY_TIMING_A): $(EFFICIENCY_TIMING_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O)
+	@printf "Compiling done, linking \""$@"\"...\n"
+	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
+	$(MT_EXE)
+	@echo "Succesful make..."
+	@echo "...$@ is ready to use."
+
+$(ROC_EFFICIENCY_FITTER_A): $(ROC_EFFICIENCY_FITTER_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O)
 	@printf "Compiling done, linking \""$@"\"...\n"
 	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
 	$(MT_EXE)
@@ -151,6 +151,11 @@ $(EFFICIENCY_MAIN_O): $(EFFICIENCY_MAIN_S)
 	@printf "Done.\n"
 
 $(EFFICIENCY_TIMING_O): $(EFFICIENCY_TIMING_S)  
+	@printf "Compiling program: \""$<"\"...\n"
+	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
+	@printf "Done.\n"
+
+$(ROC_EFFICIENCY_FITTER_O): $(ROC_EFFICIENCY_FITTER_S)  
 	@printf "Compiling program: \""$<"\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"

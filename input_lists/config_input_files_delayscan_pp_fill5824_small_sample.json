@@ -1,0 +1,16 @@
+{
+	"input_files":
+	[
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_1.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_100.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_119.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_135.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_155.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_171.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_188.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_29.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_48.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_65.root",
+		"/data/gridout/jkarancs/PhaseIPixelNtuplizer/2017/ExpressPhysics/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_81.root"
+	]
+}

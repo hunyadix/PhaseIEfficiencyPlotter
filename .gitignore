@@ -42,6 +42,9 @@ jegyzet.md
 EfficiencyPresentation_*
 CosmicsStatsPresentation_*
 
+# Backup files
+*.bkp
+
 # Instlumi and pileup maps
 # Resources/Sources/Includes/Histogram_generation/Fill_parameters/Instlumi_map/run_ls_instlumi_pileup_2012.txt
 # Resources/Sources/Includes/Histogram_generation/Fill_parameters/Instlumi_map/run_ls_instlumi_pileup_2015.txt
