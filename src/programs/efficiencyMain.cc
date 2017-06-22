@@ -79,7 +79,7 @@ std::vector<std::string>                    getFilesFromConfig(const JSON& confi
 void                                        readInFilesAndAddToChain(const JSON& config, const std::string& configKey, const std::string& innerKey, TChain* chain);
 TGraphAsymmErrors*                          getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram);
 
-int main(int argc, char** argv) try
+int main([[maybe_unused]] int argc, char** argv) try
 {
    std::cout << process_prompt << argv[0] << " started..." << std::endl;
    std::time_t processStarted = std::time(nullptr);

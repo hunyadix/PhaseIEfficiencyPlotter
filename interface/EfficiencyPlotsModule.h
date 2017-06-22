@@ -63,7 +63,7 @@ class EfficiencyPlotsModule
       static constexpr float                TRACK_DZ_CUT_BARREL_N_MINUS_1_VAL  = 0.1f;
       static constexpr float                TRACK_DZ_CUT_FORWARD_N_MINUS_1_VAL = 0.5f;
       static constexpr float                MEAS_HITSEP_CUT_N_MINUS_1_VAL      = 0.01f;
-      static constexpr float                HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL   = 0.01f;
+      static constexpr float                HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL   = 0.1f;
       static constexpr float                BARREL_MODULE_EDGE_X_CUT           = 0.6f;
       static constexpr float                BARREL_MODULE_EDGE_Y_CUT           = 3.0f;
       static BadROClist                     badROClist;
@@ -303,8 +303,8 @@ class EfficiencyPlotsModule
       static void saveHistogramsInCollectionIfNotEmpty(const T& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
       static void saveHistogramInSubdirectory(TH1* histogram, std::string parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
       static bool histogramExistsAndNotEmpty(TH1* histogram);
-      static void draw1DPlot(TH1D* histogram);
-      static void draw2DPlot(TH2D* histogram);
+      static void draw1DPlot(TH1* histogram);
+      static void draw2DPlot(TH2* histogram);
       static void writeEfficiencyPlotAsGraph(TH1* efficiencyHistogram, TH1* numHitsHistogram, const int& markerColor = 4, const int& markerStlye = 20);
       static void saveCanvasAsEps(TCanvas* canvas, const std::string& parentDirectoryName);
       float getAvarageEfficiency();
@@ -334,7 +334,7 @@ class EfficiencyPlotsModule
       std::array<std::pair<Long64_t, Long64_t>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1& efficiencyHistogram, const TH1& numHitsHistogram, const int& markerColor = 4, const int& markerStyle = 20);
       static void                           createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
-      static std::vector<std::vector<TH1*>> createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs);
+      static std::vector<std::vector<TH1*>> createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
    private:
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
       void calculateCuts();

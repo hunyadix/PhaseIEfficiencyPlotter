@@ -327,12 +327,12 @@ void draw_lat_(double x, double y, const char* text, Int_t col, double size=0.04
 }
 
 void prelim_lat_(double xmin, double xmax, double ymin, double ymax, bool in) {
-  std::string prelim = "CMS #scale[0.8]{#font[52]{Preliminary 2016}}";// #font[22]{Times bold} and #font[12]{Times Italic}
+  std::string prelim = "CMS #scale[0.8]{#font[52]{Preliminary 2017}}";// #font[22]{Times bold} and #font[12]{Times Italic}
   if (in) { TLatex* cms_lat = new TLatex(xmin+(xmax-xmin)/20.0, ymax-(ymax-ymin)/10.0, prelim.c_str()); cms_lat->SetLineWidth(2); cms_lat->Draw(); }
   else { TLatex* cms_lat = new TLatex(xmin, ymax+(ymax-ymin)/40.0, prelim.c_str()); cms_lat->SetLineWidth(2); cms_lat->Draw(); }
 }
 
-void era_lat_(double xmin, double xmax, double ymin, double ymax) {
+void era_lat_([[maybe_unused]] double xmin, double xmax, double ymin, double ymax) {
   std::string prelim = "#sqrt{s}=13 TeV (25ns)";// #font[22]{Times bold} and #font[12]{Times Italic}
   TLatex* era_lat = new TLatex(xmax, ymax+(ymax-ymin)/25.0, prelim.c_str()); era_lat->SetTextAlign(32); era_lat->SetTextSize(0.04); era_lat->SetTextFont(42); era_lat->SetLineWidth(2); era_lat->Draw();
 }
@@ -397,7 +397,7 @@ void move_legend(TCanvas* c, int ileg, double x1, double y2) {
 void era_and_prelim_lat(double xmin, double xmax, double ymin, double ymax, bool era, bool approval, bool in=0) {
   if (era) {
     std::string era = "#sqrt{s}=13 TeV (25ns)";
-    TLatex* era_lat = new TLatex(xmax, ymax+(ymax-ymin)/25.0, era.c_str());
+    TLatex* era_lat = new TLatex(xmax, ymax+(ymax-ymin)/7.2, era.c_str());
     era_lat->SetTextAlign(32);
     era_lat->SetTextSize(0.04);
     era_lat->SetTextFont(42);
@@ -406,8 +406,8 @@ void era_and_prelim_lat(double xmin, double xmax, double ymin, double ymax, bool
   }
   if (approval) {
     // Latex example: #font[22]{Times bold} and #font[12]{Times Italic}
-    std::string prelim = "CMS #scale[0.8]{#font[52]{Preliminary 2016}}";
-    TLatex* cms_lat = new TLatex(in ? xmin+(xmax-xmin)/20.0 : xmin, in ? ymax-(ymax-ymin)/10.0 : ymax+(ymax-ymin)/40.0, prelim.c_str()); 
+    std::string prelim = "CMS #scale[0.8]{#font[52]{Preliminary 2017}}";
+    TLatex* cms_lat = new TLatex(in ? xmin+(xmax-xmin)/20.0 : xmin, in ? ymax-(ymax-ymin)/10.0 : ymax+(ymax-ymin)/8.5, prelim.c_str()); 
     cms_lat->SetLineWidth(2); 
     cms_lat->Draw();
   }
@@ -642,7 +642,7 @@ void add_turnon_fits_(TCanvas* c, std::vector<TH2D*> parents, double xmin = -2.5
   }
 }
 
-void add_mpvturnon_fits_(TCanvas* c, int nhist = 5, double xmin = -2.5, double xmax = 202.5, double ymin=0, double ymax=1 ) {
+void add_mpvturnon_fits_(TCanvas* c, int nhist = 5, [[maybe_unused]] double xmin = -2.5, [[maybe_unused]] double xmax = 202.5, [[maybe_unused]] double ymin=0, [[maybe_unused]] double ymax=1 ) {
   for (int i=0; i<nhist; ++i) {
     TH1D* mpv = (TH1D*)c->GetListOfPrimitives()->At(i);
     double maximum = mpv->GetMaximum();

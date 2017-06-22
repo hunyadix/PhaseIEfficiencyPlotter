@@ -83,7 +83,7 @@ void                     readInFilesAndAddToChain(const JSON& config, const std:
 TGraphAsymmErrors*       getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram);
 float                    getDelayNs(int runNumber, int lumisectionNumber);
 
-int main(int argc, char** argv) try
+int main([[maybe_unused]] int argc, char** argv) try
 {
    std::cout << process_prompt << argv[0] << " started..." << std::endl;
    std::time_t processStarted = std::time(nullptr);
@@ -331,7 +331,7 @@ int main(int argc, char** argv) try
       {
          std::cout << '.' << std::flush;
       }
-      delayVsClusterPropertySaveProcess.get(); // should do nothing, throws exception if the thread failss
+      delayVsClusterPropertySaveProcess.get(); // should do nothing, throws exception if the thread fails
       std::cout << "Done." << std::endl;      
 
       // ------------------------------------------------------------------------------------------
@@ -346,7 +346,7 @@ int main(int argc, char** argv) try
       // - Discards histograms where delayInNs_ is NOVAL_F (aka. -9999.0)
 
       std::cout << process_prompt << "Saving ROC plots... " << std::flush;
-      std::vector<std::vector<TH1*>> delayVsEfficiencyOnROCs = EfficiencyPlotsModule::createEfficiencyVsDelayROCPlots(modules);
+      std::vector<std::vector<TH1*>> delayVsEfficiencyOnROCs = EfficiencyPlotsModule::createEfficiencyVsDelayROCPlots(modules, DELAY_PLOTS_NUM_BINS, DELAY_PLOTS_LOWER_EDGE, DELAY_PLOTS_UPPER_EDGE);
       histogramsNtuple -> cd();
       histogramsNtuple -> mkdir("ROCEfficiencies");
       for(size_t layerIndex = 0; layerIndex < 5; ++layerIndex)
@@ -473,6 +473,9 @@ float getDelayNs(int runNumber, int lumisectionNumber) try
    static const std::map<int, std::map<int, float>> delayList =
    {
       // (164 - WBC) * 25 + Globaldelay
+
+      // Fill 5824
+      
       { 296665, {{ -1, 0 * 25 + 18 }}},
       { 296666, {{ -1, 0 * 25 + 14 }}},
       { 296668, {{ -1, 0 * 25 + 11 }}},
@@ -482,9 +485,25 @@ float getDelayNs(int runNumber, int lumisectionNumber) try
       { 296675, {{ -1, 0 * 25 + 4.5}}},
       { 296676, {{ -1, 0 * 25 + 1.5}}},
       { 296678, {{ -1, 0 * 25 + 0  }}},
-      { 296679, {{ -1, 1 * 25 - 22 }}},
-      { 296680, {{ -1, 1 * 25 - 18 }}}
+      { 296679, {{ -1, -1 * 25 + 22 }}},
+      { 296680, {{ -1, -1 * 25 + 18 }}}
 
+      // Fill 5838
+
+      // { 297003, {{ -1, 44 * 25 + normal settings}}
+      // { 297004, {{ -1, 64 * 25 + 18ns}}
+      // { 297006, {{ -1, 64 * 25 + 21ns}}
+      // { 297007, {{ -1, 62 * 25 + 0ns}}
+      // { 297009, {{ -1, 62 * 25 + 1.5ns}}
+      // { 297010, {{ -1, 62 * 25 + 3ns}}
+      // { 297011, {{ -1, 62 * 25 + 4.5ns}}
+      // { 297020, {{ -1, 62 * 25 + 6ns}}
+      // { 297012, {{ -1, 62 * 25 + 7.5ns}}
+      // { 297015, {{ -1, 62 * 25 + 9ns}}
+      // { 297016, {{ -1, 62 * 25 + 10.5ns}}
+      // { 297017, {{ -1, 62 * 25 + 12ns}}
+      // { 297018, {{ -1, 62 * 25 + 15ns}}
+      // { 297019, {{ -1, 62 * 25 + 18ns}}
 
       // { 294928, {{-1, 162 * 25  - 6}}},
       // { 294929, {{-1, 163 * 25  - 6}}},

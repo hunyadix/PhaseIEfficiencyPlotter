@@ -5,7 +5,7 @@
 
 #include <memory>
 
-void printUsage(int& argc, char** argv, bool killProcess, int argsType = 2)
+void printUsage([[maybe_unused]] int& argc, char** argv, bool killProcess, int argsType = 2)
 {
 	switch(argsType)
 	{

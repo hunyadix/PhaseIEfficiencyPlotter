@@ -1633,7 +1633,7 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
 // - Requires the "efficiencyROCPlots" to be filled before. (throws an std::runtime_error otherwise)
 // - Discards histograms where delayInNs_ is NOVAL_F (aka. -9999.0)
 
-std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs)
+std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge)
 {
    auto discardNOVAL_F = [] (const EfficiencyPlotsModule* module) { return module -> delayInNs_ != NOVAL_F; };
    auto moduleEfficiencyROCPlotsFilled = [] (const EfficiencyPlotsModule* module)
@@ -1660,11 +1660,11 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
    std::vector<float> delayValues;
    delayValues.reserve(modulesWithKnownDelay.size());
    for(const auto& module: modulesWithKnownDelay) { delayValues.push_back(module -> delayInNs_); }
-   float minDelay, maxDelay;
-   std::tie(minDelay, maxDelay) = deref_minmax_element(delayValues.begin(), delayValues.end());
-   // To avoid floating-point errors in the difference calculation
-   // truncating the actual value + 0.5f
-   int delayBins = maxDelay - minDelay + 1.0f + 0.5f;
+   // float minDelay, maxDelay;
+   // std::tie(minDelay, maxDelay) = deref_minmax_element(delayValues.begin(), delayValues.end());
+   // // To avoid floating-point errors in the difference calculation
+   // // truncating the actual value + 0.5f
+   // int delayBins = maxDelay - minDelay + 1.0f + 0.5f;
    // Create histograms for each of the ROC-s
    std::vector<std::vector<TH1*>> rocEfficiencyHits;
    std::vector<LayersDiskPlotIndecies> plotIndexList = { AllDisksEfficiency, Layer1Efficiency, Layer2Efficiency, Layer3Efficiency, Layer4Efficiency };
@@ -1681,10 +1681,10 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
       {
          std::string histogramName  = "delayVsEfficiencyOnROCs" + modulesWithKnownDelay.front() -> plotNameSuffices[plotIndex - 23] + "ROC" + std::to_string(index + 1);
          std::string histogramTitle = "Efficiency on " + modulesWithKnownDelay.front() -> plotTitleSuffices[plotIndex] + " ROC " + std::to_string(index + 1);
-         rocEfficiency.emplace_back(new TH1F(histogramName.c_str(), histogramTitle.c_str(), delayBins, minDelay, maxDelay));
+         rocEfficiency.emplace_back(new TH1F(histogramName.c_str(), histogramTitle.c_str(), delayPlotsNumbins, delayPlotsLowerEdge, delayPlotsUpperEdge));
       }
       rocEfficiency.shrink_to_fit();
-      rocEfficiencyHits.emplace_back(rocEfficiency);
+      rocEfficiencyHits.emplace_back(std::move(rocEfficiency));
    }
    for(auto module: modulesWithKnownDelay)
    {
@@ -1769,20 +1769,24 @@ void EfficiencyPlotsModule::saveHistogramInSubdirectory(TH1* histogram, std::str
    canvas = custom_can_(histogram, histogramName + "_canvas", 0, 0, histoSizeX, histoSizeY, 80, 140);
    canvas -> cd();
    TH2D* histo2D = dynamic_cast<TH2D*>(histogram);
+   TH2F* histo2F = dynamic_cast<TH2F*>(histogram);
    TH1D* histo1D = dynamic_cast<TH1D*>(histogram);
-   if(histo2D == nullptr && histo1D == nullptr)
+   TH1F* histo1F = dynamic_cast<TH1F*>(histogram);
+   if(histo2D == nullptr && histo1F == nullptr && histo1D == nullptr && histo1F == nullptr)
    {
       std::cout << error_prompt << " error while typecasting for drawing." << std::endl;
       return;
    }
-   if(histo2D != nullptr)
+   if(histo2D != nullptr || histo2F == nullptr)
    {
-      draw2DPlot(histo2D);
+      if(histo2D) draw2DPlot(histo2D);
+      if(histo2F) draw2DPlot(histo2F);
       // dressIfROCPlot(histo2D);
    }
-   else if(histo1D != nullptr)
+   else if(histo1D != nullptr || histo1F == nullptr)
    {
-      draw1DPlot(histo1D);
+      if(histo1D) draw1DPlot(histo1D);
+      if(histo1F) draw1DPlot(histo1F);
    }
    canvas -> Update();
    gPad -> Update();
@@ -1803,7 +1807,7 @@ bool EfficiencyPlotsModule::histogramExistsAndNotEmpty(TH1* histogram)
    return true;
 }
 
-void EfficiencyPlotsModule::draw1DPlot(TH1D* histogram)
+void EfficiencyPlotsModule::draw1DPlot(TH1* histogram)
 {
    histogram -> SetFillColor(38);
    histogram -> Draw("HIST");
@@ -1832,13 +1836,13 @@ void EfficiencyPlotsModule::draw1DPlot(TH1D* histogram)
 
 void EfficiencyPlotsModule::writeEfficiencyPlotAsGraph(TH1* efficiencyHistogram, TH1* numHitsHistogram, const int& markerColor, const int& markerStyle)
 {
-   TGraphAsymmErrors* graph = getEfficiencyGraphAsymmErrors(*efficiencyHistogram, *numHitsHistogram, markerColor);
+   TGraphAsymmErrors* graph = getEfficiencyGraphAsymmErrors(*efficiencyHistogram, *numHitsHistogram, markerColor, markerStyle);
    graph -> SetName((efficiencyHistogram -> GetName() + std::string("AsGraph")).c_str());
    graph -> Draw("ap");
    graph -> Write();
 }
 
-void EfficiencyPlotsModule::draw2DPlot(TH2D* histogram)
+void EfficiencyPlotsModule::draw2DPlot(TH2* histogram)
 {
    histogram -> Draw("COLZ");
 }
