@@ -42,6 +42,10 @@ EFFICIENCY_PLOTS_MODULE_S = ./src/EfficiencyPlotsModule.$(SrcSuf)
 EFFICIENCY_PLOTS_MODULE_O = ./obj/EfficiencyPlotsModule.$(ObjSuf)
 OBJS     += $(EFFICIENCY_PLOTS_MODULE_O)
 
+STYLE_PRESETS_S = ./src/StylePresets.$(SrcSuf)
+STYLE_PRESETS_O = ./obj/StylePresets.$(ObjSuf)
+OBJS     += $(STYLE_PRESETS_O)
+
 # PROGRAMS
 
 EFFICIENCY_MAIN_S = ./src/programs/efficiencyMain.$(SrcSuf)
@@ -80,7 +84,7 @@ $(EFFICIENCY_TIMING_A): $(EFFICIENCY_TIMING_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR
 	@echo "Succesful make..."
 	@echo "...$@ is ready to use."
 
-$(ROC_EFFICIENCY_FITTER_A): $(ROC_EFFICIENCY_FITTER_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O)
+$(ROC_EFFICIENCY_FITTER_A): $(ROC_EFFICIENCY_FITTER_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O) $(STYLE_PRESETS_O)
 	@printf "Compiling done, linking \""$@"\"...\n"
 	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
 	$(MT_EXE)
@@ -140,6 +144,11 @@ $(CANVASEXTRAS_O): $(CANVASEXTRAS_S)
 
 $(EFFICIENCY_PLOTS_MODULE_O): $(EFFICIENCY_PLOTS_MODULE_S)
 	@printf "Compiling utility: \"EfficiencyPlotsModule\"...\n"
+	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
+	@printf "Done.\n"
+
+$(STYLE_PRESETS_O): $(STYLE_PRESETS_S)
+	@printf "Compiling utility: \"StylePresets\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 

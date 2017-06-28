@@ -333,6 +333,7 @@ class EfficiencyPlotsModule
       std::array<std::pair<Long64_t, Long64_t>, 12>* getEfficiencyDisksInnerOuter();
       std::array<std::pair<Long64_t, Long64_t>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1& efficiencyHistogram, const TH1& numHitsHistogram, const int& markerColor = 4, const int& markerStyle = 20);
+      static void                           fillHistogramByEfficiencyPair(TH1F* t_histogram, int binIndex, double t_hits, double t_efficiency);
       static void                           createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
       static std::vector<std::vector<TH1*>> createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
    private:

@@ -21,7 +21,58 @@ constexpr float                EfficiencyPlotsModule::MEAS_HITSEP_CUT_N_MINUS_1_
 constexpr float                EfficiencyPlotsModule::HIT_CLUST_NEAR_CUT_N_MINUS_1_VAL;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_X_CUT;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_Y_CUT;
-EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {};
+EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {
+   { 1, 104 }, { 1, 105 }, { 1, 106 }, { 1, 115 },
+   { 1, 116 }, { 1, 117 }, { 1, 118 }, { 1, 178 },
+   { 1, 179 }, { 1, 180 }, { 1, 189 }, { 1, 194 },
+   { 1, 195 }, { 1, 400 }, { 1, 461 }, { 1, 462 },
+   { 1, 463 }, { 1, 464 }, { 1, 474 }, { 1, 476 },
+   { 1, 485 }, { 1, 486 }, { 1, 727 }, { 1, 728 },
+   { 1, 729 }, { 1, 730 }, { 1, 782 }, { 1, 783 },
+   { 1, 1139 }, { 1, 1141 }, { 1, 1142 }, { 1, 1151 },
+   { 1, 1152 }, { 1, 1153 }, { 1, 1154 }, { 1, 1155 },
+   { 1, 1156 }, { 1, 1157 }, { 1, 1212 }, { 1, 1216 },
+   { 1, 1225 }, { 1, 1226 }, { 1, 1227 }, { 1, 1253 },
+   { 1, 1254 }, { 1, 1255 }, { 1, 1256 }, { 1, 1299 },
+   { 1, 1300 }, { 1, 1301 }, { 1, 1302 }, { 1, 1335 },
+   { 1, 1373 }, { 1, 1374 }, { 1, 1375 }, { 1, 1376 },
+   { 1, 1510 }, { 1, 1511 }, { 1, 1512 }, { 1, 1521 },
+   { 1, 1522 }, { 1, 1523 }, { 1, 1524 }, { 1, 1595 },
+   { 1, 1603 }, { 1, 1604 }, { 1, 1605 }, { 1, 1606 },
+   { 1, 1607 }, { 1, 1608 }, { 1, 1609 }, { 1, 1610 },
+   { 1, 1611 }, { 1, 1614 }, { 1, 1617 }, { 1, 1618 },
+   { 1, 1621 }, { 1, 1622 }, { 1, 1623 }, { 1, 1624 },
+   { 1, 1625 }, { 1, 1678 }, { 1, 1680 }, { 1, 1681 },
+   { 1, 1682 }, { 1, 1684 }, { 1, 1686 }, { 1, 1692 },
+   { 1, 1694 }, { 1, 1696 }, { 1, 1698 }, { 1, 1699 },
+   { 1, 1732 }, { 1, 1743 }, { 1, 1744 }, { 1, 1746 },
+   { 1, 1767 }, { 1, 1768 }, { 1, 1769 }, { 1, 1770 },
+   { 1, 1806 }, { 1, 1807 }, { 1, 1808 }, { 1, 1817 },
+   { 1, 1818 }, { 1, 1819 }, { 1, 1820 }, { 1, 1848 },
+   { 2, 167 }, { 2, 168 }, { 2, 170 }, { 2, 171 },
+   { 2, 1875 }, { 2, 1876 }, { 2, 1877 }, { 2, 1878 },
+   { 2, 1879 }, { 2, 1880 }, { 2, 1881 }, { 2, 1882 },
+   { 2, 1949 }, { 2, 1950 }, { 2, 1951 }, { 2, 1952 },
+   { 2, 1953 }, { 2, 1954 }, { 2, 1955 }, { 2, 1956 },
+   { 2, 2673 }, { 2, 2676 }, { 2, 2677 }, { 2, 2678 },
+   { 2, 2679 }, { 2, 2680 }, { 2, 3446 }, { 2, 3449 },
+   { 2, 3450 }, { 2, 3454 }, { 2, 3524 }, { 2, 3526 },
+   { 2, 3532 }, { 2, 3601 }, { 2, 3603 }, { 2, 3605 },
+   { 2, 3606 }, { 2, 4267 }, { 2, 4268 }, { 2, 4269 },
+   { 2, 4270 }, { 2, 4271 }, { 2, 4272 }, { 2, 4273 },
+   { 3, 4715 }, { 3, 4717 }, { 3, 4789 }, { 4, 2269 },
+   { 4, 2270 }, { 4, 2271 }, { 4, 2272 }, { 4, 2273 },
+   { 4, 2274 }, { 4, 2275 }, { 4, 2276 }, { 4, 2599 },
+   { 4, 2600 }, { 4, 2601 }, { 4, 2602 }, { 4, 2603 },
+   { 4, 2604 }, { 4, 2605 }, { 4, 2606 }, { 4, 5701 },
+   { 4, 5702 }, { 4, 5703 }, { 4, 5704 }, { 4, 5705 },
+   { 4, 5706 }, { 4, 6421 }, { 4, 6422 }, { 4, 6423 },
+   { 4, 6424 }, { 4, 6425 }, { 4, 6426 }, { 4, 6427 },
+   { 4, 6428 }, { 4, 7631 }, { 4, 7632 }, { 4, 7707 },
+   { 4, 8387 }, { 4, 8388 }, { 4, 8389 }, { 4, 8390 },
+   { 4, 8391 }, { 4, 8392 }, { 4, 8393 }, { 4, 8394 },
+   { 4, 9191 },
+};
 
 template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
 template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
@@ -799,7 +850,7 @@ void EfficiencyPlotsModule::printCombinedBadROCList(std::map<float, EfficiencyPl
       unsigned int numRocs = framePlot -> GetSize();
       for(unsigned int rocBin = 0; rocBin < numRocs; ++rocBin)
       {
-         std::vector<double> rocEfficiecnyAvg;
+         std::vector<double> rocEfficiencyAvg;
          for(const auto& delayScenarioPair: delayToPlotterModuleMap)
          {
             const EfficiencyPlotsModule& efficiencyPlotsModule = delayScenarioPair.second;
@@ -808,11 +859,11 @@ void EfficiencyPlotsModule::printCombinedBadROCList(std::map<float, EfficiencyPl
             if(detectorPartROCHits == nullptr || detectorPartROCEfficiencies == nullptr) continue;
             if((*detectorPartROCHits)[rocBin] == 0) continue;
             std::vector<double> rocEfficiencyMeasurements(static_cast<int>((*detectorPartROCHits)[rocBin] + 0.5), (*detectorPartROCEfficiencies)[rocBin]);
-            std::move(rocEfficiencyMeasurements.begin(), rocEfficiencyMeasurements.end(), std::back_inserter(rocEfficiecnyAvg));
+            std::move(rocEfficiencyMeasurements.begin(), rocEfficiencyMeasurements.end(), std::back_inserter(rocEfficiencyAvg));
          }
-         if(rocEfficiecnyAvg.size() == 0) continue;
-         // std::copy(rocEfficiecnyAvg.begin(), rocEfficiecnyAvg.end(), std::ostream_iterator<double>(std::cout, ", "));
-         float efficiency = static_cast<double>(std::accumulate(rocEfficiecnyAvg.begin(), rocEfficiecnyAvg.end(), 0.0)) / rocEfficiecnyAvg.size();
+         if(rocEfficiencyAvg.size() == 0) continue;
+         // std::copy(rocEfficiencyAvg.begin(), rocEfficiencyAvg.end(), std::ostream_iterator<double>(std::cout, ", "));
+         float efficiency = static_cast<double>(std::accumulate(rocEfficiencyAvg.begin(), rocEfficiencyAvg.end(), 0.0)) / rocEfficiencyAvg.size();
          // std::cout << efficiency << std::endl;   
          // std::cout << "efficiency: " << efficiency << std::endl;
          if((efficiency < mean - 0.1 && efficiency < mean - statError * 2) || efficiency < 0.15)
@@ -1163,6 +1214,14 @@ TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH
 //    - On forward? disk and ring (inner or outer)
 //    - On barrel: side (sign of Z), half shell (sign of X), sector, [layer 1-2] or [layer 3-4]
 // 
+void EfficiencyPlotsModule::fillHistogramByEfficiencyPair(TH1F* t_histogram, int binIndex, double t_hits, double t_good_hits)
+{
+   double efficiency = t_good_hits / t_hits;
+   double lowerError, upperError;
+   std::tie(lowerError, upperError) = WilsonScoreIntervalErrorCalculator(t_hits, efficiency).getError();
+   t_histogram -> SetBinError(binIndex, std::max(lowerError, upperError));
+   t_histogram -> SetBinContent(binIndex, efficiency);
+}
 
 void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& delayPlotsNumBins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge)
 {
@@ -1468,73 +1527,73 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
          for(unsigned int plotIndex = 0; plotIndex < 2; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeXBpixFpix[plotIndex]     -> Fill(delay, (*clusterSizeXBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizeXBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeXBpixFpix[plotIndex], delay, (*clusterSizeXBpixFpix)[plotIndex].first, (*clusterSizeXBpixFpix)[plotIndex].second);
             if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeXBpixFpixHits[plotIndex] -> Fill(delay, (*clusterSizeXBpixFpix)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeYBpixFpix[plotIndex]     -> Fill(delay, (*clusterSizeYBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizeYBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeYBpixFpix[plotIndex], delay, (*clusterSizeYBpixFpix)[plotIndex].first, (*clusterSizeYBpixFpix)[plotIndex].second);
             if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizeYBpixFpixHits[plotIndex] -> Fill(delay, (*clusterSizeYBpixFpix)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizePixelsBpixFpix[plotIndex]     -> Fill(delay, (*clusterSizePixelsBpixFpix)[plotIndex].second / static_cast<double>((*clusterSizePixelsBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizePixelsBpixFpix[plotIndex], delay, (*clusterSizePixelsBpixFpix)[plotIndex].first, (*clusterSizePixelsBpixFpix)[plotIndex].second);
             if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterSizePixelsBpixFpixHits[plotIndex] -> Fill(delay, (*clusterSizePixelsBpixFpix)[plotIndex].first);
             // Cluster Charge
-            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterChargeBpixFpix[plotIndex]     -> Fill(delay, (*clusterChargeBpixFpix)[plotIndex].second / static_cast<double>((*clusterChargeBpixFpix)[plotIndex].first));
+            if((*clusterSizeXBpixFpix)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterChargeBpixFpix[plotIndex], delay, (*clusterChargeBpixFpix)[plotIndex].first, (*clusterChargeBpixFpix)[plotIndex].second);
             if((*clusterSizeXBpixFpix)[plotIndex].first != 0) delayVsClusterChargeBpixFpixHits[plotIndex] -> Fill(delay, (*clusterChargeBpixFpix)[plotIndex].first);
             // Efficiency
-            if((*efficiencyBpixFpix)[plotIndex]  .first != 0) delayVsEfficiencyBpixFpix[plotIndex]       -> Fill(delay, (*efficiencyBpixFpix)[plotIndex].second / static_cast<double>((*efficiencyBpixFpix)[plotIndex].first));
+            if((*efficiencyBpixFpix)[plotIndex]  .first != 0) fillHistogramByEfficiencyPair(delayVsEfficiencyBpixFpix[plotIndex], delay, (*efficiencyBpixFpix)[plotIndex].first, (*efficiencyBpixFpix)[plotIndex].second);
             if((*efficiencyBpixFpix)[plotIndex]  .first != 0) delayVsEfficiencyBpixFpixHits[plotIndex]   -> Fill(delay, (*efficiencyBpixFpix)[plotIndex].first);
          }
          for(unsigned int plotIndex = 0; plotIndex < 8; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeXLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterSizeXLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizeXLayersNegativePositive)[plotIndex].first));
+            if((*clusterSizeXLayersNegativePositive)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeXLayersNegativePositive[plotIndex], delay, (*clusterSizeXLayersNegativePositive)[plotIndex].first, (*clusterSizeXLayersNegativePositive)[plotIndex].second);
             if((*clusterSizeXLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeXLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterSizeXLayersNegativePositive)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeYLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeYLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterSizeYLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizeYLayersNegativePositive)[plotIndex].first));
+            if((*clusterSizeYLayersNegativePositive)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeYLayersNegativePositive[plotIndex], delay, (*clusterSizeYLayersNegativePositive)[plotIndex].first, (*clusterSizeYLayersNegativePositive)[plotIndex].second);
             if((*clusterSizeYLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizeYLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterSizeYLayersNegativePositive)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizePixelsLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizePixelsLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterSizePixelsLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterSizePixelsLayersNegativePositive)[plotIndex].first));
+            if((*clusterSizePixelsLayersNegativePositive)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizePixelsLayersNegativePositive[plotIndex], delay, (*clusterSizePixelsLayersNegativePositive)[plotIndex].first, (*clusterSizePixelsLayersNegativePositive)[plotIndex].second);
             if((*clusterSizePixelsLayersNegativePositive)[plotIndex].first != 0) delayVsClusterSizePixelsLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterSizePixelsLayersNegativePositive)[plotIndex].first);
             // Cluster Charge
-            if((*clusterChargeLayersNegativePositive)[plotIndex].first != 0) delayVsClusterChargeLayersNegativePositive[plotIndex]     -> Fill(delay, (*clusterChargeLayersNegativePositive)[plotIndex].second / static_cast<double>((*clusterChargeLayersNegativePositive)[plotIndex].first));
+            if((*clusterChargeLayersNegativePositive)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterChargeLayersNegativePositive[plotIndex], delay, (*clusterChargeLayersNegativePositive)[plotIndex].first, (*clusterChargeLayersNegativePositive)[plotIndex].second);
             if((*clusterChargeLayersNegativePositive)[plotIndex].first != 0) delayVsClusterChargeLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*clusterChargeLayersNegativePositive)[plotIndex].first);
             // Efficiency
-            if((*efficiencyLayersNegativePositive)[plotIndex].first != 0) delayVsEfficiencyLayersNegativePositive[plotIndex]     -> Fill(delay, (*efficiencyLayersNegativePositive)[plotIndex].second / static_cast<double>((*efficiencyLayersNegativePositive)[plotIndex].first));
+            if((*efficiencyLayersNegativePositive)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsEfficiencyLayersNegativePositive[plotIndex], delay, (*efficiencyLayersNegativePositive)[plotIndex].first, (*efficiencyLayersNegativePositive)[plotIndex].second);
             if((*efficiencyLayersNegativePositive)[plotIndex].first != 0) delayVsEfficiencyLayersNegativePositiveHits[plotIndex] -> Fill(delay, (*efficiencyLayersNegativePositive)[plotIndex].first);
          }
          for(unsigned int plotIndex = 0; plotIndex < 12; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeXDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterSizeXDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizeXDisksInnerOuter)[plotIndex].first));
+            if((*clusterSizeXDisksInnerOuter)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeXDisksInnerOuter[plotIndex], delay, (*clusterSizeXDisksInnerOuter)[plotIndex].first, (*clusterSizeXDisksInnerOuter)[plotIndex].second);
             if((*clusterSizeXDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeXDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterSizeXDisksInnerOuter)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeYDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeYDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterSizeYDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizeYDisksInnerOuter)[plotIndex].first));
+            if((*clusterSizeYDisksInnerOuter)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeYDisksInnerOuter[plotIndex], delay, (*clusterSizeYDisksInnerOuter)[plotIndex].first, (*clusterSizeYDisksInnerOuter)[plotIndex].second);
             if((*clusterSizeYDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizeYDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterSizeYDisksInnerOuter)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizePixelsDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizePixelsDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterSizePixelsDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterSizePixelsDisksInnerOuter)[plotIndex].first));
+            if((*clusterSizePixelsDisksInnerOuter)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizePixelsDisksInnerOuter[plotIndex], delay, (*clusterSizePixelsDisksInnerOuter)[plotIndex].first, (*clusterSizePixelsDisksInnerOuter)[plotIndex].second);
             if((*clusterSizePixelsDisksInnerOuter)[plotIndex].first != 0) delayVsClusterSizePixelsDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterSizePixelsDisksInnerOuter)[plotIndex].first);
             // Cluster Charge
-            if((*clusterChargeDisksInnerOuter)[plotIndex].first != 0) delayVsClusterChargeDisksInnerOuter[plotIndex]      -> Fill(delay, (*clusterChargeDisksInnerOuter)[plotIndex].second / static_cast<double>((*clusterChargeDisksInnerOuter)[plotIndex].first));
+            if((*clusterChargeDisksInnerOuter)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterChargeDisksInnerOuter[plotIndex], delay, (*clusterChargeDisksInnerOuter)[plotIndex].first, (*clusterChargeDisksInnerOuter)[plotIndex].second);
             if((*clusterChargeDisksInnerOuter)[plotIndex].first != 0) delayVsClusterChargeDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*clusterChargeDisksInnerOuter)[plotIndex].first);
             // Efficiency
-            if((*efficiencyDisksInnerOuter)[plotIndex].first != 0) delayVsEfficiencyDisksInnerOuter[plotIndex]      -> Fill(delay, (*efficiencyDisksInnerOuter)[plotIndex].second / static_cast<double>((*efficiencyDisksInnerOuter)[plotIndex].first));
+            if((*efficiencyDisksInnerOuter)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsEfficiencyDisksInnerOuter[plotIndex], delay, (*efficiencyDisksInnerOuter)[plotIndex].first, (*efficiencyDisksInnerOuter)[plotIndex].second);
             if((*efficiencyDisksInnerOuter)[plotIndex].first != 0) delayVsEfficiencyDisksInnerOuterHits[plotIndex]  -> Fill(delay, (*efficiencyDisksInnerOuter)[plotIndex].first);
          }
          for(unsigned int plotIndex = 0; plotIndex < 64; ++plotIndex)
          {
             // Cluster Size X
-            if((*clusterSizeXBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeXBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterSizeXBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizeXBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterSizeXBNPZHSSIOLP)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeXBNPZHSSIOLP[plotIndex], delay, (*clusterSizeXBNPZHSSIOLP)[plotIndex].first, (*clusterSizeXBNPZHSSIOLP)[plotIndex].second);
             if((*clusterSizeXBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeXBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterSizeXBNPZHSSIOLP)[plotIndex].first);
             // Cluster Size Y
-            if((*clusterSizeYBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeYBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterSizeYBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizeYBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterSizeYBNPZHSSIOLP)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizeYBNPZHSSIOLP[plotIndex], delay, (*clusterSizeYBNPZHSSIOLP)[plotIndex].first, (*clusterSizeYBNPZHSSIOLP)[plotIndex].second);
             if((*clusterSizeYBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizeYBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterSizeYBNPZHSSIOLP)[plotIndex].first);
             // Cluster Total Size
-            if((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizePixelsBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterSizePixelsBNPZHSSIOLP[plotIndex], delay, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].second);
             if((*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterSizePixelsBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterSizePixelsBNPZHSSIOLP)[plotIndex].first);
             // Cluster Charge
-            if((*clusterChargeBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterChargeBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*clusterChargeBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*clusterChargeBNPZHSSIOLP)[plotIndex].first));
+            if((*clusterChargeBNPZHSSIOLP)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsClusterChargeBNPZHSSIOLP[plotIndex], delay, (*clusterChargeBNPZHSSIOLP)[plotIndex].first, (*clusterChargeBNPZHSSIOLP)[plotIndex].second);
             if((*clusterChargeBNPZHSSIOLP)[plotIndex].first != 0) delayVsClusterChargeBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*clusterChargeBNPZHSSIOLP)[plotIndex].first);
             // Efficiency
-            if((*efficiencyBNPZHSSIOLP)[plotIndex].first != 0) delayVsEfficiencyBNPZHSSIOLP[plotIndex]     -> Fill(delay, (*efficiencyBNPZHSSIOLP)[plotIndex].second / static_cast<double>((*efficiencyBNPZHSSIOLP)[plotIndex].first));
+            if((*efficiencyBNPZHSSIOLP)[plotIndex].first != 0) fillHistogramByEfficiencyPair(delayVsEfficiencyBNPZHSSIOLP[plotIndex], delay, (*efficiencyBNPZHSSIOLP)[plotIndex].first, (*efficiencyBNPZHSSIOLP)[plotIndex].second);
             if((*efficiencyBNPZHSSIOLP)[plotIndex].first != 0) delayVsEfficiencyBNPZHSSIOLPHits[plotIndex] -> Fill(delay, (*efficiencyBNPZHSSIOLP)[plotIndex].first);
          }
       }
@@ -1660,11 +1719,6 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
    std::vector<float> delayValues;
    delayValues.reserve(modulesWithKnownDelay.size());
    for(const auto& module: modulesWithKnownDelay) { delayValues.push_back(module -> delayInNs_); }
-   // float minDelay, maxDelay;
-   // std::tie(minDelay, maxDelay) = deref_minmax_element(delayValues.begin(), delayValues.end());
-   // // To avoid floating-point errors in the difference calculation
-   // // truncating the actual value + 0.5f
-   // int delayBins = maxDelay - minDelay + 1.0f + 0.5f;
    // Create histograms for each of the ROC-s
    std::vector<std::vector<TH1*>> rocEfficiencyHits;
    std::vector<LayersDiskPlotIndecies> plotIndexList = { AllDisksEfficiency, Layer1Efficiency, Layer2Efficiency, Layer3Efficiency, Layer4Efficiency };
@@ -1686,21 +1740,41 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
       rocEfficiency.shrink_to_fit();
       rocEfficiencyHits.emplace_back(std::move(rocEfficiency));
    }
+   // Create efficiency measurement point and error
+   // each of the delay settings
    for(auto module: modulesWithKnownDelay)
    {
+      // Collect all the histograms for the delay settings
       std::vector<TH1*> efficiencyHistograms;
-      for(const auto& plotIndex: plotIndexList) efficiencyHistograms.push_back(module -> efficiencyROCPlots[plotIndex]);
-      for(size_t index: range(efficiencyHistograms.size()))
+      std::vector<TH1*> hitsHistograms;
+      for(const auto& plotIndex: plotIndexList)
       {
-         TH2D* histogramAtIndex  = dynamic_cast<TH2D*>(efficiencyHistograms[index]);
-         Long64_t numBins = histogramAtIndex -> GetSize();
+         efficiencyHistograms.push_back(module -> efficiencyROCPlots[plotIndex]);
+         hitsHistograms.push_back(module -> efficiencyROCPlots[plotIndex - 23]);
+      }
+      for(std::size_t index = 0, maxIndex = efficiencyHistograms.size(); index < maxIndex; ++index)
+      {
+         TH2D* efficiencyHist  = dynamic_cast<TH2D*>(efficiencyHistograms[index]);
+         TH2D* hitsHist  = dynamic_cast<TH2D*>(hitsHistograms[index]);
+         Long64_t numBins = efficiencyHist -> GetSize();
+         if(efficiencyHist == nullptr || hitsHist == nullptr) { std::cout << error_prompt << __PRETTY_FUNCTION__ << ": missing histogram for index: " << index << std::endl;}
          // Add the content of the bins of the given efficiencyROCPlot to 
          // the corresponding delay bin of the ROC's histogram
          for(Long64_t binIndex = 0; binIndex < numBins; ++binIndex)
          {
-            double fillVal = histogramAtIndex -> GetAt(binIndex);
+            if(rocEfficiencyHits[index][binIndex] -> GetBinContent(module -> delayInNs_) != 0.0)
+            {
+               std::cout << "Trying to fill the delay scenario of \"delay:" << module -> delayInNs_ << " ns\" into a bin that already has a value filled into it. " \
+                  "The reason for this might be, that there are not enough delay bins defined, or that the delay values are calculated incorrectly. " << std::endl;
+               continue;
+            }
+            double fillVal = efficiencyHist -> GetAt(binIndex);
+            double hits    = hitsHist -> GetAt(binIndex);
             if(1.0 < fillVal) { std::cerr << error_prompt << __PRETTY_FUNCTION__ << ": efficiency value greater than 1.00 found." << std::endl; }
             rocEfficiencyHits[index][binIndex] -> Fill(module -> delayInNs_, fillVal);
+            double lowerError, upperError;
+            std::tie(lowerError, upperError) = WilsonScoreIntervalErrorCalculator(hits, fillVal).getError();
+            rocEfficiencyHits[index][binIndex] -> SetBinError(module -> delayInNs_, std::max(lowerError, upperError));
          }
       }
    }
