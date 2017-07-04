@@ -2,6 +2,7 @@ include Makefile.arch
 SrcSuf = cc
 
 CXX       = ${HOME}//usr/bin/g++
+# CXX       = ${HOME}//usr/bin/g++ -g -rdynamic
 CXXFLAGS  = -std=c++14 -O3 -Wall -Wextra -Woverloaded-virtual -Wnon-virtual-dtor -Wmisleading-indentation -fPIC -pthread -m64 -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/include -fdiagnostics-color=always
 LIBS      =  -L/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl -rdynamic 
 LIBS     += -lboost_system -lstdc++fs
@@ -46,6 +47,14 @@ STYLE_PRESETS_S = ./src/StylePresets.$(SrcSuf)
 STYLE_PRESETS_O = ./obj/StylePresets.$(ObjSuf)
 OBJS     += $(STYLE_PRESETS_O)
 
+CLUSTER_PAIR_FUNCTIONS_S = ./src/ClusterPairFunctions.$(SrcSuf)
+CLUSTER_PAIR_FUNCTIONS_O = ./obj/ClusterPairFunctions.$(ObjSuf)
+OBJS     += $(CLUSTER_PAIR_FUNCTIONS_O)
+
+MODULE_CLUSTER_PLOT_S = ./src/ModuleClusterPlot.$(SrcSuf)
+MODULE_CLUSTER_PLOT_O = ./obj/ModuleClusterPlot.$(ObjSuf)
+OBJS     += $(MODULE_CLUSTER_PLOT_O)
+
 # PROGRAMS
 
 EFFICIENCY_MAIN_S = ./src/programs/efficiencyMain.$(SrcSuf)
@@ -66,6 +75,12 @@ ROC_EFFICIENCY_FITTER_A = ./bin/rocEfficiencyFitter$(ExeSuf)
 OBJS     += $(ROC_EFFICIENCY_FITTER_O)
 PROGRAMS += $(ROC_EFFICIENCY_FITTER_A)
 
+SPLIT_CLUSTER_COUNTER_S = ./src/programs/splitClusterCounter.$(SrcSuf)
+SPLIT_CLUSTER_COUNTER_O = ./obj/splitClusterCounter.$(ObjSuf)
+SPLIT_CLUSTER_COUNTER_A = ./bin/splitClusterCounter$(ExeSuf)
+OBJS     += $(SPLIT_CLUSTER_COUNTER_O)
+PROGRAMS += $(SPLIT_CLUSTER_COUNTER_A)
+
 all: $(PROGRAMS)
 
 # Executables
@@ -85,6 +100,13 @@ $(EFFICIENCY_TIMING_A): $(EFFICIENCY_TIMING_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR
 	@echo "...$@ is ready to use."
 
 $(ROC_EFFICIENCY_FITTER_A): $(ROC_EFFICIENCY_FITTER_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O) $(STYLE_PRESETS_O)
+	@printf "Compiling done, linking \""$@"\"...\n"
+	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
+	$(MT_EXE)
+	@echo "Succesful make..."
+	@echo "...$@ is ready to use."
+
+$(SPLIT_CLUSTER_COUNTER_A): $(SPLIT_CLUSTER_COUNTER_O) $(CONSOLECOLORS_O) $(CONSOLEACTOR_O) $(COMMONACTORS_O) $(TIMER_O) $(TIMERCOL_O) $(TTREETOOLS_O) $(CANVASEXTRAS_O) $(EFFICIENCY_PLOTS_MODULE_O) $(STYLE_PRESETS_O) $(CLUSTER_PAIR_FUNCTIONS_O) $(MODULE_CLUSTER_PLOT_O)
 	@printf "Compiling done, linking \""$@"\"...\n"
 	@$(LD) $(LDFLAGS) -Wall -Wshadow $^ $(LIBS) $(OutPutOpt)$@
 	$(MT_EXE)
@@ -152,6 +174,16 @@ $(STYLE_PRESETS_O): $(STYLE_PRESETS_S)
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 
+$(CLUSTER_PAIR_FUNCTIONS_O): $(CLUSTER_PAIR_FUNCTIONS_S)
+	@printf "Compiling utility: \""$<"\"...\n"
+	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
+	@printf "Done.\n"
+
+$(MODULE_CLUSTER_PLOT_O): $(MODULE_CLUSTER_PLOT_S)
+	@printf "Compiling utility: \""$<"\"...\n"
+	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
+	@printf "Done.\n"
+
 ###
 
 $(EFFICIENCY_MAIN_O): $(EFFICIENCY_MAIN_S)  
@@ -165,6 +197,11 @@ $(EFFICIENCY_TIMING_O): $(EFFICIENCY_TIMING_S)
 	@printf "Done.\n"
 
 $(ROC_EFFICIENCY_FITTER_O): $(ROC_EFFICIENCY_FITTER_S)  
+	@printf "Compiling program: \""$<"\"...\n"
+	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
+	@printf "Done.\n"
+
+$(SPLIT_CLUSTER_COUNTER_O): $(SPLIT_CLUSTER_COUNTER_S)  
 	@printf "Compiling program: \""$<"\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"

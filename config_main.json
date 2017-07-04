@@ -1,11 +1,12 @@
 {
-	"input_files_list": "./input_lists/config_input_files_delayscan_pp_fill5824.json",
+	"input_files_list": "./input_lists/config_input_files_delayscan_pp_fill5856s.json",
 	"input_file_list_options": 
 	[
 		"./input_lists/config_input_files_test.json",
 		"./input_lists/config_input_files_delayscan_pp_fill5824.json",
 		"./input_lists/config_input_files_delayscan_pp_fill5838.json",
 		"./input_lists/config_input_files_delayscan_pp_fill5824_small_sample.json",
+		"./input_lists/config_input_files_delayscan_pp_fill5856.json",
 		"./input_lists/config_input_files_efficiency_scan.json"
 	],
 	"scenario": "FEATURE_NOT_YET_IMPLEMENTED",
@@ -15,8 +16,8 @@
 	"WBC_setting": "164++0ns",
 	"save_histograms_to_ntuple": true,
 	"ntuple_save_directory": ".",
-	"ntuple_name": "histograms_fill5824_5.root",
+	"ntuple_name": "histograms_fill5856_1s.root",
 	"save_plots": false,
 	"plots_save_directory": "./results",
-	"save_bad_ROC_list_output": "BadROClist_fill5824_5.txt"
+	"save_bad_ROC_list_output": "BadROClist_fill5856s.txt"
 }

@@ -293,7 +293,7 @@ class EfficiencyPlotsModule
       void  defineHistograms();
       void  fillClusterHistograms();
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
-      void  fillTrajMeasHistograms();
+      [[gnu::hot]] void  fillTrajMeasHistograms();
       // void  downscaleClusterSizes();
       void        downscaleEfficiencyPlots();
       void        addExtraEfficiencyPlots();
@@ -334,11 +334,13 @@ class EfficiencyPlotsModule
       std::array<std::pair<Long64_t, Long64_t>, 64>* getEfficiencyBNPZHSSIOLP(); // Barrel negative and positive Z, half shell, sector, inner and outer layer pairs
       static TGraphAsymmErrors* getEfficiencyGraphAsymmErrors(const TH1& efficiencyHistogram, const TH1& numHitsHistogram, const int& markerColor = 4, const int& markerStyle = 20);
       static void                           fillHistogramByEfficiencyPair(TH1F* t_histogram, int binIndex, double t_hits, double t_efficiency);
-      static void                           createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
+      static void   e_nullptr_dereference_ROCEffVsDelay();
+      static std::vector<std::vector<TH1*>> createROCEfficiencyContainerHistorams(const std::vector<EfficiencyPlotsModule*>& t_modulesWithKnownDelay, const std::vector<LayersDiskPlotIndecies>& t_plotIndexList, const int& t_delayPlotsNumbins, const float& t_delayPlotsLowerEdge, const float& t_delayPlotsUpperEdge);
+      static void                           createEfficiencyVsDelayDefaultPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const JSON& config, const int& t_delayPlotsNumbins, const float& t_delayPlotsLowerEdge, const float& t_delayPlotsUpperEdge);
       static std::vector<std::vector<TH1*>> createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge);
    private:
       template <EfficiencyPlotsModule::Scenario scenario = EfficiencyPlotsModule::Collisions>
-      void calculateCuts();
+      [[gnu::hot]] void calculateCuts();
       void downscaleCollectionIfNotEmpty(EfficiencyPlotPair& plotPair);
       void downscaleCollectionIfNotEmpty(LayersDiskPlotsCollection& plotCollection);
       void dressIfROCPlot(TH2D* histogram);
@@ -355,5 +357,5 @@ class EfficiencyPlotsModule
 };
 
 extern template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
-extern template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
-extern template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Cosmics>();
+extern template [[gnu::hot]] void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
+extern template [[gnu::hot]] void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Cosmics>();

@@ -22,61 +22,62 @@ constexpr float                EfficiencyPlotsModule::HIT_CLUST_NEAR_CUT_N_MINUS
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_X_CUT;
 constexpr float                EfficiencyPlotsModule::BARREL_MODULE_EDGE_Y_CUT;
 EfficiencyPlotsModule::BadROClist EfficiencyPlotsModule::badROClist = {
-   { 1, 104 }, { 1, 105 }, { 1, 106 }, { 1, 115 },
-   { 1, 116 }, { 1, 117 }, { 1, 118 }, { 1, 178 },
-   { 1, 179 }, { 1, 180 }, { 1, 189 }, { 1, 194 },
-   { 1, 195 }, { 1, 400 }, { 1, 461 }, { 1, 462 },
-   { 1, 463 }, { 1, 464 }, { 1, 474 }, { 1, 476 },
-   { 1, 485 }, { 1, 486 }, { 1, 727 }, { 1, 728 },
-   { 1, 729 }, { 1, 730 }, { 1, 782 }, { 1, 783 },
-   { 1, 1139 }, { 1, 1141 }, { 1, 1142 }, { 1, 1151 },
-   { 1, 1152 }, { 1, 1153 }, { 1, 1154 }, { 1, 1155 },
-   { 1, 1156 }, { 1, 1157 }, { 1, 1212 }, { 1, 1216 },
-   { 1, 1225 }, { 1, 1226 }, { 1, 1227 }, { 1, 1253 },
-   { 1, 1254 }, { 1, 1255 }, { 1, 1256 }, { 1, 1299 },
-   { 1, 1300 }, { 1, 1301 }, { 1, 1302 }, { 1, 1335 },
-   { 1, 1373 }, { 1, 1374 }, { 1, 1375 }, { 1, 1376 },
-   { 1, 1510 }, { 1, 1511 }, { 1, 1512 }, { 1, 1521 },
-   { 1, 1522 }, { 1, 1523 }, { 1, 1524 }, { 1, 1595 },
-   { 1, 1603 }, { 1, 1604 }, { 1, 1605 }, { 1, 1606 },
-   { 1, 1607 }, { 1, 1608 }, { 1, 1609 }, { 1, 1610 },
-   { 1, 1611 }, { 1, 1614 }, { 1, 1617 }, { 1, 1618 },
-   { 1, 1621 }, { 1, 1622 }, { 1, 1623 }, { 1, 1624 },
-   { 1, 1625 }, { 1, 1678 }, { 1, 1680 }, { 1, 1681 },
-   { 1, 1682 }, { 1, 1684 }, { 1, 1686 }, { 1, 1692 },
-   { 1, 1694 }, { 1, 1696 }, { 1, 1698 }, { 1, 1699 },
-   { 1, 1732 }, { 1, 1743 }, { 1, 1744 }, { 1, 1746 },
-   { 1, 1767 }, { 1, 1768 }, { 1, 1769 }, { 1, 1770 },
-   { 1, 1806 }, { 1, 1807 }, { 1, 1808 }, { 1, 1817 },
-   { 1, 1818 }, { 1, 1819 }, { 1, 1820 }, { 1, 1848 },
-   { 2, 167 }, { 2, 168 }, { 2, 170 }, { 2, 171 },
-   { 2, 1875 }, { 2, 1876 }, { 2, 1877 }, { 2, 1878 },
-   { 2, 1879 }, { 2, 1880 }, { 2, 1881 }, { 2, 1882 },
-   { 2, 1949 }, { 2, 1950 }, { 2, 1951 }, { 2, 1952 },
-   { 2, 1953 }, { 2, 1954 }, { 2, 1955 }, { 2, 1956 },
-   { 2, 2673 }, { 2, 2676 }, { 2, 2677 }, { 2, 2678 },
-   { 2, 2679 }, { 2, 2680 }, { 2, 3446 }, { 2, 3449 },
-   { 2, 3450 }, { 2, 3454 }, { 2, 3524 }, { 2, 3526 },
-   { 2, 3532 }, { 2, 3601 }, { 2, 3603 }, { 2, 3605 },
-   { 2, 3606 }, { 2, 4267 }, { 2, 4268 }, { 2, 4269 },
-   { 2, 4270 }, { 2, 4271 }, { 2, 4272 }, { 2, 4273 },
-   { 3, 4715 }, { 3, 4717 }, { 3, 4789 }, { 4, 2269 },
-   { 4, 2270 }, { 4, 2271 }, { 4, 2272 }, { 4, 2273 },
-   { 4, 2274 }, { 4, 2275 }, { 4, 2276 }, { 4, 2599 },
-   { 4, 2600 }, { 4, 2601 }, { 4, 2602 }, { 4, 2603 },
-   { 4, 2604 }, { 4, 2605 }, { 4, 2606 }, { 4, 5701 },
-   { 4, 5702 }, { 4, 5703 }, { 4, 5704 }, { 4, 5705 },
-   { 4, 5706 }, { 4, 6421 }, { 4, 6422 }, { 4, 6423 },
-   { 4, 6424 }, { 4, 6425 }, { 4, 6426 }, { 4, 6427 },
-   { 4, 6428 }, { 4, 7631 }, { 4, 7632 }, { 4, 7707 },
-   { 4, 8387 }, { 4, 8388 }, { 4, 8389 }, { 4, 8390 },
-   { 4, 8391 }, { 4, 8392 }, { 4, 8393 }, { 4, 8394 },
-   { 4, 9191 },
+   // // Fill 5824
+   // { 1, 104 }, { 1, 105 }, { 1, 106 }, { 1, 115 },
+   // { 1, 116 }, { 1, 117 }, { 1, 118 }, { 1, 178 },
+   // { 1, 179 }, { 1, 180 }, { 1, 189 }, { 1, 194 },
+   // { 1, 195 }, { 1, 400 }, { 1, 461 }, { 1, 462 },
+   // { 1, 463 }, { 1, 464 }, { 1, 474 }, { 1, 476 },
+   // { 1, 485 }, { 1, 486 }, { 1, 727 }, { 1, 728 },
+   // { 1, 729 }, { 1, 730 }, { 1, 782 }, { 1, 783 },
+   // { 1, 1139 }, { 1, 1141 }, { 1, 1142 }, { 1, 1151 },
+   // { 1, 1152 }, { 1, 1153 }, { 1, 1154 }, { 1, 1155 },
+   // { 1, 1156 }, { 1, 1157 }, { 1, 1212 }, { 1, 1216 },
+   // { 1, 1225 }, { 1, 1226 }, { 1, 1227 }, { 1, 1253 },
+   // { 1, 1254 }, { 1, 1255 }, { 1, 1256 }, { 1, 1299 },
+   // { 1, 1300 }, { 1, 1301 }, { 1, 1302 }, { 1, 1335 },
+   // { 1, 1373 }, { 1, 1374 }, { 1, 1375 }, { 1, 1376 },
+   // { 1, 1510 }, { 1, 1511 }, { 1, 1512 }, { 1, 1521 },
+   // { 1, 1522 }, { 1, 1523 }, { 1, 1524 }, { 1, 1595 },
+   // { 1, 1603 }, { 1, 1604 }, { 1, 1605 }, { 1, 1606 },
+   // { 1, 1607 }, { 1, 1608 }, { 1, 1609 }, { 1, 1610 },
+   // { 1, 1611 }, { 1, 1614 }, { 1, 1617 }, { 1, 1618 },
+   // { 1, 1621 }, { 1, 1622 }, { 1, 1623 }, { 1, 1624 },
+   // { 1, 1625 }, { 1, 1678 }, { 1, 1680 }, { 1, 1681 },
+   // { 1, 1682 }, { 1, 1684 }, { 1, 1686 }, { 1, 1692 },
+   // { 1, 1694 }, { 1, 1696 }, { 1, 1698 }, { 1, 1699 },
+   // { 1, 1732 }, { 1, 1743 }, { 1, 1744 }, { 1, 1746 },
+   // { 1, 1767 }, { 1, 1768 }, { 1, 1769 }, { 1, 1770 },
+   // { 1, 1806 }, { 1, 1807 }, { 1, 1808 }, { 1, 1817 },
+   // { 1, 1818 }, { 1, 1819 }, { 1, 1820 }, { 1, 1848 },
+   // { 2, 167 }, { 2, 168 }, { 2, 170 }, { 2, 171 },
+   // { 2, 1875 }, { 2, 1876 }, { 2, 1877 }, { 2, 1878 },
+   // { 2, 1879 }, { 2, 1880 }, { 2, 1881 }, { 2, 1882 },
+   // { 2, 1949 }, { 2, 1950 }, { 2, 1951 }, { 2, 1952 },
+   // { 2, 1953 }, { 2, 1954 }, { 2, 1955 }, { 2, 1956 },
+   // { 2, 2673 }, { 2, 2676 }, { 2, 2677 }, { 2, 2678 },
+   // { 2, 2679 }, { 2, 2680 }, { 2, 3446 }, { 2, 3449 },
+   // { 2, 3450 }, { 2, 3454 }, { 2, 3524 }, { 2, 3526 },
+   // { 2, 3532 }, { 2, 3601 }, { 2, 3603 }, { 2, 3605 },
+   // { 2, 3606 }, { 2, 4267 }, { 2, 4268 }, { 2, 4269 },
+   // { 2, 4270 }, { 2, 4271 }, { 2, 4272 }, { 2, 4273 },
+   // { 3, 4715 }, { 3, 4717 }, { 3, 4789 }, { 4, 2269 },
+   // { 4, 2270 }, { 4, 2271 }, { 4, 2272 }, { 4, 2273 },
+   // { 4, 2274 }, { 4, 2275 }, { 4, 2276 }, { 4, 2599 },
+   // { 4, 2600 }, { 4, 2601 }, { 4, 2602 }, { 4, 2603 },
+   // { 4, 2604 }, { 4, 2605 }, { 4, 2606 }, { 4, 5701 },
+   // { 4, 5702 }, { 4, 5703 }, { 4, 5704 }, { 4, 5705 },
+   // { 4, 5706 }, { 4, 6421 }, { 4, 6422 }, { 4, 6423 },
+   // { 4, 6424 }, { 4, 6425 }, { 4, 6426 }, { 4, 6427 },
+   // { 4, 6428 }, { 4, 7631 }, { 4, 7632 }, { 4, 7707 },
+   // { 4, 8387 }, { 4, 8388 }, { 4, 8389 }, { 4, 8390 },
+   // { 4, 8391 }, { 4, 8392 }, { 4, 8393 }, { 4, 8394 },
+   // { 4, 9191 }
 };
 
-template void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
-template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
-template void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Cosmics>();
+template [[gnu::hot]] void EfficiencyPlotsModule::saveHistogramsInCollectionIfNotEmpty<std::vector<TH1D*>>(const std::vector<TH1D*>& collection, const std::string& parentDirectoryName, const std::string& subdirectoryName, const JSON& config);
+template [[gnu::hot]] void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Collisions>();
+template [[gnu::hot]] void EfficiencyPlotsModule::fillTrajMeasHistograms<EfficiencyPlotsModule::Cosmics>();
 
 EfficiencyPlotsModule::EfficiencyPlotsModule(const EventData& clusterEventFieldArg, const Cluster& clusterFieldArg, const EventData& trajEventFieldArg, const TrajMeasurement& trajFieldArg, const float& delayInNsArg): 
    clusterEventField_     (clusterEventFieldArg),
@@ -328,7 +329,7 @@ catch(const std::exception& e)
 }
 
 template <>
-void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Collisions>()
+[[gnu::hot]] void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Collisions>()
 {
    const TrackData& trk             = trajField_.trk;
    const int&       det             = trajField_.mod_on.det;
@@ -427,7 +428,7 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Colli
    noHitsepCut    = nvtxCut && zerobiasCut && federrCut && hpCut && ptCut && nstripCut && d0Cut && dzCut && pixhitCut && lxFidCut && lyFidCut && valmisCut              && badROCCut;
 }
 template <>
-void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmics>()
+[[gnu::hot]] void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmics>()
 {
    const TrackData& trk             = trajField_.trk;
    const int&       det             = trajField_.mod_on.det;
@@ -498,7 +499,7 @@ void EfficiencyPlotsModule::calculateCuts<EfficiencyPlotsModule::Scenario::Cosmi
 }
 
 template <EfficiencyPlotsModule::Scenario scenario>
-void EfficiencyPlotsModule::fillTrajMeasHistograms() try
+[[gnu::hot]] void EfficiencyPlotsModule::fillTrajMeasHistograms() try
 {
    // Shortcuts
    const int&       det             = trajField_.mod_on.det;
@@ -1217,9 +1218,9 @@ TGraphAsymmErrors* EfficiencyPlotsModule::getEfficiencyGraphAsymmErrors(const TH
 void EfficiencyPlotsModule::fillHistogramByEfficiencyPair(TH1F* t_histogram, int binIndex, double t_hits, double t_good_hits)
 {
    double efficiency = t_good_hits / t_hits;
-   double lowerError, upperError;
-   std::tie(lowerError, upperError) = WilsonScoreIntervalErrorCalculator(t_hits, efficiency).getError();
-   t_histogram -> SetBinError(binIndex, std::max(lowerError, upperError));
+   double lowerBound, upperBound;
+   std::tie(lowerBound, upperBound) = WilsonScoreIntervalErrorCalculator(t_hits, efficiency).getError();
+   t_histogram -> SetBinError(binIndex, std::max(efficiency - lowerBound, upperBound - efficiency));
    t_histogram -> SetBinContent(binIndex, efficiency);
 }
 
@@ -1692,12 +1693,42 @@ void EfficiencyPlotsModule::createEfficiencyVsDelayDefaultPlots(const std::vecto
 // - Requires the "efficiencyROCPlots" to be filled before. (throws an std::runtime_error otherwise)
 // - Discards histograms where delayInNs_ is NOVAL_F (aka. -9999.0)
 
-std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const int& delayPlotsNumbins, const float& delayPlotsLowerEdge, const float& delayPlotsUpperEdge)
+[[noreturn, gnu::cold]] void EfficiencyPlotsModule::e_nullptr_dereference_ROCEffVsDelay()
+{
+   throw std::runtime_error("Trying to deference a nullptr in the module list. This is not supported.");
+}
+
+// Create histograms for each of the ROC-s
+std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createROCEfficiencyContainerHistorams(const std::vector<EfficiencyPlotsModule*>& t_modulesWithKnownDelay, const std::vector<LayersDiskPlotIndecies>& t_plotIndexList, const int& t_delayPlotsNumbins, const float& t_delayPlotsLowerEdge, const float& t_delayPlotsUpperEdge)
+{
+   std::vector<std::vector<TH1*>> result;
+   for(size_t plotIndex: t_plotIndexList)
+   {
+      // Using the histograms ot the first module as templates
+      // GetNbinsX() does not count the under- and overflow bins
+      size_t numBins =  dynamic_cast<TH2D*>(t_modulesWithKnownDelay.front() -> efficiencyROCPlots[plotIndex]) -> GetSize();
+      // Create a vector with X TH1D elements, where X is the number of
+      // bins the passed efficiencyHistogram has, excluding the under and overflow bins 
+      std::vector<TH1*> rocEfficiency;
+      rocEfficiency.reserve(numBins);
+      for(size_t index = 0; index < numBins; ++index)
+      {
+         std::string histogramName  = "delayVsEfficiencyOnROCs" + t_modulesWithKnownDelay.front() -> plotNameSuffices[plotIndex - 23] + "ROC" + std::to_string(index + 1);
+         std::string histogramTitle = "Efficiency on " + t_modulesWithKnownDelay.front() -> plotTitleSuffices[plotIndex] + " ROC " + std::to_string(index + 1);
+         rocEfficiency.emplace_back(new TH1F(histogramName.c_str(), histogramTitle.c_str(), t_delayPlotsNumbins, t_delayPlotsLowerEdge, t_delayPlotsUpperEdge));
+      }
+      rocEfficiency.shrink_to_fit();
+      result.emplace_back(std::move(rocEfficiency));
+   }  
+   return result;
+}
+
+std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROCPlots(const std::vector<EfficiencyPlotsModule*>& modulePtrs, const int& t_delayPlotsNumbins, const float& t_delayPlotsLowerEdge, const float& t_delayPlotsUpperEdge)
 {
    auto discardNOVAL_F = [] (const EfficiencyPlotsModule* module) { return module -> delayInNs_ != NOVAL_F; };
    auto moduleEfficiencyROCPlotsFilled = [] (const EfficiencyPlotsModule* module)
    {
-      if(module == nullptr) throw std::runtime_error("Trying to deference a nullptr in the module list. This is not supported.");
+      if(module == nullptr) EfficiencyPlotsModule::e_nullptr_dereference_ROCEffVsDelay();
       return std::any_of(module -> efficiencyROCPlots.begin(), module -> efficiencyROCPlots.end(), [](TH1 *histogram) 
       {
          if(!histogram)
@@ -1720,26 +1751,8 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
    delayValues.reserve(modulesWithKnownDelay.size());
    for(const auto& module: modulesWithKnownDelay) { delayValues.push_back(module -> delayInNs_); }
    // Create histograms for each of the ROC-s
-   std::vector<std::vector<TH1*>> rocEfficiencyHits;
    std::vector<LayersDiskPlotIndecies> plotIndexList = { AllDisksEfficiency, Layer1Efficiency, Layer2Efficiency, Layer3Efficiency, Layer4Efficiency };
-   for(size_t plotIndex: plotIndexList)
-   {
-      // Using the histograms ot the first module as templates
-      // GetNbinsX() does not count the under- and overflow bins
-      size_t numBins =  dynamic_cast<TH2D*>(modulesWithKnownDelay.front() -> efficiencyROCPlots[plotIndex]) -> GetSize();
-      // Create a vector with X TH1D elements, where X is the number of
-      // bins the passed efficiencyHistogram has, excluding the under and overflow bins 
-      std::vector<TH1*> rocEfficiency;
-      rocEfficiency.reserve(numBins);
-      for(size_t index = 0; index < numBins; ++index)
-      {
-         std::string histogramName  = "delayVsEfficiencyOnROCs" + modulesWithKnownDelay.front() -> plotNameSuffices[plotIndex - 23] + "ROC" + std::to_string(index + 1);
-         std::string histogramTitle = "Efficiency on " + modulesWithKnownDelay.front() -> plotTitleSuffices[plotIndex] + " ROC " + std::to_string(index + 1);
-         rocEfficiency.emplace_back(new TH1F(histogramName.c_str(), histogramTitle.c_str(), delayPlotsNumbins, delayPlotsLowerEdge, delayPlotsUpperEdge));
-      }
-      rocEfficiency.shrink_to_fit();
-      rocEfficiencyHits.emplace_back(std::move(rocEfficiency));
-   }
+   std::vector<std::vector<TH1*>> rocEfficiencyHits = createROCEfficiencyContainerHistorams(modulesWithKnownDelay, plotIndexList, t_delayPlotsNumbins, t_delayPlotsLowerEdge, t_delayPlotsUpperEdge);
    // Create efficiency measurement point and error
    // each of the delay settings
    for(auto module: modulesWithKnownDelay)
@@ -1772,9 +1785,17 @@ std::vector<std::vector<TH1*>> EfficiencyPlotsModule::createEfficiencyVsDelayROC
             double hits    = hitsHist -> GetAt(binIndex);
             if(1.0 < fillVal) { std::cerr << error_prompt << __PRETTY_FUNCTION__ << ": efficiency value greater than 1.00 found." << std::endl; }
             rocEfficiencyHits[index][binIndex] -> Fill(module -> delayInNs_, fillVal);
-            double lowerError, upperError;
-            std::tie(lowerError, upperError) = WilsonScoreIntervalErrorCalculator(hits, fillVal).getError();
-            rocEfficiencyHits[index][binIndex] -> SetBinError(module -> delayInNs_, std::max(lowerError, upperError));
+            double lowerBound, upperBound;
+            std::tie(lowerBound, upperBound) = WilsonScoreIntervalErrorCalculator(hits, fillVal).getError();
+            // if(hits != 0.0)
+            // {
+            //    std::cout << "hits: " << hits << std::endl;
+            //    std::cout << "fillVal: " << fillVal << std::endl;
+            //    std::cout << "lowerBound: " << lowerBound << std::endl;
+            //    std::cout << "upperBound: " << upperBound << std::endl;
+            //    std::cin.get();
+            // }
+            rocEfficiencyHits[index][binIndex] -> SetBinError(module -> delayInNs_, std::max(fillVal - lowerBound, upperBound - fillVal));
          }
       }
    }

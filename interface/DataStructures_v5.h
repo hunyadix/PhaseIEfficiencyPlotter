@@ -215,26 +215,26 @@ class ModuleData
 		float        disk_ring_coord;
 		float        blade_panel_coord;
 
-		const std::string list = "det/I:shl:side:module:layer:sec:ladder:flipped:half:disk:blade:panel:ring:federr:"
-		  "rawid/i:fedid:channel:roc:module_coord/F:ladder_coord:disk_ring_coord:blade_panel_coord";
-		const std::map<int, std::string> federrortypes = 
-		{
-			std::make_pair<int, std::string>(25, "invalidROC"),
-			std::make_pair<int, std::string>(26, "gap word"),
-			std::make_pair<int, std::string>(27, "dummy word"),
-			std::make_pair<int, std::string>(28, "FIFO full error"),
-			std::make_pair<int, std::string>(29, "timeout error"),
-			std::make_pair<int, std::string>(30, "TBM error trailer"),
-			std::make_pair<int, std::string>(31, "event number error (TBM and FED event number mismatch)"),
-			std::make_pair<int, std::string>(32, "incorrectly formatted Slink Header"),
-			std::make_pair<int, std::string>(33, "incorrectly formatted Slink Trailer"),
-			std::make_pair<int, std::string>(34, "the event size encoded in the Slink Trailer is different than the size found at raw to digi conversion "),
-			std::make_pair<int, std::string>(35, "invalid FED channel number"),
-			std::make_pair<int, std::string>(36, "invalid ROC value "),
-			std::make_pair<int, std::string>(37, "invalid dcol or pixel value "),
-			std::make_pair<int, std::string>(38, "the pixels on a ROC weren't read out from lowest to highest row and dcol value"),
-			std::make_pair<int, std::string>(39, "CRC error")
-		};;
+		// const std::string list = "det/I:shl:side:module:layer:sec:ladder:flipped:half:disk:blade:panel:ring:federr:"
+		  // "rawid/i:fedid:channel:roc:module_coord/F:ladder_coord:disk_ring_coord:blade_panel_coord";
+		// const std::map<int, std::string> federrortypes = 
+		// {
+		// 	std::make_pair<int, std::string>(25, "invalidROC"),
+		// 	std::make_pair<int, std::string>(26, "gap word"),
+		// 	std::make_pair<int, std::string>(27, "dummy word"),
+		// 	std::make_pair<int, std::string>(28, "FIFO full error"),
+		// 	std::make_pair<int, std::string>(29, "timeout error"),
+		// 	std::make_pair<int, std::string>(30, "TBM error trailer"),
+		// 	std::make_pair<int, std::string>(31, "event number error (TBM and FED event number mismatch)"),
+		// 	std::make_pair<int, std::string>(32, "incorrectly formatted Slink Header"),
+		// 	std::make_pair<int, std::string>(33, "incorrectly formatted Slink Trailer"),
+		// 	std::make_pair<int, std::string>(34, "the event size encoded in the Slink Trailer is different than the size found at raw to digi conversion "),
+		// 	std::make_pair<int, std::string>(35, "invalid FED channel number"),
+		// 	std::make_pair<int, std::string>(36, "invalid ROC value "),
+		// 	std::make_pair<int, std::string>(37, "invalid dcol or pixel value "),
+		// 	std::make_pair<int, std::string>(38, "the pixels on a ROC weren't read out from lowest to highest row and dcol value"),
+		// 	std::make_pair<int, std::string>(39, "CRC error")
+		// };
 
 		ModuleData() { init(); }
 
@@ -264,12 +264,12 @@ class ModuleData
 			blade_panel_coord = NOVAL_F;
 		};
 
-		std::string federr_name()
-		{
-			auto found = federrortypes.find(federr);
-			if(found != federrortypes.end()) return found -> second;
-			return "FED error not interpreted";
-		}
+		// std::string federr_name()
+		// {
+		// 	auto found = federrortypes.find(federr);
+		// 	if(found != federrortypes.end()) return found -> second;
+		// 	return "FED error not interpreted";
+		// }
 };
 
 class DigiData
@@ -363,12 +363,40 @@ class Cluster : public ClustData
 		ModuleData mod;    // offline module number
 
 		Cluster() { init(); };
+		// ~Cluster() = default;
+		// Cluster(Cluster const& other) = default;
+		// Cluster& operator=(Cluster other)
+		// {
+		// 	swap(*this, other);
+		// 	return *this;
+		// }
+		// Cluster(Cluster&& other) : Cluster()
+		// {
+		// 	swap(*this, other);
+		// }
 		void init()
 		{
+			std::cout << __PRETTY_FUNCTION__ << ": " << __LINE__ << std::endl;
 			ClustData::init();
 			mod_on.init();
 			mod.init();
 		}
+		// friend void swap(Cluster& first, Cluster& second)
+		// {
+		//     using std::swap;
+		//     swap(first.x, second.x);
+		//     swap(first.y, second.y);
+		//     swap(first.sizeX, second.sizeX);
+		//     swap(first.sizeY, second.sizeY);
+		//     swap(first.i, second.i);
+		//     swap(first.edge, second.edge);
+		//     swap(first.badpix, second.badpix);
+		//     swap(first.tworoc, second.tworoc);
+		//     swap(first.size, second.size);
+		//     swap(first.charge, second.charge);
+		//     swap(first.adc, second.adc);
+		//     swap(first.pix, second.pix);
+		// }
 };
 
 class TrackData

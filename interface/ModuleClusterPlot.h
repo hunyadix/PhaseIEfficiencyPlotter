@@ -1,9 +1,9 @@
 #ifndef MODULE_CLUSTER_PLOT_H
 #define MODULE_CLUSTER_PLOT_H
 
-#include "../../../interface/Cluster.h"
-#include "../../../interface/HelperFunctionsCommon.h"
-#include "../../../interface/CanvasExtras.h"
+#include "../interface/DataStructures_v5.h"
+#include "../interface/HelperFunctionsCommon.h"
+#include "../interface/CanvasExtras.h"
 #include "../interface/ClusterPairFunctions.h"
 
 #include <TH2D.h>
@@ -56,9 +56,9 @@ class ModuleClusterPlot
 		static constexpr float NORMAL_PALETTE_MAXIMUM  = 1500.0f;
 		static constexpr float ANGLE_PALETTE_MINIMUM   = 0.0;
 		static constexpr float ANGLE_PALETTE_MAXIMUM   = 3.15;
-		TH2D histogram;
-		std::vector<std::shared_ptr<TText>> labels;
-		TCanvas canvas;
+		TH2D* histogram;
+		std::vector<std::unique_ptr<TText>> labels;
+		TCanvas* canvas;
 		Type type;
 		int layer;
 		int module;

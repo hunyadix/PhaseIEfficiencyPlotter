@@ -94,7 +94,6 @@ int main([[maybe_unused]] int argc, char** argv) try
    testSaveFolders(config);
    TimerColored timer(timer_prompt);
    [[maybe_unused]] TFile* histogramsNtuple = generateOutputNtuple(config);
-   (void)histogramsNtuple; // To disable the warning
    // std::map<std::string, EfficiencyPlotsModule::Scenario> scenarioStringToObjectMap {{"collisions", EfficiencyPlotsModule::Collisions}, {"cosmics", EfficiencyPlotsModule::Cosmics}};
    // EfficiencyPlotsModule::Scenario scenario = scenarioStringToObjectMap.at(config.at("scenario"));
    gROOT -> SetBatch(kFALSE);
@@ -475,18 +474,30 @@ float getDelayNs(int runNumber, int lumisectionNumber) try
       // (164 - WBC) * 25 + Globaldelay
 
       // Fill 5824
-      
-      { 296665, {{ -1, 0 * 25 + 18 }}},
-      { 296666, {{ -1, 0 * 25 + 14 }}},
-      { 296668, {{ -1, 0 * 25 + 11 }}},
-      { 296669, {{ -1, 0 * 25 + 9  }}},
-      { 296674, {{ -1, 0 * 25 + 7.5}}},
-      { 296664, {{ -1, 0 * 25 + 6  }}},
-      { 296675, {{ -1, 0 * 25 + 4.5}}},
-      { 296676, {{ -1, 0 * 25 + 1.5}}},
-      { 296678, {{ -1, 0 * 25 + 0  }}},
-      { 296679, {{ -1, -1 * 25 + 22 }}},
-      { 296680, {{ -1, -1 * 25 + 18 }}}
+      // { 296665, {{ -1, 0 * 25 + 18 }}},
+      // { 296666, {{ -1, 0 * 25 + 14 }}},
+      // { 296668, {{ -1, 0 * 25 + 11 }}},
+      // { 296669, {{ -1, 0 * 25 + 9  }}},
+      // { 296674, {{ -1, 0 * 25 + 7.5}}},
+      // { 296664, {{ -1, 0 * 25 + 6  }}},
+      // { 296675, {{ -1, 0 * 25 + 4.5}}},
+      // { 296676, {{ -1, 0 * 25 + 1.5}}},
+      // { 296678, {{ -1, 0 * 25 + 0  }}},
+      // { 296679, {{ -1, -1 * 25 + 22 }}},
+      // { 296680, {{ -1, -1 * 25 + 18 }}}
+
+      // Fill 5856, scan 23
+      { 297281, {{ -1, 0 * 25 +     6}}},
+      { 297282, {{ -1, 0 * 25 +    -4}}},
+      { 297283, {{ -1, 0 * 25 +    -1}}},
+      { 297284, {{ -1, 0 * 25 +     2}}},
+      { 297285, {{ -1, 0 * 25 +     4}}},
+      { 297286, {{ -1, 0 * 25 +     8}}},
+      { 297287, {{ -1, 0 * 25 +    10}}},
+      { 297288, {{ -1, 0 * 25 +    13}}},
+      { 297289, {{ -1, 0 * 25 +    16}}},
+      { 297290, {{ -1, 0 * 25 +   5.5}}},
+      { 297291, {{ -1, 0 * 25 +   6.5}}}
 
       // Fill 5838
 

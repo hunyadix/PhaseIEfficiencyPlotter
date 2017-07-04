@@ -13,7 +13,7 @@
 #include "../../interface/ProgressBar.h"
 // #include "../../interface/common_functions_jkarancs.h"
 #include "../../interface/EfficiencyPlotsModule.h"
-#include "../../interface/WilsonScoreInterval.h"
+// #include "../../interface/WilsonScoreInterval.h"
 #include "../../interface/StylePresets.h"
 
 // Root
@@ -63,10 +63,10 @@ using JSON = nlohmann::json;
 
 TRandom3 rndGen;
 
-constexpr auto                    CONFIG_FILE_PATH                = "./config_main.json"; 
-constexpr auto                    INPUT_FILE_PATH                 = "/data/hunyadi/CMSSW/PhaseIEfficiencyPlotter_2017_04_02/CMSSW_9_1_0_pre3/src/DPGAnalysis/PhaseIEfficiencyPlotter/histograms_fill5824_6.root";
-constexpr auto                    OUTPUT_FILE_PATH                = "/data/hunyadi/CMSSW/PhaseIEfficiencyPlotter_2017_04_02/CMSSW_9_1_0_pre3/src/DPGAnalysis/PhaseIEfficiencyPlotter/ROC_fits_fill5824_updated_detailed_2.root";
-constexpr auto                    ROC_PLACEMENT_MAP_PATH          = "/data/hunyadi/CMSSW/PhaseIEfficiencyPlotter_2017_04_02/CMSSW_9_1_0_pre3/src/DPGAnalysis/PhaseIEfficiencyPlotter/ROCPlacement_extra.txt";
+constexpr auto CONFIG_FILE_PATH       = "./config_main.json"; 
+constexpr auto INPUT_FILE_PATH        = "/data/hunyadi/CMSSW/PhaseIEfficiencyPlotter_2017_04_02/CMSSW_9_1_0_pre3/src/DPGAnalysis/PhaseIEfficiencyPlotter/histograms_fill5824_4.root";
+constexpr auto OUTPUT_FILE_PATH       = "/data/hunyadi/CMSSW/PhaseIEfficiencyPlotter_2017_04_02/CMSSW_9_1_0_pre3/src/DPGAnalysis/PhaseIEfficiencyPlotter/ROC_fits_fill5824_updated_detailed_2.root";
+constexpr auto ROC_PLACEMENT_MAP_PATH = "/data/hunyadi/CMSSW/PhaseIEfficiencyPlotter_2017_04_02/CMSSW_9_1_0_pre3/src/DPGAnalysis/PhaseIEfficiencyPlotter/ROCPlacement_extra.txt";
 // constexpr auto
 
 
@@ -198,7 +198,7 @@ class HistogramFitter
       int operator()();
       TCanvas* getCanvas() const { return canvas; };
       TH1F* getHistogram() const { return histogramToFit; };
-      [[noreturn]] void e_accessMemberFitIsNull() const { std::cout << "Requested access fitted function before it was generated." << std::endl; throw std::runtime_error("fitter"); };
+      [[noreturn, gnu::cold]] void e_accessMemberFitIsNull() const { std::cout << "Requested access fitted function before it was generated." << std::endl; throw std::runtime_error("fitter"); };
       TF1*  getAscendingSigmoidFit()  const { if(m_ascendingSigmoidFit  == nullptr) e_accessMemberFitIsNull(); return m_ascendingSigmoidFit;  };
       TF1*  getDescendingSigmoidFit() const { if(m_descendingSigmoidFit == nullptr) e_accessMemberFitIsNull(); return m_descendingSigmoidFit; };
 };
@@ -270,12 +270,15 @@ int main(int argc, char** argv) try
 
    // Get the distribution of the ramp-relative point
    std::vector<std::pair<TH1F*, TH1F*>> rampDistributions = getRampBoundaryPointDistributions(fitResults);
+   outputFile -> mkdir("RampEndPointDistributions");
+   outputFile -> cd("RampEndPointDistributions");
    for(const auto& rampDistributionPair: rampDistributions)
    {
+      if(rampDistributionPair.first == nullptr) throw "";
+      if(rampDistributionPair.second == nullptr) throw "";
       rampDistributionPair.first  -> Write();
       rampDistributionPair.second -> Write();
    }
-
    outputFile -> Close();
    std::cout << process_prompt << argv[0] << " terminated succesfully." << std::endl;
    app -> Run();
@@ -594,7 +597,12 @@ std::vector<std::map<TH1F*, std::pair<TF1*, TF1*>>> handleROCEfficiencyHistogram
             skippedROCsOnLayer++;
          }
          updateSkippedROCsMsg();
-         // break;
+         static int breaker = 0;
+         if(breaker++ == 20)
+         {
+            breaker = 0;
+            break;
+         }
       }
       std::cout << std::endl;
    }
@@ -618,9 +626,13 @@ std::vector<std::pair<TH1F*, TH1F*>> getRampBoundaryPointDistributions(const std
       {
          ascendingRampEndPointsOnLayer  -> Fill(findSigmoidNTimesMaxHeightPosition(histogramFitsPair.second.first,  0.99, 0.001));
          descendingRampEndPointsOnLayer -> Fill(findSigmoidNTimesMaxHeightPosition(histogramFitsPair.second.second, 0.99, 0.001));
+         std::cout << "findSigmoidNTimesMaxHeightPosition(histogramFitsPair.second.first,  0.99, 0.001): " << findSigmoidNTimesMaxHeightPosition(histogramFitsPair.second.first,  0.99, 0.001) << std::endl;
+         std::cout << "findSigmoidNTimesMaxHeightPosition(histogramFitsPair.second.second, 0.99, 0.001): " << findSigmoidNTimesMaxHeightPosition(histogramFitsPair.second.second, 0.99, 0.001) << std::endl;
       }
-      result.emplace_back(std::move(ascendingRampEndPointsOnLayer), std::move(descendingRampEndPointsOnLayer));
+      result[layerIndex] = std::make_pair(std::move(ascendingRampEndPointsOnLayer), std::move(descendingRampEndPointsOnLayer));
    }
+   std::cout << __PRETTY_FUNCTION__ << ": " << __LINE__ << std::endl;
+   std::cout << "result.size(): " << result.size() << std::endl;
    return result;
 }
 
@@ -1130,12 +1142,12 @@ std::vector<std::map<int, ROCPlacement>> getLayersROCIndexToPlacementMaps(std::s
 
 // Monotoniticy of the function is assumed
 
-[[noreturn]] void e_sigmoidIsNullptr()
+[[noreturn, gnu::cold]] void e_sigmoidIsNullptr()
 {
    throw std::runtime_error("error at " __FILE__ ":" S__LINE__);
 }
 
-[[noreturn]] void e_relativeHeightRange()
+[[noreturn, gnu::cold]] void e_relativeHeightRange()
 {
    throw std::runtime_error("error at " __FILE__ ":" S__LINE__);
 }

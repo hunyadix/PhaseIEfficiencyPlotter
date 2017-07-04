@@ -129,3 +129,18 @@ std::string fileToString(const String& filename)
 	file.close(); 
 	return result;
 }
+
+template <typename ModuleData_t>
+bool areModulesSame(const ModuleData_t& t_lhs, const ModuleData_t& t_rhs)
+{
+	static_assert(std::is_same<ModuleData_t, ModuleData>::value, "Invalid argument type."); 
+	if(t_lhs.det    != t_rhs.det)    return false;
+	if(t_lhs.layer  != t_rhs.layer)  return false;
+	if(t_lhs.module != t_rhs.module) return false;
+	if(t_lhs.ladder != t_rhs.ladder) return false;
+	if(t_lhs.disk   != t_rhs.disk)   return false;
+	if(t_lhs.ring   != t_rhs.ring)   return false;
+	if(t_lhs.blade  != t_rhs.blade)  return false;
+	if(t_lhs.panel  != t_rhs.panel)  return false;
+	return true;
+}
