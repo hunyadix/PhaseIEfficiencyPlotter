@@ -31,6 +31,7 @@
 #include <TH1I.h>
 #include <TH1F.h>
 #include <TH2D.h>
+#include <TEfficiency.h>
 #include <TGaxis.h>
 #include <TPaletteAxis.h>
 #include <TLatex.h>
@@ -124,6 +125,68 @@ int main([[maybe_unused]] int argc, char** argv) try
    std::cout << "Done." << std::endl;
    // Modules
    EfficiencyPlotsModule efficiencyPlotsModule(clusterEventField, clusterField, trajEventField, trajField);
+
+   // std::vector<std::shared_ptr<TEfficiency>> histograms;
+   // auto efficiency1DForEachLayer = [&histograms] 
+   //    (const std::string& baseName,
+   //     const std::string& titlePrefix, const std::string& titlePostFix,
+   //     const std::string& xAxisName, const std::string& yAxisName, 
+   //     const std::vector<int>& numXBins, const std::vector<std::pair<float, float>>& xRanges)
+   // {
+   //    std::vector<std::shared_ptr<TH1D>> histoForEachLayer;
+   //    for(int layNum: range(1, 5))
+   //    {
+   //       histoForEachLayer.emplace_back(std::make_shared<TH1D>(
+   //          (baseName + "lay" + std::to_string(layNum)).c_str(), 
+   //          (titlePrefix + "[lay" + std::to_string(layNum) +"]" + titlePostFix + ";" + xAxisName + ";" + yAxisName + ";").c_str(), 
+   //          numXBins[layNum - 1], xRanges[layNum - 1].first, xRanges[layNum - 1].second));
+   //    }
+   //    for(auto histo: histoForEachLayer) histograms.push_back(histo); 
+   //    return histoForEachLayer;
+   // };
+   // auto efficiency2DForEachLayer = [&histograms] 
+   //    (const std::string& baseName,
+   //     const std::string& titlePrefix, const std::string& titlePostFix,
+   //     const std::string& xAxisName, const std::string& yAxisName, const std::string& zAxisName, 
+   //     const std::vector<int>& numXBins, const std::vector<std::pair<float, float>>& xRanges, 
+   //     const std::vector<int>& numYBins, const std::vector<std::pair<float, float>>& yRanges)
+   // {
+   //    std::vector<std::shared_ptr<TH2D>> histoForEachLayer;
+   //    for(int layNum: range(1, 5))
+   //    {
+   //       histoForEachLayer.emplace_back(std::make_shared<TH2D>(
+   //          (baseName + "lay" + std::to_string(layNum)).c_str(), 
+   //          (titlePrefix + "[lay" + std::to_string(layNum) +"]" + titlePostFix + ";" + xAxisName + ";" + yAxisName + ";" + zAxisName + ";").c_str(), 
+   //          numXBins[layNum - 1], xRanges[layNum - 1].first, xRanges[layNum - 1].second, 
+   //          numYBins[layNum - 1], yRanges[layNum - 1].first, yRanges[layNum - 1].second));
+   //    }
+   //    for(auto histo: histoForEachLayer) histograms.push_back(histo); 
+   //    return histoForEachLayer;
+   // };
+
+   // const std::vector<int>                     LADDER_NUM_BINS_ON_LAYERS = {13, 29, 45, 65};
+   // const std::vector<int>                     MODULE_NUM_BINS_ON_LAYERS = {9, 9, 9, 9};
+   // const std::vector<int>                     ALPHA_NUM_BINS_ON_LAYERS  = {100, 100, 100, 100};
+   // const std::vector<int>                     BETA_NUM_BINS_ON_LAYERS   = {100, 100, 100, 100};
+
+   // const std::vector<std::pair<float, float>> LADDER_RANGE_ON_LAYERS    = {{-6.0f, 7.0f }, {-14.0f, 15.0f }, {-22.0f, 23.0f }, {-32.0f, 33.0f }};
+   // const std::vector<std::pair<float, float>> MODULE_RANGE_ON_LAYERS    = {{-4.0f, 5.0f }, { -4.0f,  5.0f }, { -4.0f,  5.0f }, { -4.0f,  5.0f }};
+   // const std::vector<std::pair<float, float>> ALPHA_RANGE_ON_LAYERS     = {{ 0.0f, 3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}};
+   // const std::vector<std::pair<float, float>> BETA_RANGE_ON_LAYERS      = {{ 0.0f, 3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}};
+
+   // // Hit efficiency
+   // auto hitEfficiencyVsLadderVsModule = histo2DForEachLayer("hitEfficiencyVsLadderVsModule", "Hit efficiency vs ladder vs module", "", "ladder", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS, MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+   // auto hitEfficiencyVsLadder         = histo1DForEachLayer("hitEfficiencyVsLadder",         "Hit efficiency vs ladder", "", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS);
+   // auto hitEfficiencyVsModule         = histo1DForEachLayer("hitEfficiencyVsModule",         "Hit efficiency vs module", "", "module", "hit eff.", MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+   // auto hitEfficiencyVsAlpha          = histo1DForEachLayer("hitEfficiencyVsAlpha",          "Hit efficiency vs alpha",  "", "module", "hit eff.", ALPHA_NUM_BINS_ON_LAYERS , ALPHA_RANGE_ON_LAYERS );
+   // auto hitEfficiencyVsBeta           = histo1DForEachLayer("hitEfficiencyVsBeta",           "Hit efficiency vs beta",   "", "module", "hit eff.", BETA_NUM_BINS_ON_LAYERS  , BETA_RANGE_ON_LAYERS  );
+   // // Number of hits
+   // auto totalHitsVsLadderVsModule = histo2DForEachLayer("totalHitsVsLadderVsModule", "Number of hits vs ladder vs module", "", "ladder", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS, MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+   // auto totalHitsVsLadder         = histo1DForEachLayer("totalHitsVsLadder",         "Number of hits vs ladder", "", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS);
+   // auto totalHitsVsModule         = histo1DForEachLayer("totalHitsVsModule",         "Number of hits vs module", "", "module", "hit eff.", MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+   // auto totalHitsVsAlpha          = histo1DForEachLayer("totalHitsVsAlpha",          "Number of hits vs alpha",  "", "module", "hit eff.", ALPHA_NUM_BINS_ON_LAYERS,  ALPHA_RANGE_ON_LAYERS );
+   // auto totalHitsVsBeta           = histo1DForEachLayer("totalHitsVsBeta",           "Number of hits vs beta",   "", "module", "hit eff.", BETA_NUM_BINS_ON_LAYERS ,  BETA_RANGE_ON_LAYERS  );
+
    //////////////////
    // Cluster loop //
    //////////////////
@@ -206,6 +269,7 @@ int main([[maybe_unused]] int argc, char** argv) try
       for(Long64_t entryIndex = 0; entryIndex < trajTreeNumEntries; ++entryIndex)
       {
          trajTreeChain -> GetEntry(entryIndex);
+         if(trajEventField.run != 300233) continue;
          if(filterForRunNumberPresent) if(trajEventField.run <  runNumberLowerBound || runNumberUpperBound <= trajEventField.run)
          {
             updateAndPrintProgress(entryIndex);
@@ -213,6 +277,21 @@ int main([[maybe_unused]] int argc, char** argv) try
          }
          // printTrajFieldInfoTrajOnly(trajField);
          efficiencyPlotsModule.fillTrajMeasHistograms<SCENARIO>();
+         // if(efficiencyPlotsModule.areEfficiencyCutsPassed())
+         // {
+         //    totalHitsVsLadderVsModule[trajField.layer - 1] -> Fill(trajField.mod_on.ladder, trajField.mod_on.module);
+         //    totalHitsVsLadder        [trajField.layer - 1] -> Fill(trajField.mod_on.ladder);
+         //    totalHitsVsModule        [trajField.layer - 1] -> Fill(trajField.mod_on.module);
+         //    totalHitsVsAlpha         [trajField.layer - 1] -> Fill(trajField.mod_on.alpha);
+         //    totalHitsVsBeta          [trajField.layer - 1] -> Fill(trajField.mod_on.beta);
+         //    // Efficiency numerators
+         //    if(missing && !trajField.hit_near) continue;
+         //    hitEfficiencyVsLadderVsModule[trajField.layer - 1] -> Fill(trajField.mod_on.ladder, trajField.mod_on.module);
+         //    hitEfficiencyVsLadder        [trajField.layer - 1] -> Fill(trajField.mod_on.ladder);
+         //    hitEfficiencyVsModule        [trajField.layer - 1] -> Fill(trajField.mod_on.module);
+         //    hitEfficiencyVsAlpha         [trajField.layer - 1] -> Fill(trajField.mod_on.alpha);
+         //    hitEfficiencyVsBeta          [trajField.layer - 1] -> Fill(trajField.mod_on.beta);
+         // }
          updateAndPrintProgress(entryIndex);
       }
       std::cout << std::endl;

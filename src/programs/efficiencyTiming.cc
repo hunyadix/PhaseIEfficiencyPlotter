@@ -31,6 +31,7 @@
 #include <TH1I.h>
 #include <TH1F.h>
 #include <TH2D.h>
+#include <TEfficiency.h>
 #include <TGaxis.h>
 #include <TPaletteAxis.h>
 #include <TLatex.h>
@@ -59,7 +60,6 @@
 using JSON = nlohmann::json;
 
 // #define RANDOM_DELAYS
-
 constexpr float HALF_PI = 0.5 * 3.141592653589793238462;
 
 // const std::pair<float, float>  LAYER_MODULE_LABEL_POS      = std::make_pair(0.79f, 0.88f);
@@ -76,12 +76,14 @@ const bool TRAJ_LOOP_REQUESTED  = true;
 constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Collisions;
 // constexpr EfficiencyPlotsModule::Scenario SCENARIO = EfficiencyPlotsModule::Cosmics;
 
-void                     testSaveFolders(const JSON& config);
-TFile*                   generateOutputNtuple(const JSON& config);
-std::vector<std::string> getFilesFromConfig(const JSON& config, const std::string& configKey, const std::string& innerKey);
-void                     readInFilesAndAddToChain(const JSON& config, const std::string& configKey, const std::string& innerKey, TChain* chain);
-TGraphAsymmErrors*       getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram);
-float                    getDelayNs(int runNumber, int lumisectionNumber);
+void                                  testSaveFolders(const JSON& config);
+TFile*                                generateOutputNtuple(const JSON& config);
+std::vector<std::string>              getFilesFromConfig(const JSON& config, const std::string& configKey, const std::string& innerKey);
+void                                  readInFilesAndAddToChain(const JSON& config, const std::string& configKey, const std::string& innerKey, TChain* chain);
+TGraphAsymmErrors*                    getGraphForEfficiencyWithAsymmetricErrors(const TH1D& efficiencyHistogram, const TH1D& numHitsHistogram);
+float                                 getDelayNs(int runNumber, int lumisectionNumber);
+// std::vector<std::vector<TEfficiency>> generateDetectorMeasurementPlots();
+
 
 int main([[maybe_unused]] int argc, char** argv) try
 {
@@ -225,8 +227,6 @@ int main([[maybe_unused]] int argc, char** argv) try
       for(Long64_t entryIndex = 0; entryIndex < trajTreeNumEntries; ++entryIndex)
       {
          trajTreeChain -> GetEntry(entryIndex);
-         int panelBefore = trajField.mod_on.panel;
-         int diskBefore  = trajField.mod_on.disk;
          if(filterForRunNumberPresent) if(trajEventField.run < runNumberLowerBound || runNumberUpperBound <= trajEventField.run)
          {
             updateAndPrintProgress(entryIndex);
@@ -249,9 +249,7 @@ int main([[maybe_unused]] int argc, char** argv) try
          // std::cout << trajTreeChain -> GetCurrentFile() -> GetName() << std::endl;
          if(!(trajField.mod_on.panel == NOVAL_I || trajField.mod_on.panel == 1 || trajField.mod_on.panel == 2))
          {
-            printTrajFieldInfo(trajField);
-            std::cout << "disk before : " << diskBefore  << std::endl;
-            std::cout << "panel before: " << panelBefore << std::endl;
+            // printTrajFieldInfo(trajField);
             continue;
          }
          // std::cin.get();
@@ -469,97 +467,102 @@ T checkGetElement(const JSON& definition, const std::string& propertyName)
 float getDelayNs(int runNumber, int lumisectionNumber) try
 {
    if(runNumber == NOVAL_F || runNumber == 1) return NOVAL_F;
+   // static const std::map<int, std::map<int, float>> delayList =
+   // {
+   //    // (164 - WBC) * 25 + Globaldelay
+
+   //    // Fill 5824
+   //    // { 296665, {{ -1, 0 * 25 + 18 }}},
+   //    // { 296666, {{ -1, 0 * 25 + 14 }}},
+   //    // { 296668, {{ -1, 0 * 25 + 11 }}},
+   //    // { 296669, {{ -1, 0 * 25 + 9  }}},
+   //    // { 296674, {{ -1, 0 * 25 + 7.5}}},
+   //    // { 296664, {{ -1, 0 * 25 + 6  }}},
+   //    // { 296675, {{ -1, 0 * 25 + 4.5}}},
+   //    // { 296676, {{ -1, 0 * 25 + 1.5}}},
+   //    // { 296678, {{ -1, 0 * 25 + 0  }}},
+   //    // { 296679, {{ -1, -1 * 25 + 22 }}},
+   //    // { 296680, {{ -1, -1 * 25 + 18 }}}
+
+   //    // Fill 5856, scan 23
+   //    { 297281, {{ -1, 0 * 25 +     6}}},
+   //    { 297282, {{ -1, 0 * 25 +    -4}}},
+   //    { 297283, {{ -1, 0 * 25 +    -1}}},
+   //    { 297284, {{ -1, 0 * 25 +     2}}},
+   //    { 297285, {{ -1, 0 * 25 +     4}}},
+   //    { 297286, {{ -1, 0 * 25 +     8}}},
+   //    { 297287, {{ -1, 0 * 25 +    10}}},
+   //    { 297288, {{ -1, 0 * 25 +    13}}},
+   //    { 297289, {{ -1, 0 * 25 +    16}}},
+   //    { 297290, {{ -1, 0 * 25 +   5.5}}},
+   //    { 297291, {{ -1, 0 * 25 +   6.5}}}
+
+   //    // Fill 5838
+
+   //    // { 297003, {{ -1, 44 * 25 + normal settings}}
+   //    // { 297004, {{ -1, 64 * 25 + 18ns}}
+   //    // { 297006, {{ -1, 64 * 25 + 21ns}}
+   //    // { 297007, {{ -1, 62 * 25 + 0ns}}
+   //    // { 297009, {{ -1, 62 * 25 + 1.5ns}}
+   //    // { 297010, {{ -1, 62 * 25 + 3ns}}
+   //    // { 297011, {{ -1, 62 * 25 + 4.5ns}}
+   //    // { 297020, {{ -1, 62 * 25 + 6ns}}
+   //    // { 297012, {{ -1, 62 * 25 + 7.5ns}}
+   //    // { 297015, {{ -1, 62 * 25 + 9ns}}
+   //    // { 297016, {{ -1, 62 * 25 + 10.5ns}}
+   //    // { 297017, {{ -1, 62 * 25 + 12ns}}
+   //    // { 297018, {{ -1, 62 * 25 + 15ns}}
+   //    // { 297019, {{ -1, 62 * 25 + 18ns}}
+
+   //    // { 294928, {{-1, 162 * 25  - 6}}},
+   //    // { 294929, {{-1, 163 * 25  - 6}}},
+   //    // { 294931, {{-1, 164 * 25  - 6}}},
+   //    // { 294932, {{-1, 162 * 25  - 18}}},
+   //    // { 294933, {{-1, 163 * 25  - 18}}},
+   //    // { 294934, {{-1, 164 * 25  - 18}}},
+   //    // { 294935, {{-1, 165 * 25  - 18}}},
+   //    // { 294936, {{-1, 164 * 25  - 0}}},
+   //    // { 294937, {{-1, 162 * 25  - 0}}},
+   //    // { 294939, {{-1, 164 * 25  - 12}}},
+   //    // { 294940, {{-1, 163 * 25  - 12}}},
+   //    // { 294947, {{-1, 163 * 25  - 0}}},
+   //    // { 294949, {{-1, 162 * 25  - 3}}},
+   //    // { 294950, {{-1, 163 * 25  - 21}}},
+   //    // { 294951, {{-1, 163 * 25  - 15}}},
+   //    // { 294952, {{-1, 163 * 25  - 9}}},
+   //    // { 294953, {{-1, 163 * 25  - 3}}},
+   //    // { 294954, {{-1, 164 * 25  - 21}}},
+   //    // { 294955, {{-1, 164 * 25  - 15}}},
+   //    // { 294956, {{-1, 164 * 25  - 3}}},
+   //    // { 294957, {{-1, 163 * 25  - 0}}},
+   //    // { 294960, {{-1, 163 * 25  - 6}}}
+
+   //    // FPix
+   //    // { 291872, {{ -1, 162.0f * 25 - 12 }}},
+   //    // { 292283, {{ -1, 164.0f * 25 - 18 }}},
+   //    // { 292364, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292365, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292366, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292367, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292592, {{ -1, 162.0f * 25 - 6 }}},
+   //    // { 292593, {{ -1, 163.0f * 25 - 6 }}},
+   //    // { 292594, {{ -1, 163.0f * 25 - 6 }}},
+   //    // // //BPix
+   //    // { 292079, {{ -1, 163.0f * 25 - 18 }}},
+   //    // { 292080, {{ -1, 163.0f * 25 - 18 }}},
+   //    // { 292283, {{ -1, 165.0f * 25 - 18 }}},
+   //    // { 292364, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292365, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292366, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292367, {{ -1, 164.0f * 25 - 6 }}},
+   //    // { 292592, {{ -1, 162.0f * 25 - 6 }}},
+   //    // { 292593, {{ -1, 163.0f * 25 - 6 }}},
+   //    // { 292594, {{ -1, 163.0f * 25 - 6 }}}
+   // };
    static const std::map<int, std::map<int, float>> delayList =
    {
-      // (164 - WBC) * 25 + Globaldelay
-
-      // Fill 5824
-      // { 296665, {{ -1, 0 * 25 + 18 }}},
-      // { 296666, {{ -1, 0 * 25 + 14 }}},
-      // { 296668, {{ -1, 0 * 25 + 11 }}},
-      // { 296669, {{ -1, 0 * 25 + 9  }}},
-      // { 296674, {{ -1, 0 * 25 + 7.5}}},
-      // { 296664, {{ -1, 0 * 25 + 6  }}},
-      // { 296675, {{ -1, 0 * 25 + 4.5}}},
-      // { 296676, {{ -1, 0 * 25 + 1.5}}},
-      // { 296678, {{ -1, 0 * 25 + 0  }}},
-      // { 296679, {{ -1, -1 * 25 + 22 }}},
-      // { 296680, {{ -1, -1 * 25 + 18 }}}
-
-      // Fill 5856, scan 23
-      { 297281, {{ -1, 0 * 25 +     6}}},
-      { 297282, {{ -1, 0 * 25 +    -4}}},
-      { 297283, {{ -1, 0 * 25 +    -1}}},
-      { 297284, {{ -1, 0 * 25 +     2}}},
-      { 297285, {{ -1, 0 * 25 +     4}}},
-      { 297286, {{ -1, 0 * 25 +     8}}},
-      { 297287, {{ -1, 0 * 25 +    10}}},
-      { 297288, {{ -1, 0 * 25 +    13}}},
-      { 297289, {{ -1, 0 * 25 +    16}}},
-      { 297290, {{ -1, 0 * 25 +   5.5}}},
-      { 297291, {{ -1, 0 * 25 +   6.5}}}
-
-      // Fill 5838
-
-      // { 297003, {{ -1, 44 * 25 + normal settings}}
-      // { 297004, {{ -1, 64 * 25 + 18ns}}
-      // { 297006, {{ -1, 64 * 25 + 21ns}}
-      // { 297007, {{ -1, 62 * 25 + 0ns}}
-      // { 297009, {{ -1, 62 * 25 + 1.5ns}}
-      // { 297010, {{ -1, 62 * 25 + 3ns}}
-      // { 297011, {{ -1, 62 * 25 + 4.5ns}}
-      // { 297020, {{ -1, 62 * 25 + 6ns}}
-      // { 297012, {{ -1, 62 * 25 + 7.5ns}}
-      // { 297015, {{ -1, 62 * 25 + 9ns}}
-      // { 297016, {{ -1, 62 * 25 + 10.5ns}}
-      // { 297017, {{ -1, 62 * 25 + 12ns}}
-      // { 297018, {{ -1, 62 * 25 + 15ns}}
-      // { 297019, {{ -1, 62 * 25 + 18ns}}
-
-      // { 294928, {{-1, 162 * 25  - 6}}},
-      // { 294929, {{-1, 163 * 25  - 6}}},
-      // { 294931, {{-1, 164 * 25  - 6}}},
-      // { 294932, {{-1, 162 * 25  - 18}}},
-      // { 294933, {{-1, 163 * 25  - 18}}},
-      // { 294934, {{-1, 164 * 25  - 18}}},
-      // { 294935, {{-1, 165 * 25  - 18}}},
-      // { 294936, {{-1, 164 * 25  - 0}}},
-      // { 294937, {{-1, 162 * 25  - 0}}},
-      // { 294939, {{-1, 164 * 25  - 12}}},
-      // { 294940, {{-1, 163 * 25  - 12}}},
-      // { 294947, {{-1, 163 * 25  - 0}}},
-      // { 294949, {{-1, 162 * 25  - 3}}},
-      // { 294950, {{-1, 163 * 25  - 21}}},
-      // { 294951, {{-1, 163 * 25  - 15}}},
-      // { 294952, {{-1, 163 * 25  - 9}}},
-      // { 294953, {{-1, 163 * 25  - 3}}},
-      // { 294954, {{-1, 164 * 25  - 21}}},
-      // { 294955, {{-1, 164 * 25  - 15}}},
-      // { 294956, {{-1, 164 * 25  - 3}}},
-      // { 294957, {{-1, 163 * 25  - 0}}},
-      // { 294960, {{-1, 163 * 25  - 6}}}
-
-      // FPix
-      // { 291872, {{ -1, 162.0f * 25 - 12 }}},
-      // { 292283, {{ -1, 164.0f * 25 - 18 }}},
-      // { 292364, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292365, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292366, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292367, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292592, {{ -1, 162.0f * 25 - 6 }}},
-      // { 292593, {{ -1, 163.0f * 25 - 6 }}},
-      // { 292594, {{ -1, 163.0f * 25 - 6 }}},
-      // // //BPix
-      // { 292079, {{ -1, 163.0f * 25 - 18 }}},
-      // { 292080, {{ -1, 163.0f * 25 - 18 }}},
-      // { 292283, {{ -1, 165.0f * 25 - 18 }}},
-      // { 292364, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292365, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292366, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292367, {{ -1, 164.0f * 25 - 6 }}},
-      // { 292592, {{ -1, 162.0f * 25 - 6 }}},
-      // { 292593, {{ -1, 163.0f * 25 - 6 }}},
-      // { 292594, {{ -1, 163.0f * 25 - 6 }}}
+      { 300233, {{ -1, 1}}},
+      { 300234, {{ -1, 2}}}
    };
    const std::map<int, float>& runLsToDelayMap = delayList.at(runNumber);
    const auto& universalLumisectionIt = runLsToDelayMap.find(-1);
@@ -576,3 +579,35 @@ std::pair<int, int> delayInNsToRelativeWBCandPhaseDelay(float delayInNs)
    int valueAsInt = (delayInNs + 0.5f);
    return std::make_pair(valueAsInt / 25, valueAsInt % 25);
 }
+
+// std::vector<std::vector<TEfficiency>> generateDetectorMeasurementPlots()
+// {
+
+//    const std::vector<int>                     LADDER_NUM_BINS_ON_LAYERS = {13, 29, 45, 65};
+//    const std::vector<int>                     MODULE_NUM_BINS_ON_LAYERS = {9, 9, 9, 9};
+//    const std::vector<int>                     ALPHA_NUM_BINS_ON_LAYERS  = {100, 100, 100, 100};
+//    const std::vector<int>                     BETA_NUM_BINS_ON_LAYERS   = {100, 100, 100, 100};
+
+//    const std::vector<std::pair<float, float>> LADDER_RANGE_ON_LAYERS    = {{-6.0f, 7.0f }, {-14.0f, 15.0f }, {-22.0f, 23.0f }, {-32.0f, 33.0f }};
+//    const std::vector<std::pair<float, float>> MODULE_RANGE_ON_LAYERS    = {{-4.0f, 5.0f }, { -4.0f,  5.0f }, { -4.0f,  5.0f }, { -4.0f,  5.0f }};
+//    const std::vector<std::pair<float, float>> ALPHA_RANGE_ON_LAYERS     = {{ 0.0f, 3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}};
+//    const std::vector<std::pair<float, float>> BETA_RANGE_ON_LAYERS      = {{ 0.0f, 3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}, {  0.0f,  3.14f}};
+
+//    // Hit efficiency
+//    auto hitEfficiencyVsLadderVsModule = histo2DForEachLayer("hitEfficiencyVsLadderVsModule", "Hit efficiency vs ladder vs module", "", "ladder", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS, MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+//    auto hitEfficiencyVsLadder         = histo1DForEachLayer("hitEfficiencyVsLadder",         "Hit efficiency vs ladder", "", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS);
+//    auto hitEfficiencyVsModule         = histo1DForEachLayer("hitEfficiencyVsModule",         "Hit efficiency vs module", "", "module", "hit eff.", MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+//    auto hitEfficiencyVsAlpha          = histo1DForEachLayer("hitEfficiencyVsAlpha",          "Hit efficiency vs alpha",  "", "module", "hit eff.", ALPHA_NUM_BINS_ON_LAYERS , ALPHA_RANGE_ON_LAYERS );
+//    auto hitEfficiencyVsBeta           = histo1DForEachLayer("hitEfficiencyVsBeta",           "Hit efficiency vs beta",   "", "module", "hit eff.", BETA_NUM_BINS_ON_LAYERS  , BETA_RANGE_ON_LAYERS  );
+//    // Number of hits
+//    auto totalHitsVsLadderVsModule = histo2DForEachLayer("totalHitsVsLadderVsModule", "Number of hits vs ladder vs module", "", "ladder", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS, MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+//    auto totalHitsVsLadder         = histo1DForEachLayer("totalHitsVsLadder",         "Number of hits vs ladder", "", "module", "hit eff.", LADDER_NUM_BINS_ON_LAYERS, LADDER_RANGE_ON_LAYERS);
+//    auto totalHitsVsModule         = histo1DForEachLayer("totalHitsVsModule",         "Number of hits vs module", "", "module", "hit eff.", MODULE_NUM_BINS_ON_LAYERS, MODULE_RANGE_ON_LAYERS);
+//    auto totalHitsVsAlpha          = histo1DForEachLayer("totalHitsVsAlpha",          "Number of hits vs alpha",  "", "module", "hit eff.", ALPHA_NUM_BINS_ON_LAYERS,  ALPHA_RANGE_ON_LAYERS );
+//    auto totalHitsVsBeta           = histo1DForEachLayer("totalHitsVsBeta",           "Number of hits vs beta",   "", "module", "hit eff.", BETA_NUM_BINS_ON_LAYERS ,  BETA_RANGE_ON_LAYERS  );
+
+//    std::vector<std::vector<TEfficiency>> detectorMeasurementPlots;
+
+//    detectorMeasurementPlots.push_back()
+
+// }

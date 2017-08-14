@@ -6,6 +6,7 @@
 #include <exception>
 #include <algorithm>
 #include <iterator>
+#include <memory>
 #include <type_traits>
 
 template <typename IntType>
@@ -35,14 +36,11 @@ std::vector<IntType> range(IntType stop)
 	return range(IntType(0), stop, IntType(1));
 }
 
-// template <typename T, class UnaryPredicate>
-// std::vector<T> filter(std::vector<T> vectorToFilter, UnaryPredicate pred)
-// {
-// 	std::vector<T> filteredVector(vectorToFilter.size());
-// 	std::copy_if(vectorToFilter.begin(), vectorToFilter.end(), filteredVector.begin(), std::move(pred));
-// 	filteredVector.shrink_to_fit();
-// 	return filteredVector;
-// }
+template <typename T>
+T* deref_unique_ptr(std::unique_ptr<T> e)
+{
+	return e.get();
+}
 
 template <class T, class UnaryPredicate>
 std::vector<T> filter(const std::vector<T>& vectorToFilter, UnaryPredicate&& predicate)
@@ -130,17 +128,25 @@ std::string fileToString(const String& filename)
 	return result;
 }
 
-template <typename ModuleData_t>
-bool areModulesSame(const ModuleData_t& t_lhs, const ModuleData_t& t_rhs)
+template <typename Iterator, typename Pred, typename Operation>
+void for_each_if(Iterator begin, Iterator end, Pred p, Operation op)
 {
-	static_assert(std::is_same<ModuleData_t, ModuleData>::value, "Invalid argument type."); 
-	if(t_lhs.det    != t_rhs.det)    return false;
-	if(t_lhs.layer  != t_rhs.layer)  return false;
-	if(t_lhs.module != t_rhs.module) return false;
-	if(t_lhs.ladder != t_rhs.ladder) return false;
-	if(t_lhs.disk   != t_rhs.disk)   return false;
-	if(t_lhs.ring   != t_rhs.ring)   return false;
-	if(t_lhs.blade  != t_rhs.blade)  return false;
-	if(t_lhs.panel  != t_rhs.panel)  return false;
-	return true;
+	for(; begin != end; begin++)
+	{
+		if(p(*begin))
+		{
+			op(*begin);
+		}
+	}
 }
+
+class counter_iterator {
+   size_t m_count = 0; // Let's count a bit further
+public:
+   counter_iterator& operator++() { ++m_count; return *this; }
+   counter_iterator& operator*() { return *this; }
+   template<typename T> counter_iterator& operator=(T&&) { return *this; }
+   counter_iterator& operator=(counter_iterator&) = default; // Don't break normal assignment.
+
+   operator size_t() const { return m_count; }
+};

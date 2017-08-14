@@ -1,0 +1,19 @@
+{
+	"input_files_list": "./input_lists/config_input_files_delayscan_pp_fill5824_small_sample.json",
+	"input_file_list_options":
+	[
+		"./input_lists/config_input_files_test.json",
+		"./input_lists/config_input_files_delayscan_pp_fill5824.json",
+		"./input_lists/config_input_files_delayscan_pp_fill5838.json",
+		"./input_lists/config_input_files_delayscan_pp_fill5824_small_sample.json",
+		"./input_lists/config_input_files_delayscan_pp_fill5856.json",
+		"./input_lists/config_input_files_efficiency_scan.json",
+		"./input_lists/config_input_files_timingscan_HV.json"
+	],
+	"ntuple_name": "splitClusterStudy_1.root",
+	"plot_module_clusters":
+	{
+		"create_plots": true,
+		"n_plots_to_create": 10
+	}
+}

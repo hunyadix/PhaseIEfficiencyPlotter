@@ -3,12 +3,22 @@
 constexpr std::array<const char*, 11> ModuleClusterPlot::histogramTypePrefixes;
 std::vector<ModuleClusterPlot*> ModuleClusterPlot::moduleClusterPlotCollection;
 
+bool areModulesSame(const ModuleData& t_lhs, const ModuleData& t_rhs)
+{
+	return 
+		t_lhs.layer  == t_rhs.layer &&
+		t_lhs.module == t_rhs.module &&
+		t_lhs.ladder == t_rhs.ladder &&
+		t_lhs.disk   == t_rhs.disk &&
+		t_lhs.ring   == t_rhs.ring &&
+		t_lhs.blade  == t_rhs.blade &&
+		t_lhs.panel  == t_rhs.panel;
+}
+
 ModuleClusterPlot::ModuleClusterPlot(Type typeArg, const int& layerArg, const int& moduleArg, const int& ladderArg, const int& startEventArg, const int& endEventArg):
-	histogram(new TH2D(
-		(std::string("ModuleClusterPlot") + "_" + std::to_string(moduleClusterPlotCollection.size()) + "_" + std::to_string(layerArg) + "_" + std::to_string(moduleArg) +  + "_" + std::to_string(ladderArg) + "_" + std::to_string(startEventArg) + "_" + std::to_string(endEventArg)).c_str(), 
-		(std::string(histogramTypePrefixes[typeArg]) + " on layer " + std::to_string(layerArg) + ", module " + std::to_string(moduleArg) + ", ladder " + std::to_string(ladderArg) + ";module pix. (col);ladder pix. (row)").c_str(),
-		416, 0, 416,
-		160, 0, 160)),
+	histogramName(std::string("ModuleClusterPlot") + "_" + std::to_string(moduleClusterPlotCollection.size()) + "_" + std::to_string(layerArg) + "_" + std::to_string(moduleArg) +  + "_" + std::to_string(ladderArg) + "_" + std::to_string(startEventArg) + "_" + std::to_string(endEventArg)),
+	histogramTitle(std::string(histogramTypePrefixes[typeArg]) + " on layer " + std::to_string(layerArg) + ", module " + std::to_string(moduleArg) + ", ladder " + std::to_string(ladderArg) + ";module pix. (col);ladder pix. (row)"),
+	histogram(new TH2D(histogramName.c_str(), histogramTitle.c_str(), 416, 0, 416, 160, 0, 160)),
 	canvas(new TCanvas(histogram -> GetName(), (histogram -> GetTitle() + std::string(" ") + std::to_string(startEventArg) + " " + std::to_string(endEventArg)).c_str(), 50, 50, CANVAS_X_DIMENSION, CANVAS_Y_DIMENSION)),
 	type(typeArg),
 	layer(layerArg),
@@ -19,6 +29,13 @@ ModuleClusterPlot::ModuleClusterPlot(Type typeArg, const int& layerArg, const in
 {
 	CanvasExtras::redesignCanvas(canvas, histogram);
 	moduleClusterPlotCollection.push_back(this);
+}
+
+ModuleClusterPlot::~ModuleClusterPlot()
+{
+	auto findRes = std::find(moduleClusterPlotCollection.begin(), moduleClusterPlotCollection.end(), this);
+	if(findRes == moduleClusterPlotCollection.end()) e_self_reference_memory_handling();
+	moduleClusterPlotCollection.erase(std::remove(begin(moduleClusterPlotCollection), end(moduleClusterPlotCollection), this), end(moduleClusterPlotCollection));
 }
 
 void ModuleClusterPlot::markerToRowColModifierArrays(const int& markerState, std::vector<int>& colModifiers, std::vector<int>& rowModifiers)
@@ -66,16 +83,20 @@ void ModuleClusterPlot::fillDigisFromCluster(const Cluster& cluster, const float
 			case pairs:
 			case pairsWithAngleLabels:
 			case pairsWithIndividualAngleLabels:
+				std::cout << __PRETTY_FUNCTION__ << ": " << __LINE__ << std::endl;
+				std::cout << "Setting the bin content of col: " << col << ", row: " << row << " to " << BASE_DIGI_FILL_VALUE << std::endl;
 				histogram -> SetBinContent(col, row, BASE_DIGI_FILL_VALUE);
 				break;
 			case digisFromMarkers:
 			case pairsWithMarkers:
 			case fakePairsWithMarkers:
+				std::cout << __PRETTY_FUNCTION__ << ": " << __LINE__ << std::endl;
 				if(markerState == 0) histogram -> SetBinContent(col, row, BASE_DIGI_FILL_VALUE);
 				else                 histogram -> SetBinContent(col, row, markerState);
 				break;
 			case pairsWithNeighbours:
 			case digisFromMarkersWithNeighbours:
+				std::cout << __PRETTY_FUNCTION__ << ": " << __LINE__ << std::endl;
 				if(markerState == 0) histogram -> SetBinContent(col, row, BASE_DIGI_FILL_VALUE);
 				else                 histogram -> SetBinContent(col, row, markerState);
 				// histogram -> SetBinContent(col, row, BASE_DIGI_FILL_VALUE);
@@ -84,10 +105,11 @@ void ModuleClusterPlot::fillDigisFromCluster(const Cluster& cluster, const float
 			case pairsWithAngleColorCodes:
 			case pairsWithIndividualAngleColors:
 				// std::cout << "fillWeight: " << fillWeight << std::endl;
+				std::cout << __PRETTY_FUNCTION__ << ": " << __LINE__ << std::endl;
 				histogram -> SetBinContent(col, row, fillWeight);
 				break;
 			default:
-				std::cerr << "Error in ModuleClusterPlot::fill(): Error deducing type for histogram type." << std::endl; 
+				std::cerr << "Error in ModuleClusterPlot::fill(): Error deducing type for histogram type." << std::endl;
 				break;
 		}
 	}
@@ -104,17 +126,17 @@ void ModuleClusterPlot::fillDigisMarkers(const Cluster& cluster, const int& even
 	auto filteredList = filter(moduleClusterPlotCollection, [&eventNum] (ModuleClusterPlot* plotToCheck) { return plotToCheck -> isEventNumInRange(eventNum); });
 	filteredList      = filter(filteredList,                []          (ModuleClusterPlot* plotToCheck)
 	{
-		return 
-			(plotToCheck -> type == digis) || 
-			(plotToCheck -> type == digisFromMarkers) || 
-			(plotToCheck -> type == digisFromMarkersWithNeighbours); 
+		return
+			(plotToCheck -> type == digis) ||
+			(plotToCheck -> type == digisFromMarkers) ||
+			(plotToCheck -> type == digisFromMarkersWithNeighbours);
 	});
 	if(filteredList.empty()) return;
 	const ModuleData& mod_on = cluster.mod_on;
 	if(mod_on.det != 0) return;
 	filteredList = filter(filteredList, [&mod_on] (ModuleClusterPlot* plotToCheck)
 	{
-		return 
+		return
 			mod_on.layer  == plotToCheck -> layer &&
 			mod_on.module == plotToCheck -> module &&
 			mod_on.ladder == plotToCheck -> ladder;
@@ -136,12 +158,12 @@ void ModuleClusterPlot::fillAllPairs(const std::vector<Cluster>& clusterCollecti
 {
 	auto plotsToFillInTheEvent = filter(moduleClusterPlotCollection, [&eventNum] (ModuleClusterPlot* plotToCheck) { return plotToCheck -> isEventNumInRange(eventNum); });
 	plotsToFillInTheEvent      = filter(plotsToFillInTheEvent,       []          (ModuleClusterPlot* plotToCheck)
-	{ 
-		return 
-			(plotToCheck -> type == pairs                         ) || 
-			(plotToCheck -> type == pairsWithMarkers              ) || 
-			(plotToCheck -> type == fakePairsWithMarkers          ) || 
-			(plotToCheck -> type == pairsWithNeighbours           ) || 
+	{
+		return
+			(plotToCheck -> type == pairs                         ) ||
+			(plotToCheck -> type == pairsWithMarkers              ) ||
+			(plotToCheck -> type == fakePairsWithMarkers          ) ||
+			(plotToCheck -> type == pairsWithNeighbours           ) ||
 			(plotToCheck -> type == pairsWithAngleLabels          ) ||
 			(plotToCheck -> type == pairsWithAngleColorCodes      ) ||
 			(plotToCheck -> type == pairsWithIndividualAngleLabels) ||
@@ -152,9 +174,9 @@ void ModuleClusterPlot::fillAllPairs(const std::vector<Cluster>& clusterCollecti
 	{
 		const ModuleData& mod1 = firstClusterIt -> mod_on;
 		if(mod1.det != 0) continue;
-		auto filteredList = filter(plotsToFillInTheEvent, [&mod1] (ModuleClusterPlot* plotToCheck) 
+		auto filteredList = filter(plotsToFillInTheEvent, [&mod1] (ModuleClusterPlot* plotToCheck)
 		{
-			return 
+			return
 				mod1.layer  == plotToCheck -> layer  &&
 				mod1.module == plotToCheck -> module &&
 				mod1.ladder == plotToCheck -> ladder;
@@ -215,9 +237,9 @@ void ModuleClusterPlot::fillAllPairs(const std::vector<Cluster>& clusterCollecti
 				if(plotDefinitionPtr -> type == pairsWithIndividualAngleLabels)
 				{
 					plotDefinitionPtr -> labels.emplace_back(std::make_unique<TText>(firstClusterIt -> pix[0][1] + 5, firstClusterIt -> pix[0][0] + 3, std::to_string(angle1).c_str()));
-					CanvasExtras::setLabelStyleComment(*(plotDefinitionPtr -> labels.back()));	
+					CanvasExtras::setLabelStyleComment(*(plotDefinitionPtr -> labels.back()));
 					plotDefinitionPtr -> labels.emplace_back(std::make_unique<TText>(firstClusterIt -> pix[0][1] - 8, firstClusterIt -> pix[0][0] - 5, std::to_string(angle2).c_str()));
-					CanvasExtras::setLabelStyleComment(*(plotDefinitionPtr -> labels.back()));	
+					CanvasExtras::setLabelStyleComment(*(plotDefinitionPtr -> labels.back()));
 				}
 			}
 		}
@@ -233,14 +255,16 @@ void ModuleClusterPlot::saveAllFinished(const int& eventNum)
 	for(auto moduleClusterPlotToSave: filteredList)
 	{
 		TH2D* histogram = moduleClusterPlotToSave -> histogram;
+		if(histogram == nullptr) e_histogram_nullptr();
 		TCanvas* canvas = moduleClusterPlotToSave -> canvas;
+		if(canvas == nullptr) e_canvas_nullptr();
 		canvas -> cd();
 		// Angle identifier colors
 		if(moduleClusterPlotToSave -> type == pairsWithAngleColorCodes)
 		{
 			histogram -> GetZaxis() -> SetRangeUser(ANGLE_PALETTE_MINIMUM, ANGLE_PALETTE_MAXIMUM);
 			histogram -> GetZaxis() -> SetRangeUser(ANGLE_PALETTE_MINIMUM, ANGLE_PALETTE_MAXIMUM);
-			histogram -> GetZaxis() -> SetRangeUser(ANGLE_PALETTE_MINIMUM, ANGLE_PALETTE_MAXIMUM);			
+			histogram -> GetZaxis() -> SetRangeUser(ANGLE_PALETTE_MINIMUM, ANGLE_PALETTE_MAXIMUM);
 		}
 		// Marker identifier colors
 		else
@@ -252,11 +276,12 @@ void ModuleClusterPlot::saveAllFinished(const int& eventNum)
 		}
 		// Slow, but a bit more accurate palette
 		// CanvasExtras::setMulticolorColzPalette();
+		gStyle -> SetOptStat(222222);
 		histogram -> Draw("COLZ");
 		TText eventlabel;
-		CanvasExtras::setLabelStyleNote(eventlabel);		
+		CanvasExtras::setLabelStyleNote(eventlabel);
 		eventlabel.DrawText(0.22, 0.98, (
-			"Events: [" + 
+			"Events: [" +
 			std::to_string(moduleClusterPlotToSave -> startEvent) + " - " +
 			std::to_string(moduleClusterPlotToSave -> endEvent  ) + "]").c_str());
 		for(std::unique_ptr<TText>& label: moduleClusterPlotToSave -> labels)
@@ -268,8 +293,25 @@ void ModuleClusterPlot::saveAllFinished(const int& eventNum)
 		canvas -> Update();
 		canvas -> Update();
 		std::string filename = canvas -> GetTitle();
+		std::cout << debug_prompt << "Number of histogram entires: " << histogram -> GetEntries() << std::endl;
 		std::transform(filename.begin(), filename.end(), filename.begin(), [] (char ch) { return ch == ' ' ? '_' : ch; });
-		filename =  "results/" + filename + ".eps";
+		filename =  "results/ModuleClusterPlots/" + filename + ".eps";
+		std::cout << debug_prompt << "Saving canvas: " << filename << std::endl;
 		canvas -> SaveAs(filename.c_str());
 	}
+}
+
+[[noreturn, gnu::cold]] void ModuleClusterPlot::e_histogram_nullptr()
+{
+	throw std::runtime_error("Nullptr histogram in ModuleClusterPlot.");
+}
+
+[[noreturn, gnu::cold]] void ModuleClusterPlot::e_canvas_nullptr()
+{
+	throw std::runtime_error("Nullptr canvas in ModuleClusterPlot.");
+}
+
+[[noreturn, gnu::cold]] void ModuleClusterPlot::e_self_reference_memory_handling()
+{
+	throw std::runtime_error("Self reference counting is missing one or more of its references.");
 }

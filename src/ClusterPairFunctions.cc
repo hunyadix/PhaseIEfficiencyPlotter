@@ -2,6 +2,18 @@
 
 namespace ClusterPairFunctions
 {
+	bool areModulesSame(const ModuleData& t_lhs, const ModuleData& t_rhs)
+	{
+		return 
+			t_lhs.layer  == t_rhs.layer &&
+			t_lhs.module == t_rhs.module &&
+			t_lhs.ladder == t_rhs.ladder &&
+			t_lhs.disk   == t_rhs.disk &&
+			t_lhs.ring   == t_rhs.ring &&
+			t_lhs.blade  == t_rhs.blade &&
+			t_lhs.panel  == t_rhs.panel;
+	}
+
 	void printClusterFieldInfo(const Cluster& clusterField)
 	{
 		std::cout << "--- Begin cluster field info ---" << std::endl;

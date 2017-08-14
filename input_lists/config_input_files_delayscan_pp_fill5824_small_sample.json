@@ -1,7 +1,6 @@
 {
 	"input_files":
 	[
-		"/data/gridout/ahunyadi/PhaseIPixelNtuplizer/Scans/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_1.root",
 		"/data/gridout/ahunyadi/PhaseIPixelNtuplizer/Scans/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_100.root",
 		"/data/gridout/ahunyadi/PhaseIPixelNtuplizer/Scans/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_119.root",
 		"/data/gridout/ahunyadi/PhaseIPixelNtuplizer/Scans/v0405_default_921_92X_dataRun2_Express_v2_TimingScan2017_Scan20/170613_173906/0000/Ntuple_135.root",

@@ -281,6 +281,7 @@ class EfficiencyPlotsModule
       LayersDiskPlotsCollection                rocEfficiencyDistributionPlots   {{ nullptr }};
       std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsByOrientationEfficiencyPlots    {{ {{nullptr}} }};
       std::array<LayersDiskPlotsCollection, 8> forwardLocalPositionsWithFidicualCutsEfficiencyPlots {{ {{nullptr}} }};
+
    public:
       enum Scenario
       {
@@ -309,6 +310,7 @@ class EfficiencyPlotsModule
       static void saveCanvasAsEps(TCanvas* canvas, const std::string& parentDirectoryName);
       float getAvarageEfficiency();
       void  printCheckHistogramPointers();
+      bool  areEfficiencyCutsPassed();
       void  printCounters();
       void  printCutValues();
       float getDelayValueNs();

@@ -333,7 +333,7 @@ class ClustData
 		float adc[1000];
 		float pix[1000][2];
 
-		const std::string list = "x/F:y:lx:ly:glx:gly:glz:sizeX/I:sizeY:i:edge:badpix:tworoc:size:charge/F";
+		const std::string list = "x/F:y:lx:ly:glx:gly:glz:sizeX/I:sizeY:i:edge:badpix:tworoc:size:charge/F:adc[size]:pix[size]";
 
 		ClustData() { init(); }
 		void init()

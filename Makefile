@@ -1,10 +1,10 @@
 include Makefile.arch
 SrcSuf = cc
 
-CXX       = ${HOME}//usr/bin/g++
-# CXX       = ${HOME}//usr/bin/g++ -g -rdynamic
+# CXX       = ${HOME}//usr/bin/g++
+CXX       = ${HOME}//usr/bin/g++ -g -rdynamic
 CXXFLAGS  = -std=c++14 -O3 -Wall -Wextra -Woverloaded-virtual -Wnon-virtual-dtor -Wmisleading-indentation -fPIC -pthread -m64 -I/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/include -fdiagnostics-color=always
-LIBS      =  -L/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl -rdynamic 
+LIBS      =  -L/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/cmssw/CMSSW_9_1_0_pre3/external/slc6_amd64_gcc530/bin/../../../../../../../slc6_amd64_gcc530/lcg/root/6.08.06-mlhled2/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -lMultiProc -pthread -lm -ldl -rdynamic
 LIBS     += -lboost_system -lstdc++fs
 
 # CXXFLAGS += -std=c++1z -fdiagnostics-color=always
@@ -186,27 +186,27 @@ $(MODULE_CLUSTER_PLOT_O): $(MODULE_CLUSTER_PLOT_S)
 
 ###
 
-$(EFFICIENCY_MAIN_O): $(EFFICIENCY_MAIN_S)  
+$(EFFICIENCY_MAIN_O): $(EFFICIENCY_MAIN_S)
 	@printf "Compiling program: \""$<"\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 
-$(EFFICIENCY_TIMING_O): $(EFFICIENCY_TIMING_S)  
+$(EFFICIENCY_TIMING_O): $(EFFICIENCY_TIMING_S)
 	@printf "Compiling program: \""$<"\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 
-$(ROC_EFFICIENCY_FITTER_O): $(ROC_EFFICIENCY_FITTER_S)  
+$(ROC_EFFICIENCY_FITTER_O): $(ROC_EFFICIENCY_FITTER_S)
 	@printf "Compiling program: \""$<"\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 
-$(SPLIT_CLUSTER_COUNTER_O): $(SPLIT_CLUSTER_COUNTER_S)  
+$(SPLIT_CLUSTER_COUNTER_O): $(SPLIT_CLUSTER_COUNTER_S)
 	@printf "Compiling program: \""$<"\"...\n"
 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 	@printf "Done.\n"
 
-# $(EFFICIENCY_MULTIHITMEAS_O): $(EFFICIENCY_MULTIHITMEAS_S)  
+# $(EFFICIENCY_MULTIHITMEAS_O): $(EFFICIENCY_MULTIHITMEAS_S)
 # 	@printf "Compiling program: \"efficiency_multiHitMeas\"...\n"
 # 	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< $(OutPutOpt)$@
 # 	@printf "Done.\n"
